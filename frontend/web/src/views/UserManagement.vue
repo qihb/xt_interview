@@ -1,49 +1,57 @@
 <template>
-  <div class="user-management">
-    <div class="page-header">
-      <el-button type="primary" :icon="Plus" @click="openCreateDialog">
-        添加用户
-      </el-button>
-      <el-button :icon="Refresh" @click="loadUsers">刷新</el-button>
-    </div>
+  <div class="page-container">
+    <section class="user-section">
+      <div class="user-header">
+        <div class="user-header-title">
+          <span>用户列表</span>
+          <span class="user-count">共 {{ users.length }} 个用户</span>
+        </div>
+        <div class="user-header-actions">
+          <el-button :icon="Refresh" @click="loadUsers">刷新</el-button>
+          <el-button type="primary" :icon="Plus" @click="openCreateDialog">
+            新增用户
+          </el-button>
+        </div>
+      </div>
 
-    <el-table
-      v-loading="loading"
-      :data="users"
-      border
-      stripe
-      style="width: 100%"
-    >
-      <el-table-column prop="username" label="用户名" width="120" />
-      <el-table-column prop="name" label="姓名" width="100" />
-      <el-table-column prop="gender" label="性别" width="80" />
-      <el-table-column prop="phone" label="联系方式" width="140" />
-      <el-table-column label="权限级别" width="120">
-        <template #default="{ row }">
-          <el-tag :type="roleTagType(row.roleLevel)">
-            {{ roleText(row.roleLevel) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" width="80">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-            {{ row.status === 1 ? '启用' : '禁用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="180" />
-      <el-table-column label="操作" width="160" fixed="right">
-        <template #default="{ row }">
-          <el-button type="primary" link :icon="Edit" @click="openEditDialog(row)">
-            编辑
-          </el-button>
-          <el-button type="danger" link :icon="Delete" @click="handleDelete(row)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-table
+        v-loading="loading"
+        :data="users"
+        border
+        stripe
+        style="width: 100%"
+      >
+        <el-table-column prop="username" label="用户名" width="120" />
+        <el-table-column prop="name" label="姓名" width="100" />
+        <el-table-column prop="gender" label="性别" width="80" />
+        <el-table-column prop="phone" label="联系方式" width="140" />
+        <el-table-column label="权限级别" width="120">
+          <template #default="{ row }">
+            <el-tag :type="roleTagType(row.roleLevel)">
+              {{ roleText(row.roleLevel) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="80">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 1 ? 'success' : 'danger'">
+              {{ row.status === 1 ? '启用' : '禁用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="180" />
+        <el-table-column label="操作" width="160" fixed="right">
+          <template #default="{ row }">
+            <el-button type="primary" link :icon="Edit" @click="openEditDialog(row)">
+              编辑
+            </el-button>
+            <el-button type="danger" link :icon="Delete" @click="handleDelete(row)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </section>
 
     <el-dialog
       v-model="dialogVisible"
@@ -252,16 +260,52 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.user-management {
+<style lang="less" scoped>
+@color-primary: #1764e8;
+@text-primary: rgba(0, 0, 0, 0.85);
+@text-secondary: rgba(0, 0, 0, 0.65);
+@page-bg: #f5f7fa;
+
+.page-container {
+  min-height: 100%;
+  background: @page-bg;
+}
+
+.user-section {
   background: #fff;
   border-radius: 8px;
   padding: 20px;
 }
 
-.page-header {
+.user-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.user-header-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: @text-primary;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.user-count {
+  color: @text-secondary;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.user-header-actions {
   display: flex;
   gap: 12px;
-  margin-bottom: 20px;
+}
+
+:deep(.el-button--primary) {
+  --el-button-bg-color: @color-primary;
+  --el-button-border-color: @color-primary;
 }
 </style>
