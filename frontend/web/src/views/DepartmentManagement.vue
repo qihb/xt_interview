@@ -58,17 +58,17 @@
         label-width="90px"
       >
         <el-form-item label="部门名称" prop="name">
-          <el-input v-model="formData.name" maxlength="100" show-word-limit placeholder="请输入部门名称" />
+          <el-input v-model="formData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
         </el-form-item>
         <el-form-item label="部门编码" prop="code">
-          <el-input v-model="formData.code" maxlength="50" show-word-limit placeholder="请输入部门编码" />
+          <el-input v-model="formData.code" maxlength="20" show-word-limit placeholder="请输入部门编码" />
         </el-form-item>
         <el-form-item label="部门描述" prop="description">
           <el-input
             v-model="formData.description"
             type="textarea"
             :rows="4"
-            maxlength="500"
+            maxlength="200"
             show-word-limit
             placeholder="请输入部门描述"
           />
@@ -114,8 +114,32 @@ const formData = reactive<DepartmentPayload>({
 })
 
 const formRules: FormRules = {
-  name: [{ required: true, message: '请输入部门名称', trigger: 'blur' }],
-  code: [{ required: true, message: '请输入部门编码', trigger: 'blur' }],
+  name: [
+    { required: true, message: '请输入部门名称', trigger: 'blur' },
+    { min: 2, max: 20, message: '部门名称长度应为 2-20 个字', trigger: 'blur' },
+    {
+      validator: (_rule, value, callback) => {
+        if (value && value.trim() !== value) {
+          callback(new Error('部门名称首尾不能有空格'))
+          return
+        }
+        callback()
+      },
+      trigger: 'blur'
+    }
+  ],
+  code: [
+    { required: true, message: '请输入部门编码', trigger: 'blur' },
+    { min: 2, max: 20, message: '部门编码长度应为 2-20 个字符', trigger: 'blur' },
+    {
+      pattern: /^[A-Za-z0-9_-]+$/,
+      message: '部门编码只能包含字母、数字、下划线或短横线',
+      trigger: 'blur'
+    }
+  ],
+  description: [
+    { max: 200, message: '部门描述不能超过 200 个字', trigger: 'blur' }
+  ],
   status: [{ required: true, message: '请选择状态', trigger: 'change' }]
 }
 
