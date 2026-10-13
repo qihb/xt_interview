@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Radius & Shadow 圆角与阴影</title>
+  <link rel="stylesheet" href="preview-scaffold.css">
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+/* Radius */
+.radius-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.r-box {
+  background: #f5f7fa;
+  border: 1px solid rgba(0,0,0,0.08);
+  width: 56px;
+  height: 40px;
+  flex-shrink: 0;
+}
+.r-token {
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: #1764E8;
+  font-weight: 500;
+}
+.r-value {
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: rgba(0,0,0,0.65);
+  margin-top: 2px;
+}
+.r-desc {
+  font-size: 11px;
+  color: rgba(0,0,0,0.45);
+  margin-top: 2px;
+}
+
+/* Shadow */
+.shadow-row {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.s-box {
+  width: 64px;
+  height: 44px;
+  border-radius: 4px;
+  background: #fff;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.s-token {
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: #1764E8;
+  font-weight: 500;
+}
+.s-value {
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: rgba(0,0,0,0.65);
+  margin-top: 2px;
+}
+.s-desc {
+  font-size: 11px;
+  color: rgba(0,0,0,0.45);
+  margin-top: 2px;
+}
+
+/* Hover demo cards */
+.hover-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.hover-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 16px 20px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.hover-card:hover {
+  border-color: #1764E8;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.hover-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.85);
+  margin-bottom: 4px;
+}
+.hover-card-desc {
+  font-size: 11px;
+  color: rgba(0,0,0,0.45);
+  line-height: 1.5;
+}
+.hover-card-token {
+  font-size: 10px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: #1764E8;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.hover-card:hover .hover-card-token {
+  opacity: 1;
+}
+
+/* Shadow transition demo */
+.shadow-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.shadow-demo-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.shadow-demo-card .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.85);
+  margin-bottom: 4px;
+}
+.shadow-demo-card .state {
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: rgba(0,0,0,0.45);
+}
+.shadow-demo-card .state-hover {
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: #1764E8;
+  display: none;
+}
+.shadow-demo-card:hover .state { display: none; }
+.shadow-demo-card:hover .state-hover { display: block; }
+
+/* Card hover: sm → md */
+.shadow-card-sm {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.shadow-card-sm:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+/* Card hover: none → sm */
+.shadow-card-none {
+  box-shadow: none;
+}
+.shadow-card-none:hover {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* Card hover: md → lg */
+.shadow-card-md {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.shadow-card-md:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+/* Border hover */
+.border-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.border-demo-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.border-demo-card .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.85);
+  margin-bottom: 4px;
+}
+.border-demo-card .desc {
+  font-size: 11px;
+  color: rgba(0,0,0,0.45);
+}
+.border-demo-card .token-info {
+  font-size: 10px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: #1764E8;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.border-demo-card:hover .token-info { opacity: 1; }
+
+/* Border style 1: subtle border → primary border */
+.border-subtle {
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.border-subtle:hover {
+  border-color: #1764E8;
+}
+
+/* Border style 2: no border → subtle border */
+.border-none {
+  border: 1px solid transparent;
+}
+.border-none:hover {
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* Border style 3: bottom border highlight */
+.border-bottom {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 2px solid transparent;
+}
+.border-bottom:hover {
+  border-bottom-color: #1764E8;
+}
+
+/* Border style 4: left border highlight */
+.border-left {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-left: 3px solid transparent;
+}
+.border-left:hover {
+  border-left-color: #1764E8;
+}
+
+/* Table row hover */
+.table-hover-demo {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.table-hover-demo th {
+  background: #fafafa;
+  color: rgba(0,0,0,0.65);
+  font-weight: 500;
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.table-hover-demo td {
+  padding: 10px 16px;
+  color: rgba(0,0,0,0.85);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.table-hover-demo tr {
+  transition: background 0.15s;
+}
+.table-hover-demo tbody tr:hover {
+  background: rgba(23,100,232,0.04);
+}
+.table-hover-demo tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Button hover */
+.btn-hover-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn-hover-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background: #1764E8;
+  color: #fff;
+  border-color: #1764E8;
+}
+.btn-primary:hover {
+  background: #3678E2;
+  border-color: #3678E2;
+}
+.btn-outline {
+  background: #fff;
+  color: #1764E8;
+  border-color: #1764E8;
+}
+.btn-outline:hover {
+  background: rgba(23,100,232,0.04);
+}
+.btn-text {
+  background: transparent;
+  color: #1764E8;
+  border-color: transparent;
+}
+.btn-text:hover {
+  background: rgba(23,100,232,0.06);
+}
+.btn-danger-text {
+  background: transparent;
+  color: #F56C6C;
+  border-color: transparent;
+}
+.btn-danger-text:hover {
+  background: rgba(245,108,108,0.06);
+}
+
+/* Link hover */
+.link-hover-demo {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.link-hover-demo a {
+  font-size: 13px;
+  color: #1764E8;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.link-hover-demo a:hover {
+  color: #3678E2;
+  text-decoration: underline;
+}
+.link-hover-demo .link-subtle {
+  color: rgba(0,0,0,0.65);
+}
+.link-hover-demo .link-subtle:hover {
+  color: #1764E8;
+}
+  </style>
+</head>
+<body>
+
+  <div class="pv-header">
+    <h1>Radius & Shadow 圆角与阴影</h1>
+    <p>圆角与投影 token 定义，以及常见 hover 交互效果参考。</p>
+  </div>
+
+  <!-- Radius -->
+  <div class="pv-section">
+    <div class="pv-section__title">Radius 圆角</div>
+    <div class="stack-12">
+      <div class="radius-row">
+        <div class="r-box" style="border-radius:2px"></div>
+        <div>
+          <div class="r-token">--radius-sm</div>
+          <div class="r-value">2px</div>
+          <div class="r-desc">小型元素 · 复选框</div>
+        </div>
+      </div>
+      <div class="radius-row">
+        <div class="r-box" style="border-radius:4px"></div>
+        <div>
+          <div class="r-token">--radius-md</div>
+          <div class="r-value">4px</div>
+          <div class="r-desc">按钮 · 输入框 · 标签</div>
+        </div>
+      </div>
+      <div class="radius-row">
+        <div class="r-box" style="border-radius:8px"></div>
+        <div>
+          <div class="r-token">--radius-lg</div>
+          <div class="r-value">8px</div>
+          <div class="r-desc">卡片 · 弹框 · 下拉</div>
+        </div>
+      </div>
+      <div class="radius-row">
+        <div class="r-box" style="border-radius:12px"></div>
+        <div>
+          <div class="r-token">--radius-xl</div>
+          <div class="r-value">12px</div>
+          <div class="r-desc">大卡片 · 容器</div>
+        </div>
+      </div>
+      <div class="radius-row">
+        <div class="r-box" style="border-radius:9999px"></div>
+        <div>
+          <div class="r-token">--radius-full</div>
+          <div class="r-value">9999px</div>
+          <div class="r-desc">胶囊按钮 · Badge</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shadow -->
+  <div class="pv-section">
+    <div class="pv-section__title">Shadow 阴影</div>
+    <div class="stack-12">
+      <div class="shadow-row">
+        <div class="s-box" style="box-shadow: 0 1px 2px rgba(0,0,0,0.06)"></div>
+        <div>
+          <div class="s-token">--shadow-sm</div>
+          <div class="s-value">0 1px 2px rgba(0,0,0,0.06)</div>
+          <div class="s-desc">卡片默认投影</div>
+        </div>
+      </div>
+      <div class="shadow-row">
+        <div class="s-box" style="box-shadow: 0 4px 12px rgba(0,0,0,0.08)"></div>
+        <div>
+          <div class="s-token">--shadow-md</div>
+          <div class="s-value">0 4px 12px rgba(0,0,0,0.08)</div>
+          <div class="s-desc">下拉菜单 · 悬浮卡片</div>
+        </div>
+      </div>
+      <div class="shadow-row">
+        <div class="s-box" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12)"></div>
+        <div>
+          <div class="s-token">--shadow-lg</div>
+          <div class="s-value">0 8px 24px rgba(0,0,0,0.12)</div>
+          <div class="s-desc">弹窗 · 模态框</div>
+        </div>
+      </div>
+      <div class="shadow-row">
+        <div class="s-box" style="box-shadow: 0 16px 48px rgba(0,0,0,0.16)"></div>
+        <div>
+          <div class="s-token">--shadow-xl</div>
+          <div class="s-value">0 16px 48px rgba(0,0,0,0.16)</div>
+          <div class="s-desc">全屏弹窗 · 浮层</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shadow Hover Transitions -->
+  <div class="pv-section">
+    <div class="pv-section__title">Shadow Hover 阴影过渡效果</div>
+    <p style="font-size: 12px; color: rgba(0,0,0,0.45); margin: -8px 0 16px;">鼠标移入卡片查看过渡效果</p>
+    <div class="shadow-demo-grid">
+      <div class="shadow-demo-card shadow-card-none">
+        <div class="label">无阴影 → sm</div>
+        <div class="state">默认: box-shadow: none</div>
+        <div class="state-hover">hover: box-shadow: 0 1px 2px rgba(0,0,0,0.06)</div>
+        <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 8px;">列表行、简单卡片</div>
+      </div>
+      <div class="shadow-demo-card shadow-card-sm">
+        <div class="label">sm → md</div>
+        <div class="state">默认: box-shadow: 0 1px 2px rgba(0,0,0,0.06)</div>
+        <div class="state-hover">hover: box-shadow: 0 4px 12px rgba(0,0,0,0.08)</div>
+        <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 8px;">可点击卡片、数据卡片</div>
+      </div>
+      <div class="shadow-demo-card shadow-card-md">
+        <div class="label">md → lg</div>
+        <div class="state">默认: box-shadow: 0 4px 12px rgba(0,0,0,0.08)</div>
+        <div class="state-hover">hover: box-shadow: 0 8px 24px rgba(0,0,0,0.12)</div>
+        <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 8px;">浮层卡片、下拉菜单项</div>
+      </div>
+      <div class="shadow-demo-card shadow-card-sm" style="transform-origin: center;">
+        <div class="label">sm → md + 微上移</div>
+        <div class="state">默认: translateY(0) + shadow-sm</div>
+        <div class="state-hover">hover: translateY(-1px) + shadow-md</div>
+        <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 8px;">统计卡片、仪表盘卡片</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Border Hover -->
+  <div class="pv-section">
+    <div class="pv-section__title">Border Hover 边框悬浮效果</div>
+    <p style="font-size: 12px; color: rgba(0,0,0,0.45); margin: -8px 0 16px;">鼠标移入卡片查看边框变化</p>
+    <div class="border-demo-grid">
+      <div class="border-demo-card border-subtle">
+        <div class="label">灰色边框 → 主色边框</div>
+        <div class="desc">border-color: rgba(0,0,0,0.08) → #1764E8</div>
+        <div class="token-info">可点击卡片、选择器</div>
+      </div>
+      <div class="border-demo-card border-none">
+        <div class="label">无边框 → 灰色边框</div>
+        <div class="desc">border-color: transparent → rgba(0,0,0,0.08)</div>
+        <div class="token-info">列表项、菜单项</div>
+      </div>
+      <div class="border-demo-card border-bottom">
+        <div class="label">底部边框高亮</div>
+        <div class="desc">border-bottom: transparent → #1764E8</div>
+        <div class="token-info">Tab 项、导航项</div>
+      </div>
+      <div class="border-demo-card border-left">
+        <div class="label">左侧边框高亮</div>
+        <div class="desc">border-left: transparent → #1764E8</div>
+        <div class="token-info">侧栏菜单项、消息列表</div>
+      </div>
+      <div class="border-demo-card border-subtle" style="border-color: rgba(0,0,0,0.08);">
+        <div class="label">边框 + 阴影组合</div>
+        <div class="desc">border → primary + shadow-sm → md</div>
+        <div class="token-info">统计卡片、仪表盘卡片</div>
+      </div>
+      <div class="border-demo-card" style="border: 1px solid rgba(0,0,0,0.08); border-radius: 4px;">
+        <div class="label">圆角缩小 + 边框</div>
+        <div class="desc">小卡片、Tag 容器的 hover 效果</div>
+        <div class="token-info">Tag 组、标签容器</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Row Hover -->
+  <div class="pv-section">
+    <div class="pv-section__title">Table Row Hover 表格行悬浮</div>
+    <p style="font-size: 12px; color: rgba(0,0,0,0.45); margin: -8px 0 16px;">鼠标移入表格行查看效果</p>
+    <table class="table-hover-demo">
+      <thead>
+        <tr>
+          <th>名称</th>
+          <th>状态</th>
+          <th>负责人</th>
+          <th>更新时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>用户管理模块</td>
+          <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;background:rgba(103,194,58,0.1);color:#67C23A;">进行中</span></td>
+          <td>张三</td>
+          <td style="color:rgba(0,0,0,0.45)">2025-03-15 14:30</td>
+        </tr>
+        <tr>
+          <td>权限控制系统</td>
+          <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;background:rgba(230,162,60,0.1);color:#E6A23C;">待审核</span></td>
+          <td>李四</td>
+          <td style="color:rgba(0,0,0,0.45)">2025-03-14 09:15</td>
+        </tr>
+        <tr>
+          <td>数据导出功能</td>
+          <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;background:rgba(103,194,58,0.1);color:#67C23A;">已完成</span></td>
+          <td>王五</td>
+          <td style="color:rgba(0,0,0,0.45)">2025-03-13 16:45</td>
+        </tr>
+        <tr>
+          <td>消息通知中心</td>
+          <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;background:rgba(23,100,232,0.08);color:#1764E8;">开发中</span></td>
+          <td>赵六</td>
+          <td style="color:rgba(0,0,0,0.45)">2025-03-12 11:20</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="background:#f5f7fa;border-radius:4px;padding:12px 16px;font-size:12px;font-family:'SF Mono',monospace;color:rgba(0,0,0,0.65);margin-top:12px;line-height:1.6;">
+tbody tr:hover { background: rgba(23,100,232,0.04); }
+    </div>
+  </div>
+
+  <!-- Button Hover -->
+  <div class="pv-section">
+    <div class="pv-section__title">Button Hover 按钮悬浮效果</div>
+    <p style="font-size: 12px; color: rgba(0,0,0,0.45); margin: -8px 0 16px;">鼠标移入按钮查看效果</p>
+    <div class="btn-hover-grid">
+      <div class="btn-hover-demo btn-primary">主按钮</div>
+      <div class="btn-hover-demo btn-outline">描边按钮</div>
+      <div class="btn-hover-demo btn-text">文字按钮</div>
+      <div class="btn-hover-demo btn-danger-text">危险文字</div>
+    </div>
+    <div style="background:#f5f7fa;border-radius:4px;padding:12px 16px;font-size:12px;font-family:'SF Mono',monospace;color:rgba(0,0,0,0.65);margin-top:12px;line-height:1.6;white-space:pre;">/* 主按钮 hover: 颜色变亮 */
+.btn-primary:hover { background: #3678E2; }
+
+/* 描边按钮 hover: 浅色背景 */
+.btn-outline:hover { background: rgba(23,100,232,0.04); }
+
+/* 文字按钮 hover: 浅色背景 */
+.btn-text:hover { background: rgba(23,100,232,0.06); }
+
+/* 危险文字按钮 hover */
+.btn-danger-text:hover { background: rgba(245,108,108,0.06); }</div>
+  </div>
+
+  <!-- Link Hover -->
+  <div class="pv-section">
+    <div class="pv-section__title">Link Hover 链接悬浮效果</div>
+    <div class="link-hover-demo" style="margin-bottom: 12px;">
+      <a href="javascript:void(0)">主要链接</a>
+      <a href="javascript:void(0)" class="link-subtle">次要链接</a>
+      <span style="font-size: 13px; color: rgba(0,0,0,0.65);">普通文本（非链接）</span>
+    </div>
+    <div style="background:#f5f7fa;border-radius:4px;padding:12px 16px;font-size:12px;font-family:'SF Mono',monospace;color:rgba(0,0,0,0.65);line-height:1.6;white-space:pre;">/* 主要链接 hover: 颜色变亮 + 下划线 */
+a:hover { color: #3678E2; text-decoration: underline; }
+
+/* 次要链接 hover: 变为主色 + 下划线 */
+.link-subtle:hover { color: #1764E8; text-decoration: underline; }</div>
+  </div>
+
+</body>
+</html>

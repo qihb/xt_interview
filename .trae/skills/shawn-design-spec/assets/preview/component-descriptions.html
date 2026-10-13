@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descriptions 描述列表</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --table-header-bg: #fafafa;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--page-bg);
+      color: var(--text-primary);
+      padding: 32px;
+      line-height: 1.6;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    .demo-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Descriptions label/content overrides */
+    .el-descriptions__label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--table-header-bg);
+    }
+
+    .el-descriptions__content {
+      color: var(--text-primary);
+    }
+
+    /* Standard mode label width */
+    .mode-standard .el-descriptions__label {
+      width: 120px;
+    }
+
+    /* Compact mode padding */
+    .mode-compact .el-descriptions__label,
+    .mode-compact .el-descriptions__content {
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-header">
+      <h1>Descriptions 描述列表</h1>
+      <p>描述列表组件，用于展示对象的多个属性信息，支持标准、紧凑和无边框等模式。</p>
+    </div>
+
+    <!-- 标准模式 -->
+    <div class="section-title">标准模式</div>
+    <div class="section">
+      <div class="demo-card">
+        <el-descriptions
+          class="mode-standard"
+          title="计划详情"
+          :column="2"
+          border
+          :label-width="120"
+        >
+          <el-descriptions-item label="计划名称">
+            2026 年度产品迭代计划
+          </el-descriptions-item>
+          <el-descriptions-item label="计划类型">
+            产品迭代
+          </el-descriptions-item>
+          <el-descriptions-item label="状态">
+            <el-tag type="success" size="small">进行中</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="负责人">
+            张三
+          </el-descriptions-item>
+          <el-descriptions-item label="开始日期">
+            2026-01-15
+          </el-descriptions-item>
+          <el-descriptions-item label="结束日期">
+            2026-12-31
+          </el-descriptions-item>
+          <el-descriptions-item label="描述" :span="2">
+            本计划涵盖产品核心功能的迭代优化，包括用户体验改进、性能提升以及新功能模块的开发。预计分四个季度逐步推进，每个季度设定明确的里程碑目标。
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+    </div>
+
+    <!-- 紧凑模式 -->
+    <div class="section-title">紧凑模式</div>
+    <div class="section">
+      <div class="demo-card">
+        <el-descriptions
+          class="mode-compact"
+          title="基本信息"
+          :column="3"
+          border
+          size="small"
+        >
+          <el-descriptions-item label="计划名称">
+            2026 年度产品迭代计划
+          </el-descriptions-item>
+          <el-descriptions-item label="计划类型">
+            产品迭代
+          </el-descriptions-item>
+          <el-descriptions-item label="状态">
+            <el-tag type="success" size="small">进行中</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="负责人">
+            张三
+          </el-descriptions-item>
+          <el-descriptions-item label="开始日期">
+            2026-01-15
+          </el-descriptions-item>
+          <el-descriptions-item label="结束日期">
+            2026-12-31
+          </el-descriptions-item>
+          <el-descriptions-item label="描述" :span="3">
+            本计划涵盖产品核心功能的迭代优化，包括用户体验改进、性能提升以及新功能模块的开发。
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+    </div>
+
+    <!-- 无边框模式 -->
+    <div class="section-title">无边框模式</div>
+    <div class="section">
+      <div class="demo-card">
+        <el-descriptions
+          title="计划概览"
+          :column="2"
+        >
+          <el-descriptions-item label="计划名称">
+            2026 年度产品迭代计划
+          </el-descriptions-item>
+          <el-descriptions-item label="计划类型">
+            产品迭代
+          </el-descriptions-item>
+          <el-descriptions-item label="状态">
+            <el-tag type="success" size="small">进行中</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="负责人">
+            张三
+          </el-descriptions-item>
+          <el-descriptions-item label="开始日期">
+            2026-01-15
+          </el-descriptions-item>
+          <el-descriptions-item label="结束日期">
+            2026-12-31
+          </el-descriptions-item>
+          <el-descriptions-item label="描述" :span="2">
+            本计划涵盖产品核心功能的迭代优化，包括用户体验改进、性能提升以及新功能模块的开发。预计分四个季度逐步推进。
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/locale/zh-cn.min.js"></script>
+  <script>
+    const { createApp } = Vue;
+
+    const app = createApp({});
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, {
+      locale: zhCn,
+    });
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+
+    app.mount('#app');
+  </script>
+</body>
+</html>

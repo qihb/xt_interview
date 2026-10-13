@@ -1,0 +1,328 @@
+<!--
+  Shawn Design System — 数据仪表盘
+  使用方法：复制此文件，替换文字、数据和图表配置。
+  变量声明在 :root，按需取用。
+  禁止：Tailwind CSS、Lucide 图标、CDN CSS 框架。
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数据仪表盘</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css" />
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-primary-bg: rgba(23, 100, 232, 0.1);
+      --color-success: #67C23A;
+      --color-success-bg: rgba(103, 194, 58, 0.1);
+      --color-warning: #E6A23C;
+      --color-warning-bg: rgba(230, 162, 60, 0.1);
+      --color-danger: #F56C6C;
+      --color-danger-bg: rgba(245, 108, 108, 0.1);
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --table-header-bg: #fafafa;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+                    'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-stack);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-container { padding: 20px; min-height: 100vh; }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== Stats Row ========== */
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon--primary { background: var(--color-primary-bg); color: var(--color-primary); }
+    .stat-icon--success { background: var(--color-success-bg); color: var(--color-success); }
+    .stat-icon--warning { background: var(--color-warning-bg); color: var(--color-warning); }
+    .stat-icon--danger  { background: var(--color-danger-bg);  color: var(--color-danger); }
+
+    .stat-body { flex: 1; min-width: 0; }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .stat-trend {
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .stat-trend--up   { color: var(--color-success); }
+    .stat-trend--down { color: var(--color-danger); }
+
+    /* ========== Chart Row ========== */
+    .chart-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .chart-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      padding: 16px 20px;
+    }
+
+    .chart-card--main { flex: 2; min-height: 320px; }
+    .chart-card--side { flex: 1; min-height: 320px; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .card-link {
+      font-size: 12px;
+      color: var(--color-primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .card-link:hover { color: #3d85f0; }
+
+    .chart-placeholder {
+      background: var(--page-bg);
+      border-radius: 4px;
+      height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(0, 0, 0, 0.25);
+      font-size: 14px;
+    }
+
+    /* ========== Table Card ========== */
+    .table-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .table-card .card-header {
+      padding: 16px 20px;
+      margin-bottom: 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .table-card .el-table tr th,
+    .table-card .el-table tr td {
+      padding: 4px;
+      font-size: 12px;
+    }
+
+    .completion-cell {
+      width: 100px;
+      display: inline-flex;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-container">
+      <div class="page-header">
+        <h1>数据仪表盘</h1>
+        <p>统计卡片 + 图表区域 + 数据表格，适用于数据概览和分析场景</p>
+      </div>
+
+      <!-- 统计卡片 -->
+      <div class="stats-row">
+        <div v-for="item in statsCards" :key="item.key" class="stat-card">
+          <div class="stat-icon" :class="'stat-icon--' + item.color">
+            <el-icon v-if="item.key === 'courses'" :size="22"><Document></Document></el-icon>
+            <el-icon v-else-if="item.key === 'students'" :size="22"><User></User></el-icon>
+            <el-icon v-else-if="item.key === 'rate'" :size="22"><CircleCheck></CircleCheck></el-icon>
+            <el-icon v-else-if="item.key === 'active'" :size="22"><DataLine></DataLine></el-icon>
+          </div>
+          <div class="stat-body">
+            <div class="stat-label">{{ item.label }}</div>
+            <div class="stat-value">{{ item.value }}</div>
+            <div class="stat-trend" :class="item.trendUp ? 'stat-trend--up' : 'stat-trend--down'">
+              <el-icon v-if="item.trendUp" :size="12"><Top></Top></el-icon>
+              <el-icon v-else :size="12"><Bottom></Bottom></el-icon>
+              {{ item.trend }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 图表行 -->
+      <div class="chart-row">
+        <div class="chart-card chart-card--main">
+          <div class="card-header">
+            <span class="card-title">趋势图</span>
+            <el-radio-group v-model="trendRange" size="small">
+              <el-radio-button label="week">近7天</el-radio-button>
+              <el-radio-button label="month">近30天</el-radio-button>
+              <el-radio-button label="quarter">近90天</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="chart-placeholder">ECharts 图表区域</div>
+        </div>
+        <div class="chart-card chart-card--side">
+          <div class="card-header">
+            <span class="card-title">分布</span>
+          </div>
+          <div class="chart-placeholder">ECharts 图表区域</div>
+        </div>
+      </div>
+
+      <!-- 最近数据表格 -->
+      <div class="table-card">
+        <div class="card-header">
+          <span class="card-title">最近数据</span>
+          <a class="card-link" @click.prevent="handleViewMore">查看更多</a>
+        </div>
+        <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
+          <el-table-column prop="course" label="课程名称" min-width="200" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="category" label="分类" width="120"></el-table-column>
+          <el-table-column prop="enrolled" label="报名人数" width="110" align="center"></el-table-column>
+          <el-table-column prop="completionRate" label="完成率" width="140" align="center">
+            <template #default="{ row }">
+              <el-progress
+                :percentage="row.completionRate"
+                :stroke-width="6"
+                :color="row.completionRate >= 80 ? '#67C23A' : row.completionRate >= 60 ? '#E6A23C' : '#F56C6C'"
+                class="completion-cell"
+              ></el-progress>
+            </template>
+          </el-table-column>
+          <el-table-column prop="updatedAt" label="更新时间" width="165"></el-table-column>
+        </el-table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, ref } = Vue;
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } },
+      },
+    };
+
+    const app = createApp({
+      setup() {
+        const statsCards = ref([
+          { key: 'courses', label: '总课程', value: '1,286', trend: '较上周 +12%', trendUp: true, color: 'primary' },
+          { key: 'students', label: '总学员', value: '8,432', trend: '较上周 +8%', trendUp: true, color: 'success' },
+          { key: 'rate', label: '完成率', value: '76.8%', trend: '较上周 +3%', trendUp: true, color: 'warning' },
+          { key: 'active', label: '本月活跃', value: '2,156', trend: '较上周 -5%', trendUp: false, color: 'danger' },
+        ]);
+
+        const trendRange = ref('week');
+        const loading = ref(false);
+
+        const tableData = ref([
+          { id: 1, course: '新员工入职培训',       category: '必修', enrolled: 326, completionRate: 92, updatedAt: '2026-07-13 10:20:00' },
+          { id: 2, course: '供应链管理高级课程',   category: '选修', enrolled: 158, completionRate: 78, updatedAt: '2026-07-12 16:45:00' },
+          { id: 3, course: 'Python 数据分析实战',   category: '技术', enrolled: 243, completionRate: 65, updatedAt: '2026-07-12 09:10:00' },
+          { id: 4, course: '项目管理 PMP 认证辅导', category: '认证', enrolled: 89,  completionRate: 88, updatedAt: '2026-07-11 14:30:00' },
+          { id: 5, course: '领导力与团队管理',     category: '管理', enrolled: 201, completionRate: 71, updatedAt: '2026-07-11 08:55:00' },
+        ]);
+
+        function handleViewMore() {
+          ElementPlus.ElMessage.info('跳转到完整数据列表');
+        }
+
+        return { statsCards, trendRange, loading, tableData, handleViewMore };
+      },
+    });
+
+    app.use(ElementPlus, { locale: zhCn });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
+  </script>
+</body>
+</html>

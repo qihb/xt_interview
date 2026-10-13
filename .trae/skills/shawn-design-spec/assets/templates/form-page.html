@@ -1,0 +1,367 @@
+<!--
+  Shawn Design System — 表单页（标准）
+  变体：独立表单页 + 分区表单 + 表单预览切换
+  使用方法：复制此文件，替换文字、表单项和数据内容。
+  变量声明在 :root，按需取用。
+  禁止：Tailwind CSS、Lucide 图标、CDN CSS 框架。
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>创建培训计划</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css" />
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --table-header-bg: #fafafa;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+                    'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-stack);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-container { padding: 20px; min-height: 100vh; }
+
+    /* ========== Page Header ========== */
+    .preview-header {
+      margin-bottom: 32px;
+    }
+
+    .preview-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .preview-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .page-header-right .el-button {
+      margin-left: 0;
+    }
+
+    /* ========== Section Title（蓝色左边线） ========== */
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    /* ========== Form Card ========== */
+    .form-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+
+    .form-card .el-form {
+      max-width: 720px;
+    }
+
+    .form-card .el-form-item__label {
+      color: var(--text-secondary);
+    }
+
+    .form-card .el-input,
+    .form-card .el-select,
+    .form-card .el-date-editor {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .form-card .el-textarea {
+      max-width: 480px;
+    }
+
+    .form-card .el-input-number {
+      width: 200px;
+    }
+
+    .form-card .el-form-item {
+      margin-bottom: 12px;
+    }
+
+    /* ========== Form Actions ========== */
+    .form-actions {
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding-top: 16px;
+      margin-top: 16px;
+      text-align: right;
+    }
+
+    .form-actions .el-button + .el-button {
+      margin-left: 8px;
+    }
+
+    /* ========== Preview Mode ========== */
+    .preview-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+
+    .preview-card .el-descriptions {
+      --el-descriptions-item-bordered-label-background: var(--table-header-bg);
+    }
+
+    .preview-card .el-descriptions__label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      width: 120px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-container">
+      <div class="preview-header">
+        <h1>独立表单页</h1>
+        <p>返回导航 + 分区表单 + 预览模式切换，适用于独立的创建/编辑页面</p>
+      </div>
+
+      <!-- 页头 -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <el-button @click="handleBack">
+            <el-icon><Back></Back></el-icon>
+            返回
+          </el-button>
+          <span class="page-title">创建培训计划</span>
+        </div>
+        <div class="page-header-right">
+          <el-button v-if="!previewMode" @click="previewMode = true">
+            <el-icon><Reading></Reading></el-icon>
+            预览
+          </el-button>
+          <el-button v-else @click="previewMode = false">
+            <el-icon><Edit></Edit></el-icon>
+            编辑
+          </el-button>
+        </div>
+      </div>
+
+      <!-- 编辑模式 -->
+      <template v-if="!previewMode">
+        <!-- 第一分区：基础信息 -->
+        <div class="form-card">
+          <div class="section-title">基础信息</div>
+          <el-form ref="formRef" :model="formData" :rules="formRules" label-width="120px" label-position="right">
+            <el-form-item label="计划名称" prop="name">
+              <el-input v-model="formData.name" placeholder="请输入培训计划名称" clearable></el-input>
+            </el-form-item>
+            <el-form-item label="培训类型" prop="type">
+              <el-select v-model="formData.type" placeholder="请选择培训类型" clearable>
+                <el-option label="新员工入职培训" value="onboarding"></el-option>
+                <el-option label="技能培训" value="skill"></el-option>
+                <el-option label="管理能力培训" value="management"></el-option>
+                <el-option label="合规培训" value="compliance"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="计划描述" prop="description">
+              <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入培训计划的简要描述"></el-input>
+            </el-form-item>
+            <el-form-item label="开始日期" prop="startDate">
+              <el-date-picker v-model="formData.startDate" type="date" placeholder="请选择开始日期" value-format="YYYY-MM-DD"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="是否启用" prop="enabled">
+              <el-switch v-model="formData.enabled"></el-switch>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <!-- 第二分区：高级设置 -->
+        <div class="form-card">
+          <div class="section-title">高级设置</div>
+          <el-form ref="advancedFormRef" :model="formData" label-width="120px" label-position="right">
+            <el-form-item label="最大人数" prop="maxCount">
+              <el-input-number v-model="formData.maxCount" :min="1" :max="9999" placeholder="请输入"></el-input-number>
+            </el-form-item>
+            <el-form-item label="优先级" prop="priority">
+              <el-radio-group v-model="formData.priority">
+                <el-radio value="high">高</el-radio>
+                <el-radio value="medium">中</el-radio>
+                <el-radio value="low">低</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="formData.remark" type="textarea" :rows="3" placeholder="其他补充说明"></el-input>
+            </el-form-item>
+          </el-form>
+
+          <div class="form-actions">
+            <el-button @click="handleCancel">取消</el-button>
+            <el-button type="primary" @click="handleSubmit">保存</el-button>
+          </div>
+        </div>
+      </template>
+
+      <!-- 预览模式 -->
+      <template v-else>
+        <div class="preview-card">
+          <div class="section-title">基础信息</div>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="计划名称">{{ formData.name || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="培训类型">{{ formData.type || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="开始日期">{{ formData.startDate || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="是否启用">
+              <el-tag :type="formData.enabled ? 'success' : 'danger'" size="small" effect="light">
+                {{ formData.enabled ? '已启用' : '未启用' }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="计划描述" :span="2">{{ formData.description || '-' }}</el-descriptions-item>
+          </el-descriptions>
+        </div>
+        <div class="preview-card">
+          <div class="section-title">高级设置</div>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="最大人数">{{ formData.maxCount }}</el-descriptions-item>
+            <el-descriptions-item label="优先级">{{ formData.priority === 'high' ? '高' : formData.priority === 'medium' ? '中' : '低' }}</el-descriptions-item>
+            <el-descriptions-item label="备注" :span="2">{{ formData.remark || '-' }}</el-descriptions-item>
+          </el-descriptions>
+        </div>
+        <div class="form-actions" style="background: var(--card-bg); border-radius: 8px; padding: 12px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+          <el-button @click="previewMode = false">返回编辑</el-button>
+          <el-button type="primary" @click="handleSubmit">确认提交</el-button>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } },
+      },
+    };
+
+    const app = createApp({
+      setup() {
+        const formRef = ref(null);
+        const previewMode = ref(false);
+
+        const formData = reactive({
+          name: '',
+          type: '',
+          description: '',
+          startDate: '',
+          enabled: true,
+          maxCount: 50,
+          priority: 'medium',
+          remark: '',
+        });
+
+        const formRules = {
+          name: [{ required: true, message: '请输入培训计划名称', trigger: 'blur' }],
+          type: [{ required: true, message: '请选择培训类型', trigger: 'change' }],
+          startDate: [{ required: true, message: '请选择开始日期', trigger: 'change' }],
+        };
+
+        function handleBack() {
+          ElementPlus.ElMessage.info('返回上一页');
+        }
+
+        function handleCancel() {
+          ElementPlus.ElMessageBox.confirm(
+            '确定取消？未保存的内容将丢失。',
+            '提示',
+            { confirmButtonText: '确定', cancelButtonText: '继续编辑', type: 'warning' }
+          ).then(() => { ElementPlus.ElMessage.info('已取消'); }).catch(() => {});
+        }
+
+        function handleSubmit() {
+          const formEl = formRef.value;
+          if (!formEl) return;
+          formEl.validate((valid) => {
+            if (valid) {
+              ElementPlus.ElMessage.success('保存成功');
+              previewMode.value = false;
+            } else {
+              ElementPlus.ElMessage.warning('请填写必填项');
+            }
+          });
+        }
+
+        return { formRef, previewMode, formData, formRules, handleBack, handleCancel, handleSubmit };
+      },
+    });
+
+    app.use(ElementPlus, { locale: zhCn });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
+  </script>
+</body>
+</html>

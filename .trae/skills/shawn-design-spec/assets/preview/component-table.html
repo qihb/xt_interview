@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Table 表格</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --table-header-bg: #fafafa;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--page-bg);
+      color: var(--text-primary);
+      padding: 32px;
+      line-height: 1.6;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .section-block {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+    /* 紧凑表格：40px 行高，12px 字号 */
+    .compact-table {
+      --el-table-header-bg-color: var(--table-header-bg);
+      --el-table-border-color: rgba(0, 0, 0, 0.06);
+      --el-table-row-height: 40px;
+      font-size: 12px;
+    }
+
+    .compact-table .el-table__header th {
+      font-weight: 500;
+    }
+
+    /* 标准表格：48px 行高，14px 字号 */
+    .standard-table {
+      --el-table-header-bg-color: var(--table-header-bg);
+      --el-table-border-color: rgba(0, 0, 0, 0.06);
+      --el-table-row-height: 48px;
+      font-size: 14px;
+    }
+
+    .standard-table .el-table__header th {
+      font-weight: 500;
+    }
+
+    /* 展开行背景色 */
+    .expand-content {
+      padding: 16px 24px;
+      background: rgba(23, 100, 232, 0.04);
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .expand-content .expand-label {
+      color: var(--text-muted);
+      margin-right: 8px;
+    }
+
+    .expand-content .expand-row {
+      margin-bottom: 6px;
+    }
+
+    .expand-content .expand-row:last-child {
+      margin-bottom: 0;
+    }
+
+    /* 金额列右对齐 */
+    .amount-cell {
+      font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+      text-align: right;
+      color: var(--text-primary);
+    }
+
+    /* 编号列等宽 */
+    .code-cell {
+      font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    /* 合计行样式 */
+    .summary-label {
+      font-weight: 500;
+    }
+
+    /* 操作按钮间距优化 */
+    .op-divider {
+      margin: 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-header">
+      <h1>Table 表格</h1>
+      <p>基于 Element Plus el-table 的数据表格组件，支持紧凑/标准两种密度、合计行、展开行、操作列等变体，适用于 B2B 中后台数据管理场景。</p>
+    </div>
+
+    <!-- 1. 紧凑表格 -->
+    <div class="section-title">紧凑表格（40px 行高）</div>
+    <div class="section-block">
+      <el-table
+        :data="compactData"
+        class="compact-table"
+        border
+        stripe
+        style="width: 100%;"
+        size="small"
+      >
+        <el-table-column type="selection" width="42" align="center"></el-table-column>
+        <el-table-column prop="name" label="名称" min-width="140"></el-table-column>
+        <el-table-column prop="code" label="编号" width="140">
+          <template #default="{ row }">
+            <span class="code-cell">{{ row.code }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.statusType" size="small" effect="light">{{ row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="owner" label="负责人" width="100"></el-table-column>
+        <el-table-column prop="time" label="时间" width="160"></el-table-column>
+        <el-table-column label="操作" width="140" fixed="right">
+          <template #default>
+            <el-button type="primary" link size="small">编辑</el-button>
+            <el-button type="danger" link size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <!-- 2. 标准表格 -->
+    <div class="section-title">标准表格（48px 行高）</div>
+    <div class="section-block">
+      <el-table
+        :data="standardData"
+        class="standard-table"
+        border
+        stripe
+        style="width: 100%;"
+      >
+        <el-table-column type="selection" width="50" align="center"></el-table-column>
+        <el-table-column prop="name" label="名称" min-width="150"></el-table-column>
+        <el-table-column prop="code" label="编号" width="150">
+          <template #default="{ row }">
+            <span class="code-cell">{{ row.code }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.statusType" size="small" effect="light">{{ row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="owner" label="负责人" width="100"></el-table-column>
+        <el-table-column prop="time" label="时间" width="170"></el-table-column>
+        <el-table-column prop="amount" label="金额" width="130" align="right">
+          <template #default="{ row }">
+            <span class="amount-cell">{{ row.amount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip></el-table-column>
+        <el-table-column label="操作" width="200" fixed="right">
+          <template #default>
+            <el-button type="primary" link size="small">查看</el-button>
+            <el-divider direction="vertical" class="op-divider"></el-divider>
+            <el-button type="primary" link size="small">编辑</el-button>
+            <el-divider direction="vertical" class="op-divider"></el-divider>
+            <el-button type="danger" link size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <!-- 3. 操作列 -->
+    <div class="section-title">操作列</div>
+    <div class="section-block">
+      <el-table
+        :data="opData"
+        border
+        stripe
+        style="width: 100%;"
+      >
+        <el-table-column prop="name" label="合同名称" min-width="180"></el-table-column>
+        <el-table-column prop="code" label="合同编号" width="150">
+          <template #default="{ row }">
+            <span class="code-cell">{{ row.code }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="party" label="甲方" width="140"></el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.statusType" size="small" effect="light">{{ row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="amount" label="合同金额" width="130" align="right">
+          <template #default="{ row }">
+            <span class="amount-cell">{{ row.amount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200" fixed="right">
+          <template #default>
+            <el-button type="primary" link size="small">查看</el-button>
+            <el-divider direction="vertical" class="op-divider"></el-divider>
+            <el-button type="primary" link size="small">编辑</el-button>
+            <el-divider direction="vertical" class="op-divider"></el-divider>
+            <el-button type="danger" link size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <!-- 4. 合计行 -->
+    <div class="section-title">合计行</div>
+    <div class="section-block">
+      <el-table
+        :data="summaryData"
+        border
+        stripe
+        show-summary
+        :summary-method="getSummary"
+        style="width: 100%;"
+      >
+        <el-table-column prop="name" label="采购项目" min-width="160"></el-table-column>
+        <el-table-column prop="category" label="品类" width="110"></el-table-column>
+        <el-table-column prop="quantity" label="数量" width="80" align="right"></el-table-column>
+        <el-table-column prop="unit" label="单位" width="70" align="center"></el-table-column>
+        <el-table-column prop="price" label="单价" width="110" align="right">
+          <template #default="{ row }">
+            <span class="amount-cell">{{ row.price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="amount" label="金额" width="130" align="right">
+          <template #default="{ row }">
+            <span class="amount-cell">{{ row.amount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="supplier" label="供应商" width="140"></el-table-column>
+      </el-table>
+    </div>
+
+    <!-- 5. 展开行 -->
+    <div class="section-title">展开行</div>
+    <div class="section-block">
+      <el-table
+        :data="expandData"
+        border
+        stripe
+        style="width: 100%;"
+      >
+        <el-table-column type="expand">
+          <template #default="{ row }">
+            <div class="expand-content">
+              <div class="expand-row">
+                <span class="expand-label">项目描述：</span>
+                <span>{{ row.description }}</span>
+              </div>
+              <div class="expand-row">
+                <span class="expand-label">技术栈：</span>
+                <span>{{ row.techStack }}</span>
+              </div>
+              <div class="expand-row">
+                <span class="expand-label">里程碑：</span>
+                <span>{{ row.milestone }}</span>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="项目名称" min-width="160"></el-table-column>
+        <el-table-column prop="code" label="项目编号" width="140">
+          <template #default="{ row }">
+            <span class="code-cell">{{ row.code }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="manager" label="项目经理" width="100"></el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.statusType" size="small" effect="light">{{ row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="startDate" label="启动日期" width="120"></el-table-column>
+        <el-table-column prop="progress" label="进度" width="180">
+          <template #default="{ row }">
+            <el-progress :percentage="row.progress" :stroke-width="6" style="width: 120px;"></el-progress>
+          </template>
+        </el-table-column>
+        <el-table-column prop="amount" label="预算" width="120" align="right">
+          <template #default="{ row }">
+            <span class="amount-cell">{{ row.amount }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    // 中文 locale
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: {
+          goto: '前往',
+          pagesize: '条/页',
+          total: '共 {total} 条',
+          pageClassifier: '页',
+          page: '页',
+          prev: '上一页',
+          next: '下一页',
+          currentPage: '第 {pager} 页',
+          prevPages: '向前 {pager} 页',
+          nextPages: '向后 {pager} 页',
+          deprecationWarning: '已弃用的用法'
+        },
+        select: {
+          loading: '加载中',
+          noMatch: '无匹配数据',
+          noData: '暂无数据',
+          placeholder: '请选择'
+        },
+        table: {
+          emptyText: '暂无数据',
+          confirmFilter: '确认',
+          resetFilter: '重置',
+          clearFilter: '全部',
+          sumText: '合计'
+        },
+        datepicker: {
+          now: '此刻',
+          today: '今天',
+          cancel: '取消',
+          clear: '清空',
+          confirm: '确定',
+          dateTablePrompt: '使用方向键与 Enter 键选取日期',
+          monthTablePrompt: '使用方向键与 Enter 键选取月份',
+          yearTablePrompt: '使用方向键与 Enter 键选取年份',
+          selectDate: '选择日期',
+          selectTime: '选择时间',
+          startDate: '开始日期',
+          startTime: '开始时间',
+          endDate: '结束日期',
+          endTime: '结束时间',
+          prevYear: '前一年',
+          nextYear: '后一年',
+          prevMonth: '上个月',
+          nextMonth: '下个月',
+          year: '年',
+          month1: '1 月',
+          month2: '2 月',
+          month3: '3 月',
+          month4: '4 月',
+          month5: '5 月',
+          month6: '6 月',
+          month7: '7 月',
+          month8: '8 月',
+          month9: '9 月',
+          month10: '10 月',
+          month11: '11 月',
+          month12: '12 月',
+          weeks: {
+            sun: '日',
+            mon: '一',
+            tue: '二',
+            wed: '三',
+            thu: '四',
+            fri: '五',
+            sat: '六'
+          },
+          months: {
+            jan: '一月',
+            feb: '二月',
+            mar: '三月',
+            apr: '四月',
+            may: '五月',
+            jun: '六月',
+            jul: '七月',
+            aug: '八月',
+            sep: '九月',
+            oct: '十月',
+            nov: '十一月',
+            dec: '十二月'
+          }
+        }
+      }
+    };
+
+    const app = createApp({
+      setup() {
+        // 1. 紧凑表格数据 — B2B 供应商管理
+        const compactData = ref([
+          { name: '华东精密零部件供应商', code: 'SUP-2024-001', status: '合作中', statusType: 'success', owner: '陈明远', time: '2024-03-15 09:30' },
+          { name: '深圳智能芯片科技有限公司', code: 'SUP-2024-002', status: '合作中', statusType: 'success', owner: '林小雨', time: '2024-05-20 14:00' },
+          { name: '北京云帆软件服务公司', code: 'SUP-2024-003', status: '审核中', statusType: 'warning', owner: '赵磊', time: '2025-01-08 10:15' },
+          { name: '广州恒通物流有限公司', code: 'SUP-2024-004', status: '合作中', statusType: 'success', owner: '周婷', time: '2024-08-05 16:45' },
+          { name: '上海锐科自动化设备公司', code: 'SUP-2024-005', status: '已终止', statusType: 'danger', owner: '吴凡', time: '2024-02-22 11:20' },
+          { name: '杭州数联云计算科技公司', code: 'SUP-2024-006', status: '合作中', statusType: 'success', owner: '郑浩然', time: '2025-02-14 08:00' },
+          { name: '成都鼎新包装材料公司', code: 'SUP-2024-007', status: '审核中', statusType: 'warning', owner: '孙悦', time: '2024-11-18 13:30' },
+          { name: '武汉华信电子元器件公司', code: 'SUP-2024-008', status: '合作中', statusType: 'success', owner: '刘畅', time: '2024-07-12 09:00' },
+        ]);
+
+        // 2. 标准表格数据 — B2B 订单管理
+        const standardData = ref([
+          { name: '智能传感器采购订单', code: 'ORD-2025-0012', status: '已完成', statusType: 'success', owner: '陈明远', time: '2025-03-10 09:30', amount: '¥256,800.00', remark: '华东精密零部件供应商年度框架协议首批交付' },
+          { name: '云服务器集群扩容', code: 'ORD-2025-0011', status: '进行中', statusType: 'success', owner: '林小雨', time: '2025-03-08 14:00', amount: '¥1,280,000.00', remark: '杭州数联云计算科技公司，扩容 200 台计算节点' },
+          { name: '办公用品季度采购', code: 'ORD-2025-0010', status: '待审核', statusType: 'warning', owner: '赵磊', time: '2025-03-05 10:15', amount: '¥18,600.00', remark: 'Q2 办公耗材及文具统一采购' },
+          { name: '工业机器人维保合同', code: 'ORD-2025-0009', status: '进行中', statusType: 'success', owner: '周婷', time: '2025-02-28 16:45', amount: '¥89,500.00', remark: '上海锐科自动化设备公司年度维保' },
+          { name: '数据中心 UPS 更换', code: 'ORD-2025-0008', status: '已取消', statusType: 'danger', owner: '吴凡', time: '2025-02-20 11:20', amount: '¥345,000.00', remark: '因预算调整取消，计划延后至 Q3 执行' },
+          { name: '安全审计服务采购', code: 'ORD-2025-0007', status: '已完成', statusType: 'success', owner: '郑浩然', time: '2025-02-14 08:00', amount: '¥120,000.00', remark: '年度信息安全等级保护测评及渗透测试服务' },
+        ]);
+
+        // 3. 操作列数据 — B2B 合同管理
+        const opData = ref([
+          { name: '华东区域年度采购框架协议', code: 'CTR-2025-A001', party: '华东精密零部件供应商', status: '履行中', statusType: 'success', amount: '¥3,200,000.00' },
+          { name: '云计算资源服务合同', code: 'CTR-2025-A002', party: '杭州数联云计算科技公司', status: '履行中', statusType: 'success', amount: '¥1,560,000.00' },
+          { name: '物流配送服务协议', code: 'CTR-2025-A003', party: '广州恒通物流有限公司', status: '待签署', statusType: 'warning', amount: '¥480,000.00' },
+          { name: '信息安全咨询服务合同', code: 'CTR-2025-A004', party: '北京云帆软件服务公司', status: '已到期', statusType: 'danger', amount: '¥220,000.00' },
+          { name: '设备维护保养协议', code: 'CTR-2025-A005', party: '上海锐科自动化设备公司', status: '履行中', statusType: 'success', amount: '¥95,000.00' },
+        ]);
+
+        // 4. 合计行数据 — B2B 采购明细
+        const summaryData = ref([
+          { name: '高精度伺服电机', category: '电气设备', quantity: 120, unit: '台', price: '¥4,500.00', amount: '¥540,000.00', supplier: '华东精密零部件供应商' },
+          { name: '工业级传感器模组', category: '电子元器件', quantity: 500, unit: '个', price: '¥380.00', amount: '¥190,000.00', supplier: '武汉华信电子元器件公司' },
+          { name: '碳纤维复合板材', category: '原材料', quantity: 2000, unit: '千克', price: '¥128.00', amount: '¥256,000.00', supplier: '成都鼎新包装材料公司' },
+          { name: 'PLC 控制器', category: '电气设备', quantity: 60, unit: '台', price: '¥6,200.00', amount: '¥372,000.00', supplier: '深圳智能芯片科技有限公司' },
+          { name: '不锈钢紧固件套装', category: '五金配件', quantity: 3000, unit: '套', price: '¥24.50', amount: '¥73,500.00', supplier: '华东精密零部件供应商' },
+          { name: '防静电包装材料', category: '包装耗材', quantity: 10000, unit: '件', price: '¥3.80', amount: '¥38,000.00', supplier: '成都鼎新包装材料公司' },
+        ]);
+
+        const getSummary = ({ columns, data }) => {
+          const sums = [];
+          columns.forEach((column, index) => {
+            if (index === 0) {
+              sums[index] = '合计';
+              return;
+            }
+            if (column.property === 'amount') {
+              let total = 0;
+              data.forEach((item) => {
+                const val = parseFloat(item.amount.replace(/[^0-9.-]+/g, ''));
+                if (!isNaN(val)) {
+                  total += val;
+                }
+              });
+              sums[index] = '¥' + total.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else if (column.property === 'quantity') {
+              let total = 0;
+              data.forEach((item) => {
+                const val = Number(item.quantity);
+                if (!isNaN(val)) {
+                  total += val;
+                }
+              });
+              sums[index] = total.toLocaleString('zh-CN');
+            } else {
+              sums[index] = '';
+            }
+          });
+          return sums;
+        };
+
+        // 5. 展开行数据 — B2B 项目管理
+        const expandData = ref([
+          {
+            name: '智能仓储管理系统', code: 'PRJ-2025-001', manager: '陈明远', status: '进行中', statusType: 'success', startDate: '2025-01-15', progress: 68, amount: '¥1,850,000.00',
+            description: '为华东区域三座仓库部署 WMS 系统，实现库位管理、自动拣货、库存盘点等功能，预计降低人工成本 30%。',
+            techStack: 'Vue 3 + Spring Boot + MySQL + Redis + RabbitMQ',
+            milestone: '需求评审(已完成) → 系统设计(已完成) → 开发实施(进行中) → UAT 测试(待开始) → 上线验收(待开始)'
+          },
+          {
+            name: '供应商协同平台', code: 'PRJ-2025-002', manager: '林小雨', status: '进行中', statusType: 'success', startDate: '2025-02-01', progress: 42, amount: '¥960,000.00',
+            description: '构建统一的供应商门户，实现订单协同、对账结算、质量反馈等在线化管理，覆盖 200+ 供应商。',
+            techStack: 'React + Node.js + PostgreSQL + Kafka + Kubernetes',
+            milestone: '需求确认(已完成) → 原型设计(已完成) → 前后端开发(进行中) → 集成测试(待开始) → 灰度发布(待开始)'
+          },
+          {
+            name: '数据驾驶舱二期', code: 'PRJ-2025-003', manager: '郑浩然', status: '规划中', statusType: 'warning', startDate: '2025-04-01', progress: 10, amount: '¥580,000.00',
+            description: '在一期基础上增加供应链分析、成本预警、产能预测等模块，接入 ERP 和 MES 数据源。',
+            techStack: 'Vue 3 + ECharts + Python + ClickHouse + Airflow',
+            milestone: '需求调研(进行中) → 数据建模(待开始) → 可视化开发(待开始) → 数据接入(待开始) → 上线发布(待开始)'
+          },
+          {
+            name: '移动巡检应用', code: 'PRJ-2025-004', manager: '赵磊', status: '已完成', statusType: 'success', startDate: '2024-09-10', progress: 100, amount: '¥320,000.00',
+            description: '基于企业微信的巡检应用，支持扫码签到、拍照记录、异常上报、整改跟踪全流程管理。',
+            techStack: '微信小程序 + .NET Core + SQL Server + MinIO',
+            milestone: '需求评审(已完成) → UI 设计(已完成) → 开发联调(已完成) → 试运行(已完成) → 正式上线(已完成)'
+          },
+          {
+            name: '合同管理系统升级', code: 'PRJ-2025-005', manager: '周婷', status: '进行中', statusType: 'success', startDate: '2025-02-20', progress: 55, amount: '¥420,000.00',
+            description: '将现有合同管理系统从单体架构迁移至微服务架构，新增电子签章、合同智能审查等功能。',
+            techStack: 'Angular + Spring Cloud + MongoDB + ElasticSearch + MinIO',
+            milestone: '架构设计(已完成) → 模块拆分(已完成) → 功能迁移(进行中) → 数据割接(待开始) → 回归验证(待开始)'
+          },
+        ]);
+
+        return {
+          compactData,
+          standardData,
+          opData,
+          summaryData,
+          getSummary,
+          expandData
+        };
+      }
+    });
+
+    app.use(ElementPlus, { locale: zhCn });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
+  </script>
+</body>
+</html>

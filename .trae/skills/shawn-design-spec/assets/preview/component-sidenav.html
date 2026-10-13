@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidenav 侧栏</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/locale/zh-cn.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-stack);
+      background: var(--page-bg);
+      color: var(--text-primary);
+      padding: 24px;
+    }
+    .pv-header {
+      margin-bottom: 32px;
+    }
+    .pv-header h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .pv-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .pv-section {
+      margin-bottom: 32px;
+    }
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+    .demo-box {
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: inline-block;
+    }
+    .stack-12 {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .sidenav-container {
+      width: 240px;
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .sidenav-header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      gap: 10px;
+      white-space: nowrap;
+    }
+    .sidenav-header .logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--color-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .collapse-btn-wrap {
+      padding: 12px 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .collapse-btn-wrap .el-button {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="pv-header">
+      <h1>Sidenav 侧栏</h1>
+      <p>左侧垂直导航菜单组件，基于 Element Plus el-menu 实现，支持图标、折叠和分组。</p>
+    </div>
+
+    <!-- 变体 1: 垂直导航菜单 -->
+    <div class="pv-section">
+      <div class="section-title">垂直导航菜单</div>
+      <div class="stack-12">
+        <div class="demo-box">
+          <div class="sidenav-container">
+            <div class="sidenav-header">
+              <span class="logo-icon">S</span>
+              <span>管理后台</span>
+            </div>
+            <el-menu
+              mode="vertical"
+              :default-active="activeMenu1"
+              :width="220"
+              style="width: 220px; border-right: none;"
+            >
+              <el-menu-item index="1">
+                <el-icon><component :is="'HomeFilled'"></component></el-icon>
+                <span>工作台</span>
+              </el-menu-item>
+              <el-menu-item index="2">
+                <el-icon><component :is="'User'"></component></el-icon>
+                <span>用户管理</span>
+              </el-menu-item>
+              <el-menu-item index="3">
+                <el-icon><component :is="'DataAnalysis'"></component></el-icon>
+                <span>数据中心</span>
+              </el-menu-item>
+              <el-menu-item index="4">
+                <el-icon><component :is="'Document'"></component></el-icon>
+                <span>文档管理</span>
+              </el-menu-item>
+              <el-menu-item index="5">
+                <el-icon><component :is="'Bell'"></component></el-icon>
+                <span>消息通知</span>
+              </el-menu-item>
+              <el-menu-item index="6">
+                <el-icon><component :is="'Setting'"></component></el-icon>
+                <span>系统设置</span>
+              </el-menu-item>
+            </el-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 变体 2: 带折叠 -->
+    <div class="pv-section">
+      <div class="section-title">带折叠</div>
+      <div class="stack-12">
+        <div class="demo-box">
+          <div class="sidenav-container">
+            <div class="sidenav-header" :style="{ justifyContent: isCollapse ? 'center' : 'flex-start', padding: isCollapse ? '0 12px' : '0 20px' }">
+              <span class="logo-icon">S</span>
+              <span v-show="!isCollapse">管理后台</span>
+            </div>
+            <el-menu
+              mode="vertical"
+              :default-active="activeMenu2"
+              :collapse="isCollapse"
+              :width="isCollapse ? '64px' : '220px'"
+              style="border-right: none; transition: width 0.3s;"
+            >
+              <el-menu-item index="1">
+                <el-icon><component :is="'HomeFilled'"></component></el-icon>
+                <template #title><span>工作台</span></template>
+              </el-menu-item>
+              <el-menu-item index="2">
+                <el-icon><component :is="'User'"></component></el-icon>
+                <template #title><span>用户管理</span></template>
+              </el-menu-item>
+              <el-menu-item index="3">
+                <el-icon><component :is="'DataAnalysis'"></component></el-icon>
+                <template #title><span>数据中心</span></template>
+              </el-menu-item>
+              <el-menu-item index="4">
+                <el-icon><component :is="'Document'"></component></el-icon>
+                <template #title><span>文档管理</span></template>
+              </el-menu-item>
+              <el-menu-item index="5">
+                <el-icon><component :is="'Setting'"></component></el-icon>
+                <template #title><span>系统设置</span></template>
+              </el-menu-item>
+            </el-menu>
+            <div class="collapse-btn-wrap">
+              <el-button @click="isCollapse = !isCollapse">
+                <el-icon>
+                  <Fold v-if="!isCollapse"></Fold>
+                  <Expand v-else></Expand>
+                </el-icon>
+                <span v-show="!isCollapse">收起菜单</span>
+              </el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 变体 3: 带分组 -->
+    <div class="pv-section">
+      <div class="section-title">带分组</div>
+      <div class="stack-12">
+        <div class="demo-box">
+          <div class="sidenav-container">
+            <div class="sidenav-header">
+              <span class="logo-icon">S</span>
+              <span>管理后台</span>
+            </div>
+            <el-menu
+              mode="vertical"
+              :default-active="activeMenu3"
+              style="width: 220px; border-right: none;"
+            >
+              <el-menu-item index="1">
+                <el-icon><component :is="'HomeFilled'"></component></el-icon>
+                <span>工作台</span>
+              </el-menu-item>
+              <el-menu-item-group>
+                <template #title>
+                  <span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">系统管理</span>
+                </template>
+                <el-menu-item index="2-1">
+                  <el-icon><component :is="'User'"></component></el-icon>
+                  <span>用户管理</span>
+                </el-menu-item>
+                <el-menu-item index="2-2">
+                  <el-icon><component :is="'UserFilled'"></component></el-icon>
+                  <span>角色管理</span>
+                </el-menu-item>
+                <el-menu-item index="2-3">
+                  <el-icon><component :is="'Lock'"></component></el-icon>
+                  <span>权限管理</span>
+                </el-menu-item>
+              </el-menu-item-group>
+              <el-menu-item-group>
+                <template #title>
+                  <span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">数据管理</span>
+                </template>
+                <el-menu-item index="3-1">
+                  <el-icon><component :is="'DataAnalysis'"></component></el-icon>
+                  <span>数据概览</span>
+                </el-menu-item>
+                <el-menu-item index="3-2">
+                  <el-icon><component :is="'Histogram'"></component></el-icon>
+                  <span>报表中心</span>
+                </el-menu-item>
+                <el-menu-item index="3-3">
+                  <el-icon><component :is="'Download'"></component></el-icon>
+                  <span>数据导出</span>
+                </el-menu-item>
+              </el-menu-item-group>
+              <el-menu-item-group>
+                <template #title>
+                  <span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">系统设置</span>
+                </template>
+                <el-menu-item index="4-1">
+                  <el-icon><component :is="'Setting'"></component></el-icon>
+                  <span>系统配置</span>
+                </el-menu-item>
+                <el-menu-item index="4-2">
+                  <el-icon><component :is="'Bell'"></component></el-icon>
+                  <span>通知设置</span>
+                </el-menu-item>
+                <el-menu-item index="4-3">
+                  <el-icon><component :is="'Tickets'"></component></el-icon>
+                  <span>操作日志</span>
+                </el-menu-item>
+              </el-menu-item-group>
+            </el-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue;
+    const app = createApp({
+      setup() {
+        return {
+          activeMenu1: ref('1'),
+          activeMenu2: ref('1'),
+          activeMenu3: ref('1'),
+          isCollapse: ref(false),
+        };
+      }
+    });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, { locale: zhCn });
+    app.mount('#app');
+  </script>
+</body>
+</html>

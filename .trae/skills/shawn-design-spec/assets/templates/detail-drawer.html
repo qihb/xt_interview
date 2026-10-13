@@ -1,0 +1,700 @@
+<!--
+  Shawn Design System — 详情抽屉页
+  变体：列表 + 两种抽屉（基础详情 / 扩展详情带 tabs）
+  使用方法：复制此文件，替换文字和数据内容。
+  变量声明在 :root，按需取用。
+  禁止：Tailwind CSS、Lucide 图标、CDN CSS 框架。
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>详情抽屉页</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css" />
+  <style>
+    /* ========== Design Tokens ========== */
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --table-header-bg: #fafafa;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+                    'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    /* ========== Reset & Base ========== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-stack);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .page-container {
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== Filter Bar ========== */
+    .filter-bar {
+      margin-bottom: 12px;
+    }
+
+    .filter-bar .el-form--inline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-bar .el-form-item {
+      margin-bottom: 0;
+      margin-right: 0;
+    }
+
+    .filter-bar .el-input,
+    .filter-bar .el-select,
+    .filter-bar .el-date-editor {
+      width: 180px;
+    }
+
+    .filter-bar .el-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 0;
+    }
+
+    /* ========== Table Area ========== */
+    .table-area .el-table tr th,
+    .table-area .el-table tr td {
+      padding: 4px;
+      font-size: 12px;
+    }
+
+    /* ========== Pagination Bar ========== */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 12px;
+      gap: 16px;
+    }
+
+    .pagination-total {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .pagination-bar .el-pagination {
+      --el-pagination-font-size: 12px;
+    }
+
+    .pagination-bar .el-pagination .el-input {
+      width: 80px;
+    }
+
+    /* ========== Drawer Style Overrides ========== */
+    .el-drawer__header {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      margin-bottom: 0;
+    }
+
+    .el-drawer__body {
+      padding: 16px 20px;
+    }
+
+    /* ========== Drawer Section Title（蓝色左边线） ========== */
+    .drawer-section {
+      margin-bottom: 24px;
+    }
+
+    .drawer-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .drawer-section__title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .drawer-section__title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    .drawer-divider {
+      height: 1px;
+      background: rgba(0, 0, 0, 0.06);
+      margin: 20px 0;
+    }
+
+    /* ========== Descriptions in Drawer ========== */
+    .el-drawer .el-descriptions {
+      --el-descriptions-item-bordered-label-background: var(--table-header-bg);
+    }
+
+    .el-drawer .el-descriptions__label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      width: 100px;
+    }
+
+    .el-drawer .el-descriptions__content {
+      color: var(--text-primary);
+    }
+
+    .el-drawer .el-descriptions__cell {
+      padding: 10px 16px;
+    }
+
+    /* ========== Readonly Form ========== */
+    .readonly-form .el-form-item {
+      margin-bottom: 12px;
+    }
+
+    .readonly-form .el-form-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .readonly-form .el-form-item__label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .readonly-value {
+      display: block;
+      padding: 0 12px;
+      min-height: 32px;
+      line-height: 32px;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    .readonly-value--muted {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ========== Drawer Footer ========== */
+    .drawer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .drawer-footer .el-button {
+      margin-left: 0;
+    }
+
+    /* ========== Tabs in Drawer ========== */
+    .drawer-tabs .el-tabs__header {
+      margin: 0 0 16px;
+    }
+
+    .drawer-tabs .el-tabs__nav-wrap::after {
+      height: 1px;
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .drawer-tabs .el-table tr th,
+    .drawer-tabs .el-table tr td {
+      padding: 4px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-container">
+      <div class="page-header">
+        <h1>详情页（抽屉）</h1>
+        <p>快速查看抽屉（640px）+ 完整详情抽屉（980px 含 Tabs）两种模式</p>
+      </div>
+
+      <!-- 筛选区 -->
+      <div class="filter-bar">
+        <el-form :inline="true" :model="filterForm" @submit.prevent="handleSearch">
+          <el-form-item>
+            <el-input
+              v-model="filterForm.keyword"
+              placeholder="搜索名称"
+              clearable
+              @keyup.enter="handleSearch"
+            >
+              <template #prefix>
+                <el-icon><Search></Search></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-select v-model="filterForm.status" placeholder="状态" clearable>
+              <el-option label="启用" value="active"></el-option>
+              <el-option label="禁用" value="disabled"></el-option>
+              <el-option label="草稿" value="draft"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="handleSearch">
+              <el-icon><Search></Search></el-icon>
+              查询
+            </el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="handleReset">
+              <el-icon><Refresh></Refresh></el-icon>
+              重置
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <!-- 表格区 -->
+      <div class="table-area">
+        <el-table
+          v-loading="loading"
+          :data="tableData"
+          border
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="name" label="名称" min-width="200" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="status" label="状态" width="100" align="center">
+            <template #default="{ row }">
+              <el-tag :type="statusTagType(row.status)" size="small" effect="light">
+                {{ statusLabel(row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="creator" label="创建人" width="120"></el-table-column>
+          <el-table-column prop="createdAt" label="创建时间" width="165"></el-table-column>
+          <el-table-column label="操作" width="200" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" link @click="handleQuickView(row)">快速预览</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="primary" link @click="handleFullDetail(row)">详情</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- 分页栏 -->
+        <div class="pagination-bar">
+          <span class="pagination-total">共 {{ total }} 条</span>
+          <el-pagination
+            v-model:current-page="pagination.page"
+            v-model:page-size="pagination.pageSize"
+            :page-sizes="[20, 50, 100, 200, 500]"
+            :total="total"
+            layout="sizes, prev, pager, next, jumper"
+            @size-change="handlePageChange"
+            @current-change="handlePageChange"
+          ></el-pagination>
+        </div>
+      </div>
+
+      <!-- 抽屉 1：快速预览（基础详情，640px） -->
+      <el-drawer
+        v-model="quickViewVisible"
+        :size="640"
+        :show-close="false"
+        :destroy-on-close="true"
+        direction="rtl"
+      >
+        <template #header>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 16px; font-weight: 600;">{{ currentRow.name }}</span>
+            <el-icon style="cursor: pointer; color: rgba(0,0,0,0.45);" :size="18" @click="quickViewVisible = false">
+              <Close></Close>
+            </el-icon>
+          </div>
+        </template>
+
+        <div class="drawer-section">
+          <div class="drawer-section__title">基础信息</div>
+          <el-descriptions :column="1" border>
+            <el-descriptions-item label="名称">{{ currentRow.name }}</el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag :type="statusTagType(currentRow.status)" size="small" effect="light">
+                {{ statusLabel(currentRow.status) }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="创建人">{{ currentRow.creator }}</el-descriptions-item>
+            <el-descriptions-item label="创建时间">{{ currentRow.createdAt }}</el-descriptions-item>
+            <el-descriptions-item label="更新时间">{{ currentRow.updatedAt }}</el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <div class="drawer-divider"></div>
+
+        <div class="drawer-section">
+          <div class="drawer-section__title">详细信息</div>
+          <el-form class="readonly-form" label-width="100px" label-position="left">
+            <el-form-item label="所属部门">
+              <span class="readonly-value">{{ currentRow.department }}</span>
+            </el-form-item>
+            <el-form-item label="负责人">
+              <span class="readonly-value">{{ currentRow.owner }}</span>
+            </el-form-item>
+            <el-form-item label="优先级">
+              <el-tag :type="priorityTagType(currentRow.priority)" size="small" effect="plain">
+                {{ currentRow.priority }}
+              </el-tag>
+            </el-form-item>
+            <el-form-item label="描述">
+              <span class="readonly-value">{{ currentRow.description }}</span>
+            </el-form-item>
+            <el-form-item label="备注">
+              <span class="readonly-value" :class="{ 'readonly-value--muted': !currentRow.remark }">
+                {{ currentRow.remark || '暂无备注' }}
+              </span>
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <template #footer>
+          <div class="drawer-footer">
+            <el-button @click="quickViewVisible = false">关闭</el-button>
+            <el-button type="primary" @click="handleEditFromDrawer(currentRow)">
+              <el-icon><Edit></Edit></el-icon>
+              编辑
+            </el-button>
+          </div>
+        </template>
+      </el-drawer>
+
+      <!-- 抽屉 2：完整详情（扩展，980px，带 tabs） -->
+      <el-drawer
+        v-model="fullDetailVisible"
+        :size="980"
+        :show-close="false"
+        :destroy-on-close="true"
+        direction="rtl"
+      >
+        <template #header>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 16px; font-weight: 600;">{{ currentRow.name }}</span>
+              <el-tag :type="statusTagType(currentRow.status)" size="small" effect="light">
+                {{ statusLabel(currentRow.status) }}
+              </el-tag>
+            </div>
+            <el-icon style="cursor: pointer; color: rgba(0,0,0,0.45);" :size="18" @click="fullDetailVisible = false">
+              <Close></Close>
+            </el-icon>
+          </div>
+        </template>
+
+        <el-tabs v-model="detailActiveTab" class="drawer-tabs">
+          <!-- Tab 1: 基本信息 -->
+          <el-tab-pane label="基本信息" name="info">
+            <div class="drawer-section">
+              <div class="drawer-section__title">基本信息</div>
+              <el-descriptions :column="2" border>
+                <el-descriptions-item label="名称">{{ currentRow.name }}</el-descriptions-item>
+                <el-descriptions-item label="状态">
+                  <el-tag :type="statusTagType(currentRow.status)" size="small" effect="light">
+                    {{ statusLabel(currentRow.status) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="所属部门">{{ currentRow.department }}</el-descriptions-item>
+                <el-descriptions-item label="负责人">{{ currentRow.owner }}</el-descriptions-item>
+                <el-descriptions-item label="优先级">
+                  <el-tag :type="priorityTagType(currentRow.priority)" size="small" effect="plain">
+                    {{ currentRow.priority }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="创建人">{{ currentRow.creator }}</el-descriptions-item>
+                <el-descriptions-item label="创建时间">{{ currentRow.createdAt }}</el-descriptions-item>
+                <el-descriptions-item label="更新时间">{{ currentRow.updatedAt }}</el-descriptions-item>
+                <el-descriptions-item label="描述" :span="2">{{ currentRow.description }}</el-descriptions-item>
+                <el-descriptions-item label="备注" :span="2">{{ currentRow.remark || '暂无备注' }}</el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </el-tab-pane>
+
+          <!-- Tab 2: 操作记录 -->
+          <el-tab-pane label="操作记录" name="logs">
+            <el-timeline style="padding: 8px 0;">
+              <el-timeline-item
+                v-for="log in currentRow.logs"
+                :key="log.time"
+                :timestamp="log.time"
+                :type="log.type"
+                placement="top"
+              >
+                <div style="display: flex; align-items: baseline; gap: 12px;">
+                  <span style="font-size: 12px; color: rgba(0,0,0,0.45); flex-shrink: 0;">{{ log.user }}</span>
+                  <span style="font-size: 14px;">{{ log.action }}</span>
+                </div>
+              </el-timeline-item>
+            </el-timeline>
+          </el-tab-pane>
+
+          <!-- Tab 3: 关联数据 -->
+          <el-tab-pane label="关联数据" name="related">
+            <el-table :data="currentRow.relatedItems" border stripe style="width: 100%">
+              <el-table-column prop="name" label="项目名称" min-width="180" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="type" label="类型" width="100" align="center"></el-table-column>
+              <el-table-column prop="status" label="状态" width="100" align="center">
+                <template #default="{ row }">
+                  <el-tag size="small" :type="row.status === '正常' ? 'success' : 'warning'" effect="light">
+                    {{ row.status }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="updatedAt" label="更新时间" width="165"></el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+
+        <template #footer>
+          <div class="drawer-footer">
+            <el-button @click="fullDetailVisible = false">关闭</el-button>
+            <el-button type="primary" @click="handleEditFromDrawer(currentRow)">
+              <el-icon><Edit></Edit></el-icon>
+              编辑
+            </el-button>
+          </div>
+        </template>
+      </el-drawer>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    /* ---- 中文语言包 ---- */
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } },
+      },
+    };
+
+    const app = createApp({
+      setup() {
+        /* ---- 筛选表单 ---- */
+        const filterForm = reactive({
+          keyword: '',
+          status: '',
+        });
+
+        const loading = ref(false);
+
+        const pagination = reactive({ page: 1, pageSize: 50 });
+        const total = ref(128);
+
+        /* ---- 示例数据 ---- */
+        const tableData = ref([
+          {
+            id: 1, name: '供应链管理模块', status: 'active', creator: '张三',
+            createdAt: '2026-07-10 09:30:00', updatedAt: '2026-07-12 15:20:00',
+            department: '技术部', owner: '张三', priority: '高',
+            description: '负责供应链全流程管理，包括采购、库存、物流等核心业务模块的统一管控。',
+            remark: '预计 Q3 完成二期迭代',
+            logs: [
+              { user: '张三', action: '创建了模块', time: '2026-07-10 09:30:00', type: 'primary' },
+              { user: '李四', action: '审核通过', time: '2026-07-11 10:00:00', type: 'success' },
+              { user: '张三', action: '更新描述信息', time: '2026-07-12 15:20:00', type: '' },
+            ],
+            relatedItems: [
+              { name: '采购订单管理', type: '子模块', status: '正常', updatedAt: '2026-07-12 15:20:00' },
+              { name: '库存预警服务', type: '子模块', status: '正常', updatedAt: '2026-07-11 08:00:00' },
+              { name: '物流追踪接口', type: 'API', status: '维护中', updatedAt: '2026-07-10 16:00:00' },
+            ],
+          },
+          {
+            id: 2, name: '客户关系管理系统', status: 'active', creator: '李四',
+            createdAt: '2026-07-09 14:20:00', updatedAt: '2026-07-11 10:00:00',
+            department: '市场部', owner: '李四', priority: '高',
+            description: '整合客户数据、销售线索、跟进记录，提升客户转化率和满意度。',
+            remark: '',
+            logs: [
+              { user: '李四', action: '创建了系统', time: '2026-07-09 14:20:00', type: 'primary' },
+              { user: '王五', action: '完成数据迁移', time: '2026-07-10 16:00:00', type: 'success' },
+            ],
+            relatedItems: [
+              { name: '客户画像分析', type: '报表', status: '正常', updatedAt: '2026-07-11 10:00:00' },
+            ],
+          },
+          {
+            id: 3, name: '财务报表引擎', status: 'disabled', creator: '王五',
+            createdAt: '2026-07-08 11:05:00', updatedAt: '2026-07-08 11:05:00',
+            department: '财务部', owner: '王五', priority: '中',
+            description: '自动生成月度、季度、年度财务报表，支持多维度数据分析与导出。',
+            remark: '暂未启动开发',
+            logs: [
+              { user: '王五', action: '创建了模块', time: '2026-07-08 11:05:00', type: 'primary' },
+            ],
+            relatedItems: [],
+          },
+          {
+            id: 4, name: '权限网关服务', status: 'draft', creator: '赵六',
+            createdAt: '2026-07-07 16:45:00', updatedAt: '2026-07-07 16:45:00',
+            department: '技术部', owner: '赵六', priority: '低',
+            description: '统一身份认证与权限管理网关，支持 RBAC、ABAC 等多种权限模型。',
+            remark: '方案评审中',
+            logs: [
+              { user: '赵六', action: '提交方案', time: '2026-07-07 16:45:00', type: 'primary' },
+            ],
+            relatedItems: [
+              { name: 'RBAC 权限模型', type: '设计文档', status: '评审中', updatedAt: '2026-07-07 16:45:00' },
+            ],
+          },
+          {
+            id: 5, name: '数据同步中间件', status: 'active', creator: '孙七',
+            createdAt: '2026-07-06 08:10:00', updatedAt: '2026-07-13 09:00:00',
+            department: '数据部', owner: '孙七', priority: '中',
+            description: '实现跨系统数据实时同步，支持增量同步、全量同步、双向同步等模式。',
+            remark: '已进入联调阶段',
+            logs: [
+              { user: '孙七', action: '创建了中间件', time: '2026-07-06 08:10:00', type: 'primary' },
+              { user: '孙七', action: '完成增量同步开发', time: '2026-07-10 17:00:00', type: 'success' },
+              { user: '孙七', action: '进入联调阶段', time: '2026-07-13 09:00:00', type: '' },
+            ],
+            relatedItems: [
+              { name: 'MySQL CDC 采集器', type: '组件', status: '正常', updatedAt: '2026-07-12 18:00:00' },
+              { name: 'Kafka 消费端', type: '组件', status: '正常', updatedAt: '2026-07-11 12:00:00' },
+            ],
+          },
+        ]);
+
+        /* ---- 抽屉状态 ---- */
+        const quickViewVisible = ref(false);
+        const fullDetailVisible = ref(false);
+        const detailActiveTab = ref('info');
+        const currentRow = reactive({
+          id: '', name: '', status: '', creator: '', createdAt: '', updatedAt: '',
+          department: '', owner: '', priority: '', description: '', remark: '',
+          logs: [], relatedItems: [],
+        });
+
+        /* ---- 状态映射 ---- */
+        function statusTagType(status) {
+          const map = { active: 'success', disabled: 'danger', draft: 'warning' };
+          return map[status] || 'info';
+        }
+
+        function statusLabel(status) {
+          const map = { active: '启用', disabled: '禁用', draft: '草稿' };
+          return map[status] || status;
+        }
+
+        function priorityTagType(priority) {
+          const map = { '高': 'danger', '中': 'warning', '低': 'info' };
+          return map[priority] || 'info';
+        }
+
+        /* ---- 事件处理 ---- */
+        function handleSearch() {
+          ElementPlus.ElMessage.success('查询条件：' + JSON.stringify({ keyword: filterForm.keyword, status: filterForm.status }));
+        }
+
+        function handleReset() {
+          filterForm.keyword = '';
+          filterForm.status = '';
+          pagination.page = 1;
+          ElementPlus.ElMessage.info('已重置筛选条件');
+        }
+
+        function handleQuickView(row) {
+          Object.assign(currentRow, row);
+          quickViewVisible.value = true;
+        }
+
+        function handleFullDetail(row) {
+          Object.assign(currentRow, row);
+          detailActiveTab.value = 'info';
+          fullDetailVisible.value = true;
+        }
+
+        function handleEdit(row) {
+          ElementPlus.ElMessage.info('编辑：' + row.name);
+        }
+
+        function handleEditFromDrawer(row) {
+          quickViewVisible.value = false;
+          fullDetailVisible.value = false;
+          ElementPlus.ElMessage.info('编辑：' + row.name);
+        }
+
+        function handlePageChange() {}
+
+        return {
+          filterForm, loading, pagination, total, tableData,
+          quickViewVisible, fullDetailVisible, detailActiveTab, currentRow,
+          statusTagType, statusLabel, priorityTagType,
+          handleSearch, handleReset, handleQuickView, handleFullDetail,
+          handleEdit, handleEditFromDrawer, handlePageChange,
+        };
+      },
+    });
+
+    app.use(ElementPlus, { locale: zhCn });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
+  </script>
+</body>
+</html>

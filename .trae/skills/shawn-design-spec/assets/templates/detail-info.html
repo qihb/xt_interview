@@ -1,0 +1,378 @@
+<!--
+  Shawn Design System — 详情页（信息展示）
+  使用方法：复制此文件，替换文字和数据内容。
+  变量声明在 :root，按需取用。
+  禁止：Tailwind CSS、Lucide 图标、CDN CSS 框架。
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认证考核详情</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css" />
+  <style>
+    /* ========== Design Tokens ========== */
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+                    'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    /* ========== Reset & Base ========== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-stack);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .page-container {
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* ========== Detail Header Card ========== */
+    .detail-header-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+
+    .preview-header {
+      margin-bottom: 32px;
+    }
+
+    .preview-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .preview-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .page-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-header-right .el-button {
+      margin-left: 0;
+    }
+
+    /* ========== Breadcrumb ========== */
+    .page-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .page-breadcrumb a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .page-breadcrumb a:hover {
+      color: var(--color-primary);
+    }
+
+    .page-breadcrumb .breadcrumb-sep {
+      display: inline-flex;
+      align-items: center;
+      color: var(--text-muted);
+    }
+
+    /* ========== Section Title（蓝色左边线） ========== */
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    /* ========== Info Section ========== */
+    .info-section {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+
+    .info-section .el-descriptions {
+      --el-descriptions-item-bordered-label-background: #fafafa;
+    }
+
+    .info-section .el-descriptions__label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      width: 140px;
+    }
+
+    .info-section .el-descriptions__content {
+      color: var(--text-primary);
+    }
+
+    /* ========== Score Display ========== */
+    .score-pass {
+      color: var(--color-success);
+      font-weight: 600;
+    }
+
+    .score-fail {
+      color: var(--color-danger);
+      font-weight: 600;
+    }
+
+    /* ========== Info Link ========== */
+    .info-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .info-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-container">
+      <div class="preview-header">
+        <h1>详情页（信息展示）</h1>
+        <p>顶部 Banner + Descriptions 描述列表，适用于字段较少的详情展示</p>
+      </div>
+
+      <!-- 详情头部卡片 -->
+      <div class="detail-header-card">
+        <nav class="page-breadcrumb">
+          <a @click="handleBack">认证管理</a>
+          <span class="breadcrumb-sep">/</span>
+          <a @click="handleBack">考核列表</a>
+          <span class="breadcrumb-sep">/</span>
+          <span>详情</span>
+        </nav>
+        <div class="page-header">
+          <div class="page-header-left">
+            <span class="page-title">{{ detail.name }}</span>
+            <el-tag :type="detail.statusType === 'success' ? 'success' : detail.statusType === 'warning' ? 'warning' : 'primary'" size="small" effect="light">
+              {{ detail.statusLabel }}
+            </el-tag>
+          </div>
+          <div class="page-header-right">
+            <el-button @click="handleBack">
+              <el-icon><Back></Back></el-icon>
+              返回
+            </el-button>
+            <el-button type="primary" @click="handleEdit">
+              <el-icon><Edit></Edit></el-icon>
+              编辑
+            </el-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第一区：基本信息 -->
+      <div class="info-section">
+        <div class="section-title">基本信息</div>
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="考核编号">{{ detail.code }}</el-descriptions-item>
+          <el-descriptions-item label="考核名称">{{ detail.name }}</el-descriptions-item>
+          <el-descriptions-item label="考核类型">{{ detail.type }}</el-descriptions-item>
+          <el-descriptions-item label="认证等级">
+            <el-tag size="small" effect="light" type="warning">{{ detail.level }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="考核状态">
+            <el-tag :type="detail.statusType === 'success' ? 'success' : detail.statusType === 'warning' ? 'warning' : 'primary'" size="small" effect="light">
+              {{ detail.statusLabel }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="考核周期">{{ detail.period }}</el-descriptions-item>
+          <el-descriptions-item label="所属部门">{{ detail.department }}</el-descriptions-item>
+          <el-descriptions-item label="负责人">{{ detail.manager }}</el-descriptions-item>
+        </el-descriptions>
+      </div>
+
+      <!-- 第二区：详细信息 -->
+      <div class="info-section">
+        <div class="section-title">详细信息</div>
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="考核开始时间">{{ detail.startTime }}</el-descriptions-item>
+          <el-descriptions-item label="考核结束时间">{{ detail.endTime }}</el-descriptions-item>
+          <el-descriptions-item label="考核地点">{{ detail.location }}</el-descriptions-item>
+          <el-descriptions-item label="考核方式">{{ detail.method }}</el-descriptions-item>
+          <el-descriptions-item label="满分/及格分">{{ detail.totalScore }} / {{ detail.passScore }}</el-descriptions-item>
+          <el-descriptions-item label="实际得分">
+            <span :class="detail.actualScore >= detail.passScore ? 'score-pass' : 'score-fail'">
+              {{ detail.actualScore }}
+            </span>
+          </el-descriptions-item>
+          <el-descriptions-item label="考核官">{{ detail.examiner }}</el-descriptions-item>
+          <el-descriptions-item label="监考人">{{ detail.invigilator }}</el-descriptions-item>
+          <el-descriptions-item label="考核说明" :span="2">{{ detail.description }}</el-descriptions-item>
+        </el-descriptions>
+      </div>
+
+      <!-- 第三区：其他信息 -->
+      <div class="info-section">
+        <div class="section-title">其他信息</div>
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="创建人">{{ detail.creator }}</el-descriptions-item>
+          <el-descriptions-item label="创建时间">{{ detail.createdAt }}</el-descriptions-item>
+          <el-descriptions-item label="最后修改人">{{ detail.updatedBy }}</el-descriptions-item>
+          <el-descriptions-item label="最后修改时间">{{ detail.updatedAt }}</el-descriptions-item>
+          <el-descriptions-item label="关联证书">
+            <a class="info-link" @click="handleViewCert">{{ detail.certName }}</a>
+          </el-descriptions-item>
+          <el-descriptions-item label="附件数量">{{ detail.attachmentCount }} 个</el-descriptions-item>
+          <el-descriptions-item label="备注" :span="2">{{ detail.remark || '暂无备注' }}</el-descriptions-item>
+        </el-descriptions>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, reactive } = Vue;
+
+    /* ---- 中文语言包 ---- */
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } },
+      },
+    };
+
+    const app = createApp({
+      setup() {
+        /* ---- 示例数据：认证考核详情 ---- */
+        const detail = reactive({
+          code: 'CERT-2026-00312',
+          name: '高级供应链管理师认证考核',
+          type: '专业技能认证',
+          level: '高级',
+          status: 'passed',
+          statusType: 'success',
+          statusLabel: '已通过',
+          period: '2026年第二期',
+          department: '供应链管理中心',
+          manager: '李明辉',
+          startTime: '2026-06-15 09:00:00',
+          endTime: '2026-06-15 12:00:00',
+          location: '总部大楼 A座 3层 301会议室',
+          method: '笔试 + 实操',
+          totalScore: 100,
+          passScore: 60,
+          actualScore: 87,
+          examiner: '王建国',
+          invigilator: '张晓丽',
+          description: '本次认证考核涵盖供应链战略规划、采购管理、物流优化、库存控制及风险管理五大模块，要求考生在规定时间内完成理论答题与案例实操。',
+          creator: '系统管理员',
+          createdAt: '2026-05-20 10:30:00',
+          updatedBy: '李明辉',
+          updatedAt: '2026-06-16 14:20:00',
+          certName: '高级供应链管理师证书-2026',
+          attachmentCount: 3,
+          remark: '考核成绩优异，已推荐参加专家评审。',
+        });
+
+        /* ---- 事件处理 ---- */
+        function handleBack() {
+          ElementPlus.ElMessage.info('返回列表页');
+        }
+
+        function handleEdit() {
+          ElementPlus.ElMessage.info('编辑：' + detail.name);
+        }
+
+        function handleViewCert() {
+          ElementPlus.ElMessage.info('查看证书：' + detail.certName);
+        }
+
+        return {
+          detail,
+          handleBack,
+          handleEdit,
+          handleViewCert,
+        };
+      },
+    });
+
+    app.use(ElementPlus, { locale: zhCn });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
+  </script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!--
+  Shawn Design System — 详情页（Tabs）
+  使用方法：复制此文件，替换文字和数据内容。
+  变量声明在 :root，按需取用。
+  禁止：Tailwind CSS、Lucide 图标、CDN CSS 框架。
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>详情页 - Tabs</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css" />
+  <style>
+    /* ========== Design Tokens ========== */
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --table-header-bg: #fafafa;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+                    'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    /* ========== Reset & Base ========== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-stack);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .page-container {
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* ========== Detail Header Card ========== */
+    .detail-header-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+
+    .preview-header {
+      margin-bottom: 32px;
+    }
+
+    .preview-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .preview-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .page-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .page-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-header-right .el-button {
+      margin-left: 0;
+    }
+
+    .detail-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .detail-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ========== Section Title（蓝色左边线） ========== */
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    /* ========== Content Card（Tabs） ========== */
+    .content-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .content-card .el-tabs {
+      --el-tabs-header-height: 48px;
+    }
+
+    .content-card .el-tabs__header {
+      margin: 0;
+      padding: 0 20px;
+      background: var(--card-bg);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .content-card .el-tabs__nav-wrap::after {
+      display: none;
+    }
+
+    .content-card .el-tabs__item {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 0 16px;
+      height: 48px;
+      line-height: 48px;
+    }
+
+    .content-card .el-tabs__item.is-active {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .content-card .el-tabs__active-bar {
+      background-color: var(--color-primary);
+    }
+
+    .tab-pane-body {
+      padding: 16px 20px 20px;
+    }
+
+    /* ========== Descriptions ========== */
+    .detail-descriptions .el-descriptions__label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      width: 120px;
+      background: var(--table-header-bg);
+    }
+
+    .detail-descriptions .el-descriptions__content {
+      color: var(--text-primary);
+    }
+
+    /* ========== Table in Tab ========== */
+    .tab-table .el-table tr th,
+    .tab-table .el-table tr td {
+      padding: 4px;
+      font-size: 12px;
+    }
+
+    .completion-cell {
+      width: 100px;
+      display: inline-flex;
+    }
+
+    .score-value {
+      font-weight: 600;
+    }
+
+    .score-value--high {
+      color: var(--color-success);
+    }
+
+    .score-value--mid {
+      color: var(--color-warning);
+    }
+
+    .score-value--low {
+      color: var(--color-danger);
+    }
+
+    /* ========== Timeline in Tab ========== */
+    .log-timeline {
+      padding: 8px 0;
+    }
+
+    .log-timeline .el-timeline-item__timestamp {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .log-item-body {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .log-item-user {
+      font-size: 12px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .log-item-action {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-container">
+      <div class="preview-header">
+        <h1>详情页（tabs）</h1>
+        <p>顶部 Banner + 多标签页详情展示，适用于复杂实体的详情查看</p>
+      </div>
+
+      <!-- 详情头部卡片 -->
+      <div class="detail-header-card">
+        <div class="page-header">
+          <div class="page-header-left">
+            <span class="page-title">{{ detail.name }}</span>
+            <el-tag :type="statusTagType(detail.status)" size="small" effect="light">
+              {{ statusLabel(detail.status) }}
+            </el-tag>
+          </div>
+          <div class="page-header-right">
+            <el-button @click="handleBack">
+              <el-icon><Back></Back></el-icon>
+              返回
+            </el-button>
+            <el-button type="primary" @click="handleEdit">
+              <el-icon><Edit></Edit></el-icon>
+              编辑
+            </el-button>
+          </div>
+        </div>
+        <div class="detail-meta">
+          <span class="detail-meta-item">创建人：{{ detail.creator }}</span>
+          <span class="detail-meta-item">创建时间：{{ detail.createdAt }}</span>
+          <span class="detail-meta-item">更新时间：{{ detail.updatedAt }}</span>
+        </div>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="content-card">
+        <el-tabs v-model="activeTab">
+
+          <!-- Tab 1: 基础信息 -->
+          <el-tab-pane label="基础信息" name="basic">
+            <div class="tab-pane-body">
+              <div class="section-title">基本信息</div>
+              <el-descriptions class="detail-descriptions" border :column="2">
+                <el-descriptions-item label="计划名称">{{ detail.name }}</el-descriptions-item>
+                <el-descriptions-item label="计划类型">{{ detail.type }}</el-descriptions-item>
+                <el-descriptions-item label="状态">
+                  <el-tag :type="statusTagType(detail.status)" size="small" effect="light">
+                    {{ statusLabel(detail.status) }}
+                  </el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="负责人">{{ detail.creator }}</el-descriptions-item>
+                <el-descriptions-item label="开始日期">{{ detail.startDate }}</el-descriptions-item>
+                <el-descriptions-item label="结束日期">{{ detail.endDate }}</el-descriptions-item>
+                <el-descriptions-item label="培训对象">{{ detail.target }}</el-descriptions-item>
+                <el-descriptions-item label="预算（元）">{{ detail.budget }}</el-descriptions-item>
+                <el-descriptions-item label="描述" :span="2">{{ detail.description }}</el-descriptions-item>
+              </el-descriptions>
+            </div>
+          </el-tab-pane>
+
+          <!-- Tab 2: 关联数据 -->
+          <el-tab-pane label="关联数据" name="related">
+            <div class="tab-pane-body">
+              <div class="section-title">课程列表</div>
+              <el-table :data="relatedData" border stripe class="tab-table" style="width: 100%">
+                <el-table-column prop="courseName" label="课程名称" min-width="200" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="category" label="课程分类" width="110" align="center">
+                  <template #default="{ row }">
+                    <el-tag :type="categoryTagType(row.category)" size="small" effect="plain">
+                      {{ row.category }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="trainer" label="培训讲师" width="100"></el-table-column>
+                <el-table-column prop="trainerDept" label="讲师部门" width="120"></el-table-column>
+                <el-table-column prop="duration" label="课时" width="80" align="center"></el-table-column>
+                <el-table-column prop="participants" label="参训人数" width="90" align="center"></el-table-column>
+                <el-table-column prop="scheduledDate" label="计划日期" width="120" align="center"></el-table-column>
+                <el-table-column prop="completionRate" label="完成率" width="140" align="center">
+                  <template #default="{ row }">
+                    <el-progress
+                      :percentage="row.completionRate"
+                      :stroke-width="6"
+                      :color="row.completionRate >= 80 ? '#67C23A' : row.completionRate >= 50 ? '#E6A23C' : '#F56C6C'"
+                      class="completion-cell"
+                    ></el-progress>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="avgScore" label="平均分" width="80" align="center">
+                  <template #default="{ row }">
+                    <span class="score-value" :class="{
+                      'score-value--high': row.avgScore >= 80,
+                      'score-value--mid': row.avgScore >= 60 && row.avgScore < 80,
+                      'score-value--low': row.avgScore > 0 && row.avgScore < 60
+                    }">
+                      {{ row.avgScore || '-' }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="status" label="状态" width="100" align="center">
+                  <template #default="{ row }">
+                    <el-tag :type="courseStatusType(row.status)" size="small" effect="light">
+                      {{ row.status }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" width="140" fixed="right" align="center">
+                  <template #default="{ row }">
+                    <el-button type="primary" link @click="handleViewCourse(row)">查看</el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button type="primary" link @click="handleEditCourse(row)">编辑</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-tab-pane>
+
+          <!-- Tab 3: 操作日志 -->
+          <el-tab-pane label="操作日志" name="logs">
+            <div class="tab-pane-body">
+              <div class="section-title">操作记录</div>
+              <el-timeline class="log-timeline">
+                <el-timeline-item
+                  v-for="log in operationLogs"
+                  :key="log.id"
+                  :timestamp="log.time"
+                  :type="log.type"
+                  placement="top"
+                >
+                  <div class="log-item-body">
+                    <span class="log-item-user">{{ log.user }}</span>
+                    <span class="log-item-action">{{ log.action }}</span>
+                  </div>
+                </el-timeline-item>
+              </el-timeline>
+            </div>
+          </el-tab-pane>
+
+        </el-tabs>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    /* ---- 中文语言包 ---- */
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } },
+      },
+    };
+
+    const app = createApp({
+      setup() {
+        /* ---- 当前 Tab ---- */
+        const activeTab = ref('basic');
+
+        /* ---- 详情数据（示例：培训计划管理） ---- */
+        const detail = reactive({
+          name: '2026年度新员工入职培训计划',
+          status: 'active',
+          type: '入职培训',
+          creator: '张三',
+          createdAt: '2026-06-15 09:30:00',
+          updatedAt: '2026-07-12 16:20:00',
+          startDate: '2026-08-01',
+          endDate: '2026-08-31',
+          target: '2026年第三季度新入职员工',
+          budget: '50,000',
+          description: '面向第三季度新入职员工的系统性培训，涵盖企业文化、岗位技能、安全合规三大模块。培训结束后统一考核，考核结果纳入试用期评估。',
+        });
+
+        /* ---- 关联数据 ---- */
+        const relatedData = ref([
+          { id: 1, courseName: '企业文化与价值观',       category: '通识类', trainer: '李明',   trainerDept: '人力资源部', duration: '4 课时',  participants: 32, scheduledDate: '2026-08-02', completionRate: 100, avgScore: 92, status: '已完成' },
+          { id: 2, courseName: '岗位技能基础培训',       category: '技能类', trainer: '王芳',   trainerDept: '研发中心',   duration: '8 课时',  participants: 32, scheduledDate: '2026-08-05', completionRate: 68,  avgScore: 75, status: '进行中' },
+          { id: 3, courseName: '信息安全与合规意识',     category: '合规类', trainer: '赵强',   trainerDept: '信息安全部', duration: '2 课时',  participants: 32, scheduledDate: '2026-08-12', completionRate: 0,   avgScore: 0,  status: '待开始' },
+          { id: 4, courseName: 'ERP 系统操作实训',       category: '技能类', trainer: '孙丽',   trainerDept: '数字化中心', duration: '4 课时',  participants: 28, scheduledDate: '2026-08-15', completionRate: 0,   avgScore: 0,  status: '待开始' },
+          { id: 5, courseName: '跨部门协作与高效沟通',   category: '管理类', trainer: '周伟',   trainerDept: '组织发展部', duration: '3 课时',  participants: 30, scheduledDate: '2026-08-18', completionRate: 0,   avgScore: 0,  status: '待开始' },
+          { id: 6, courseName: '财务报销流程与制度解读', category: '通识类', trainer: '钱敏',   trainerDept: '财务部',     duration: '2 课时',  participants: 32, scheduledDate: '2026-08-20', completionRate: 12,  avgScore: 0,  status: '待开始' },
+          { id: 7, courseName: '安全生产与应急处置演练', category: '合规类', trainer: '郑伟',   trainerDept: '安全管理部', duration: '4 课时',  participants: 32, scheduledDate: '2026-08-22', completionRate: 0,   avgScore: 0,  status: '待开始' },
+        ]);
+
+        /* ---- 操作日志 ---- */
+        const operationLogs = ref([
+          { id: 1, user: '张三', action: '创建了培训计划「2026年度新员工入职培训计划」',       time: '2026-06-15 09:30:00', type: 'primary' },
+          { id: 2, user: '张三', action: '关联课程「企业文化与价值观」',                     time: '2026-06-16 10:15:00', type: '' },
+          { id: 3, user: '李四', action: '审核通过，状态变更为「启用」',                     time: '2026-06-18 14:00:00', type: 'success' },
+          { id: 4, user: '张三', action: '关联课程「岗位技能基础培训」「信息安全与合规意识」', time: '2026-06-20 09:45:00', type: '' },
+          { id: 5, user: '王芳', action: '更新参训人员名单，新增 4 人',                      time: '2026-07-10 11:20:00', type: '' },
+          { id: 6, user: '张三', action: '修改培训结束日期为 2026-08-31',                    time: '2026-07-12 16:20:00', type: 'warning' },
+        ]);
+
+        /* ---- 状态映射 ---- */
+        function statusTagType(status) {
+          const map = { active: 'success', disabled: 'danger', draft: 'warning' };
+          return map[status] || 'info';
+        }
+
+        function statusLabel(status) {
+          const map = { active: '启用', disabled: '禁用', draft: '草稿' };
+          return map[status] || status;
+        }
+
+        function courseStatusType(status) {
+          const map = { '已完成': 'success', '进行中': '', '待开始': 'info' };
+          return map[status] || 'info';
+        }
+
+        function categoryTagType(category) {
+          const map = { '通识类': '', '技能类': 'success', '合规类': 'warning', '管理类': 'danger' };
+          return map[category] ?? 'info';
+        }
+
+        /* ---- 事件处理 ---- */
+        function handleEdit() {
+          ElementPlus.ElMessage.info('进入编辑模式');
+        }
+
+        function handleBack() {
+          ElementPlus.ElMessage.info('返回列表页');
+        }
+
+        function handleViewCourse(row) {
+          ElementPlus.ElMessage.info('查看课程：' + row.courseName);
+        }
+
+        function handleEditCourse(row) {
+          ElementPlus.ElMessage.info('编辑课程：' + row.courseName);
+        }
+
+        return {
+          activeTab,
+          detail,
+          relatedData,
+          operationLogs,
+          statusTagType,
+          statusLabel,
+          courseStatusType,
+          categoryTagType,
+          handleEdit,
+          handleBack,
+          handleViewCourse,
+          handleEditCourse,
+        };
+      },
+    });
+
+    app.use(ElementPlus, { locale: zhCn });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
+  </script>
+</body>
+</html>

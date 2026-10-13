@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cascader 级联选择</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/locale/zh-cn.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--page-bg);
+      color: var(--text-primary);
+      padding: 24px 32px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 16px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .demo-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .cascader-item {
+      margin-bottom: 16px;
+    }
+
+    .cascader-item:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-header">
+      <h1>Cascader 级联选择</h1>
+      <p>多级联动选择面板，支持基础级联、可搜索、多选和 hover 触发。</p>
+    </div>
+
+    <!-- 基础级联 -->
+    <div class="section-title">基础级联选择</div>
+    <div class="card">
+      <div class="cascader-item">
+        <div class="demo-label">省市区级联</div>
+        <el-cascader v-model="basicValue" :options="options" placeholder="请选择地区" style="width: 320px;"></el-cascader>
+      </div>
+      <div class="cascader-item">
+        <div class="demo-label">默认值：北京市 / 朝阳区 / 望京街道</div>
+        <el-cascader v-model="defaultValue" :options="options" placeholder="请选择地区" style="width: 320px;"></el-cascader>
+      </div>
+    </div>
+
+    <!-- 可搜索 -->
+    <div class="section-title">可搜索（filterable）</div>
+    <div class="card">
+      <div class="demo-label">输入关键字搜索选项</div>
+      <el-cascader v-model="filterValue" :options="options" filterable placeholder="请输入搜索" style="width: 320px;"></el-cascader>
+    </div>
+
+    <!-- 多选 -->
+    <div class="section-title">多选模式（multiple）</div>
+    <div class="card">
+      <div class="demo-label">可选择多个路径</div>
+      <el-cascader v-model="multipleValue" :options="options" :props="multipleProps" placeholder="请选择地区" collapse-tags collapse-tags-tooltip style="width: 400px;"></el-cascader>
+    </div>
+
+    <!-- hover 触发 -->
+    <div class="section-title">Hover 触发子菜单</div>
+    <div class="card">
+      <div class="demo-label">鼠标悬停展开下一级</div>
+      <el-cascader v-model="hoverValue" :options="options" :props="hoverProps" placeholder="请选择地区" style="width: 320px;"></el-cascader>
+    </div>
+  </div>
+
+  <script>
+    const { ref, reactive } = Vue;
+
+    const app = Vue.createApp({
+      setup() {
+        const basicValue = ref([]);
+        const defaultValue = ref(['beijing', 'chaoyang', 'wangjing']);
+        const filterValue = ref([]);
+        const multipleValue = ref([]);
+        const hoverValue = ref([]);
+
+        const multipleProps = { multiple: true };
+
+        const hoverProps = { expandTrigger: 'hover' };
+
+        const options = [
+          {
+            value: 'beijing',
+            label: '北京',
+            children: [
+              {
+                value: 'chaoyang',
+                label: '朝阳区',
+                children: [
+                  { value: 'wangjing', label: '望京街道' },
+                  { value: 'jiuxianqiao', label: '酒仙桥街道' },
+                  { value: 'dawanglu', label: '大望路' }
+                ]
+              },
+              {
+                value: 'haidian',
+                label: '海淀区',
+                children: [
+                  { value: 'zhongguancun', label: '中关村' },
+                  { value: 'wudaokou', label: '五道口' }
+                ]
+              },
+              {
+                value: 'dongcheng',
+                label: '东城区',
+                children: [
+                  { value: 'wangfujing', label: '王府井' },
+                  { value: 'dongsi', label: '东四' }
+                ]
+              }
+            ]
+          },
+          {
+            value: 'shanghai',
+            label: '上海',
+            children: [
+              {
+                value: 'pudong',
+                label: '浦东新区',
+                children: [
+                  { value: 'lujiazui', label: '陆家嘴' },
+                  { value: 'zhangjiang', label: '张江' }
+                ]
+              },
+              {
+                value: 'jingan',
+                label: '静安区',
+                children: [
+                  { value: 'nanjingxilu', label: '南京西路' }
+                ]
+              }
+            ]
+          },
+          {
+            value: 'guangdong',
+            label: '广东',
+            children: [
+              {
+                value: 'guangzhou',
+                label: '广州',
+                children: [
+                  { value: 'tianhe', label: '天河区' },
+                  { value: 'yuexiu', label: '越秀区' }
+                ]
+              },
+              {
+                value: 'shenzhen',
+                label: '深圳',
+                children: [
+                  { value: 'nanshan', label: '南山区' },
+                  { value: 'futian', label: '福田区' }
+                ]
+              }
+            ]
+          }
+        ];
+
+        return {
+          basicValue,
+          defaultValue,
+          filterValue,
+          multipleValue,
+          hoverValue,
+          multipleProps,
+          hoverProps,
+          options
+        };
+      }
+    });
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, {
+      locale: zhCn
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>

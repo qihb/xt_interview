@@ -1,0 +1,1053 @@
+<!--
+  Shawn Design System — 列表页（多筛选多按钮）
+  使用方法：复制此文件，替换文字和数据内容。
+  变量声明在 :root，按需取用。
+  禁止：Tailwind CSS、Lucide 图标、CDN CSS 框架。
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>多筛选多按钮列表页</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css" />
+  <style>
+    /* ========== Design Tokens ========== */
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+                    'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    /* ========== Reset & Base ========== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-stack);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--page-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .page-container {
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== Filter Bar ========== */
+    .filter-bar {
+      margin-bottom: 12px;
+    }
+
+    .filter-bar .el-form-item {
+      margin-bottom: 12px;
+    }
+
+    .filter-bar .el-input,
+    .filter-bar .el-select,
+    .filter-bar .el-cascader {
+      width: 100%;
+    }
+
+    .filter-bar .el-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-bar .el-date-editor--daterange {
+      width: 100%;
+    }
+
+    /* ========== Expand Toggle ========== */
+    .expand-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-primary);
+      cursor: pointer;
+      font-size: 12px;
+      user-select: none;
+      margin-bottom: 12px;
+    }
+
+    .expand-toggle:hover {
+      color: #3d85f0;
+    }
+
+    .expand-toggle .el-icon {
+      transition: transform 0.25s ease;
+    }
+
+    .expand-toggle.is-expanded .el-icon {
+      transform: rotate(180deg);
+    }
+
+    /* ========== Filter Actions ========== */
+    .filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-actions .el-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 0;
+    }
+
+    .filter-actions .el-dropdown .el-button-group {
+      display: inline-flex;
+    }
+
+    .filter-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-right .el-button {
+      margin-left: 0;
+    }
+
+    .filter-right .el-divider {
+      margin: 0 4px;
+    }
+
+    .setting-switch {
+      margin-left: auto;
+    }
+
+    /* ========== Batch Action Bar ========== */
+    .batch-action-bar {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      background: #f0f5ff;
+      border: 1px solid #d0e0ff;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .batch-info {
+      margin-right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .batch-info strong {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .batch-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .batch-actions .el-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 0;
+    }
+
+    /* ========== Table Area ========== */
+    .table-area .el-table tr th,
+    .table-area .el-table tr td {
+      padding: 4px;
+      font-size: 12px;
+    }
+
+    /* ========== Pagination Bar ========== */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 12px;
+      gap: 16px;
+    }
+
+    .pagination-total {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .pagination-bar .el-pagination {
+      --el-pagination-font-size: 12px;
+    }
+
+    .pagination-bar .el-pagination .el-input {
+      width: 80px;
+    }
+
+    /* ========== Batch Add Dialog ========== */
+    .batch-add-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    .batch-add-step-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .batch-add-card {
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .batch-add-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: rgba(23, 100, 232, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .batch-add-card-icon .el-icon {
+      font-size: 22px;
+      color: var(--color-primary);
+    }
+
+    .batch-add-card-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .batch-add-card-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .batch-add-card-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .batch-add-upload .el-upload {
+      width: 100%;
+    }
+
+    .batch-add-upload .el-upload-dragger {
+      width: 100%;
+      padding: 32px 0;
+      border-radius: 8px;
+      border-color: rgba(0, 0, 0, 0.08);
+      background: var(--card-bg);
+    }
+
+    .batch-add-upload .el-upload-dragger:hover {
+      border-color: var(--color-primary);
+    }
+
+    .batch-add-file {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--color-success);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-container">
+      <div class="page-header">
+        <h1>列表页（多筛选多按钮）</h1>
+        <p>多行筛选条件 + 级联选择 + 刷新/收藏/导出/设置等操作按钮</p>
+      </div>
+
+      <!-- 筛选区 -->
+      <div class="filter-bar">
+        <el-form :model="filterForm" @submit.prevent="handleSearch">
+          <!-- 第一行：常用筛选 -->
+          <el-row :gutter="8">
+            <el-col :xs="24" :sm="12" :md="6">
+              <el-form-item label="名称">
+                <el-input
+                  v-model="filterForm.keyword"
+                  placeholder="搜索名称"
+                  clearable
+                  @keyup.enter="handleSearch"
+                >
+                  <template #prefix>
+                    <el-icon><Search></Search></el-icon>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="6">
+              <el-form-item label="状态">
+                <el-select v-model="filterForm.status" placeholder="全部状态" clearable>
+                  <el-option label="筹备中" value="preparing"></el-option>
+                  <el-option label="未开始" value="pending"></el-option>
+                  <el-option label="进行中" value="inProgress"></el-option>
+                  <el-option label="已完成" value="completed"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="6">
+              <el-form-item label="类型">
+                <el-select v-model="filterForm.type" placeholder="全部类型" clearable>
+                  <el-option label="标准模块" value="standard"></el-option>
+                  <el-option label="扩展模块" value="extension"></el-option>
+                  <el-option label="插件" value="plugin"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="6">
+              <el-form-item label="上架">
+                <el-select v-model="filterForm.onShelf" placeholder="全部" clearable>
+                  <el-option label="已上架" value="true"></el-option>
+                  <el-option label="已下架" value="false"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <!-- 折叠区：更多筛选项 -->
+          <div v-show="filterExpanded" style="overflow: hidden;">
+            <el-row :gutter="8">
+              <el-col :xs="24" :sm="12" :md="6">
+                <el-form-item label="分类">
+                  <el-cascader
+                    v-model="filterForm.category"
+                    :options="categoryOptions"
+                    placeholder="选择分类"
+                    clearable
+                    :props="{ checkStrictly: true }"
+                  ></el-cascader>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12" :md="6">
+                <el-form-item label="创建人">
+                  <el-input
+                    v-model="filterForm.creator"
+                    placeholder="输入创建人"
+                    clearable
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12" :md="6">
+                <el-form-item label="优先级">
+                  <el-select v-model="filterForm.priority" placeholder="全部优先级" clearable>
+                    <el-option label="高" value="high"></el-option>
+                    <el-option label="中" value="medium"></el-option>
+                    <el-option label="低" value="low"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12" :md="6">
+                <el-form-item label="标签">
+                  <el-select v-model="filterForm.tag" placeholder="全部标签" clearable>
+                    <el-option label="核心" value="core"></el-option>
+                    <el-option label="实验" value="experimental"></el-option>
+                    <el-option label="废弃" value="deprecated"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+
+          <!-- 展开/收起 -->
+          <div
+            class="expand-toggle"
+            :class="{ 'is-expanded': filterExpanded }"
+            @click="filterExpanded = !filterExpanded"
+          >
+            <span>{{ filterExpanded ? '收起筛选' : '更多筛选' }}</span>
+            <el-icon><ArrowDownBold></ArrowDownBold></el-icon>
+          </div>
+
+          <!-- 查询/重置 + 右侧工具栏 -->
+          <div class="filter-actions">
+            <el-button type="primary" @click="handleSearch">
+              <el-icon><Search></Search></el-icon>
+              查询
+            </el-button>
+            <el-button @click="handleReset">
+              <el-icon><Refresh></Refresh></el-icon>
+              重置
+            </el-button>
+
+            <div class="filter-right">
+              <!-- 刷新 -->
+              <el-button type="primary" link @click="handleRefresh">
+                <el-icon><Refresh></Refresh></el-icon>
+                刷新
+              </el-button>
+
+              <!-- 导出 -->
+              <el-tooltip content="需先选中数据行" placement="top" :disabled="selectedRows.length > 0">
+                <el-button link :disabled="selectedRows.length === 0" @click="handleExport">
+                  <el-icon><Download></Download></el-icon>
+                  导出
+                </el-button>
+              </el-tooltip>
+
+              <!-- 自定义列表 -->
+              <el-button type="primary" link @click="handleColumnSetting">
+                <el-icon><Tools></Tools></el-icon>
+                自定义列表
+              </el-button>
+
+              <el-divider direction="vertical"></el-divider>
+
+              <!-- 设置下拉 -->
+              <el-dropdown trigger="click" @command="handleSettingCommand">
+                <el-button>
+                  <el-icon style="font-size: 18px;"><Setting></Setting></el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="density">
+                      <el-icon><Grid></Grid></el-icon>
+                      表格密度
+                      <span style="margin-left: 12px; color: rgba(0,0,0,0.35); font-size: 12px;">{{ densityLabel }}</span>
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="null" @click.prevent>
+                      <el-icon><Menu></Menu></el-icon>
+                      斑马纹
+                      <el-switch :model-value="tableStripe" size="small" class="setting-switch" @change="tableStripe = !tableStripe"></el-switch>
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="null" @click.prevent>
+                      <el-icon><CopyDocument></CopyDocument></el-icon>
+                      表格边框
+                      <el-switch :model-value="tableBorder" size="small" class="setting-switch" @change="tableBorder = !tableBorder"></el-switch>
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="null" @click.prevent>
+                      <el-icon><Sort></Sort></el-icon>
+                      全局排序
+                      <el-switch :model-value="globalSortable" size="small" class="setting-switch" @change="globalSortable = !globalSortable"></el-switch>
+                    </el-dropdown-item>
+                    <el-dropdown-item divided command="fullscreen">
+                      <el-icon><FullScreen></FullScreen></el-icon>
+                      全屏显示
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+
+              <el-divider direction="vertical"></el-divider>
+
+              <!-- 新增项目 -->
+              <el-dropdown split-button type="primary" @click="handleAdd" @command="handleDropdownCommand">
+                <el-icon><Plus></Plus></el-icon>
+                新增项目
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="batchAdd">
+                      <el-icon><Plus></Plus></el-icon>
+                      批量新增
+                    </el-dropdown-item>
+                    <el-dropdown-item command="batchDelete" :disabled="selectedRows.length === 0" divided>
+                      <el-icon><Delete></Delete></el-icon>
+                      批量删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+          </div>
+        </el-form>
+      </div>
+
+      <!-- 选中操作栏 -->
+      <div v-if="selectedRows.length > 0" class="batch-action-bar">
+        <div class="batch-info">
+          已选中 <strong>{{ selectedRows.length }}</strong> 项
+        </div>
+        <div class="batch-actions">
+          <el-button size="small" @click="clearSelection">取消选择</el-button>
+          <el-button size="small" type="danger" plain @click="handleBatchDelete">
+            <el-icon><Delete></Delete></el-icon>
+            批量删除
+          </el-button>
+          <el-button size="small" type="primary" plain @click="handleExport">
+            <el-icon><Download></Download></el-icon>
+            批量导出
+          </el-button>
+        </div>
+      </div>
+
+      <!-- 表格区 -->
+      <div class="table-area">
+        <el-table
+          ref="tableRef"
+          v-loading="loading"
+          :data="tableData"
+          :border="tableBorder"
+          :stripe="tableStripe"
+          style="width: 100%"
+          :default-sort="{ prop: 'createdAt', order: 'descending' }"
+          @selection-change="handleSelectionChange"
+          @sort-change="handleSortChange"
+        >
+          <el-table-column type="selection" width="46" fixed="left" align="center"></el-table-column>
+          <el-table-column prop="name" label="名称" min-width="180" show-overflow-tooltip sortable="custom"></el-table-column>
+          <el-table-column prop="code" label="编号" width="130" sortable="custom"></el-table-column>
+          <el-table-column prop="type" label="类型" width="110" align="center" :filters="typeFilters" :filter-method="filterType">
+            <template #default="{ row }">
+              <el-tag :type="typeTagType(row.type)" size="small" effect="light">
+                {{ typeLabel(row.type) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="priority" label="优先级" width="100" align="center" sortable="custom">
+            <template #default="{ row }">
+              <el-tag :type="priorityTagType(row.priority)" size="small" effect="dark">
+                {{ priorityLabel(row.priority) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="category" label="分类" width="120"></el-table-column>
+          <el-table-column prop="owner" label="负责人" width="100"></el-table-column>
+          <el-table-column prop="createdAt" label="创建时间" width="165" sortable="custom"></el-table-column>
+          <el-table-column prop="amount" label="金额" width="130" align="right" sortable="custom">
+            <template #default="{ row }">
+              ¥{{ row.amount.toLocaleString() }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="notes" label="备注" min-width="220" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="status" label="状态" width="270" align="center" fixed="right">
+            <template #default="{ row }">
+              <el-radio-group v-model="row.status" size="small" @change="handleStatusChange(row)">
+                <el-radio-button label="筹备中" value="preparing"></el-radio-button>
+                <el-radio-button label="未开始" value="pending"></el-radio-button>
+                <el-radio-button label="进行中" value="inProgress"></el-radio-button>
+                <el-radio-button label="已结班" value="completed"></el-radio-button>
+              </el-radio-group>
+            </template>
+          </el-table-column>
+          <el-table-column prop="onShelf" label="上架" width="80" align="center" fixed="right">
+            <template #default="{ row }">
+              <el-switch v-model="row.onShelf" @change="handleShelfChange(row)"></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="120" fixed="right" align="center">
+            <template #default="{ row }">
+              <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <!-- 分页栏 -->
+        <div class="pagination-bar">
+          <span class="pagination-total" style="margin-right: auto;">共 {{ total }} 条</span>
+          <el-pagination
+            v-model:current-page="pagination.page"
+            v-model:page-size="pagination.pageSize"
+            :page-sizes="[20, 50, 100, 200, 500]"
+            :total="total"
+            layout="sizes, prev, pager, next, jumper"
+            @size-change="handlePageChange"
+            @current-change="handlePageChange"
+          ></el-pagination>
+        </div>
+      </div>
+    </div>
+
+    <!-- 批量新增弹框 -->
+    <el-dialog
+      v-model="batchAddVisible"
+      title="批量新增"
+      width="480px"
+      :close-on-click-modal="false"
+      destroy-on-close
+      @closed="resetBatchAdd"
+    >
+      <div class="batch-add-step">
+        <span class="batch-add-step-num">1</span>
+        下载模板
+      </div>
+      <div class="batch-add-card">
+        <div class="batch-add-card-icon">
+          <el-icon><Document></Document></el-icon>
+        </div>
+        <div class="batch-add-card-body">
+          <div class="batch-add-card-title">下载导入模板</div>
+          <div class="batch-add-card-desc">按模板格式填写数据</div>
+        </div>
+        <el-button type="primary" plain size="small" @click="handleDownloadTemplate">
+          <el-icon><Download></Download></el-icon>
+          下载模板
+        </el-button>
+      </div>
+
+      <div class="batch-add-step">
+        <span class="batch-add-step-num">2</span>
+        上传文件
+      </div>
+      <el-upload
+        ref="uploadRef"
+        class="batch-add-upload"
+        drag
+        action=""
+        :auto-upload="false"
+        :limit="1"
+        accept=".xlsx,.xls"
+        :on-change="handleFileChange"
+        :on-exceed="handleFileExceed"
+      >
+        <el-icon style="font-size: 36px; color: rgba(0,0,0,0.15); margin-bottom: 8px;">
+          <UploadFilled></UploadFilled>
+        </el-icon>
+        <div style="font-size: 13px; color: rgba(0,0,0,0.65);">
+          拖拽文件到此处，或<em style="color: #1764E8; font-style: normal; font-weight: 500;">点击上传</em>
+        </div>
+        <div style="font-size: 12px; color: rgba(0,0,0,0.35); margin-top: 4px;">
+          支持 .xlsx / .xls 格式
+        </div>
+      </el-upload>
+      <div v-if="batchAddFile" class="batch-add-file">
+        <el-icon><CircleCheck></CircleCheck></el-icon>
+        {{ batchAddFile.name }}
+      </div>
+
+      <template #footer>
+        <el-button @click="batchAddVisible = false">取消</el-button>
+        <el-button type="primary" :disabled="!batchAddFile" @click="handleBatchAddSubmit">
+          确认导入
+        </el-button>
+      </template>
+    </el-dialog>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, ref, reactive, computed } = Vue;
+
+    /* ---- 中文语言包 ---- */
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } },
+      },
+    };
+
+    /* ---- 级联选择器数据 ---- */
+    const categoryOptions = [
+      {
+        value: 'tech',
+        label: '信息技术',
+        children: [
+          { value: 'frontend', label: '前端开发' },
+          { value: 'backend', label: '后端服务' },
+          { value: 'infra', label: '基础架构' },
+          { value: 'security', label: '信息安全' },
+        ],
+      },
+      {
+        value: 'hr',
+        label: '人力资源',
+        children: [
+          { value: 'training', label: '培训发展' },
+          { value: 'recruit', label: '招聘管理' },
+          { value: 'assessment', label: '绩效考核' },
+        ],
+      },
+      {
+        value: 'finance',
+        label: '财务管理',
+        children: [
+          { value: 'budget', label: '预算管理' },
+          { value: 'audit', label: '审计合规' },
+          { value: 'report', label: '报表分析' },
+        ],
+      },
+      {
+        value: 'marketing',
+        label: '市场营销',
+        children: [
+          { value: 'brand', label: '品牌推广' },
+          { value: 'channel', label: '渠道运营' },
+          { value: 'event', label: '活动策划' },
+        ],
+      },
+    ];
+
+    const app = createApp({
+      setup() {
+        /* ---- 筛选表单 ---- */
+        const filterForm = reactive({
+          keyword: '',
+          status: '',
+          type: '',
+          onShelf: '',
+          category: [],
+          creator: '',
+          priority: '',
+          tag: '',
+        });
+
+        /* ---- 筛选展开状态 ---- */
+        const filterExpanded = ref(false);
+
+        /* ---- 表格设置 ---- */
+        const tableDensity = ref('default');
+        const tableStripe = ref(true);
+        const tableBorder = ref(true);
+        const globalSortable = ref(true);
+
+        const densityLabel = computed(() => {
+          const map = { default: '默认', compact: '紧凑', loose: '宽松' };
+          return map[tableDensity.value];
+        });
+
+        const typeFilters = [
+          { text: '标准模块', value: 'standard' },
+          { text: '扩展模块', value: 'extension' },
+          { text: '插件', value: 'plugin' },
+        ];
+
+        /* ---- 加载状态 ---- */
+        const loading = ref(false);
+
+        /* ---- 分页 ---- */
+        const pagination = reactive({
+          page: 1,
+          pageSize: 50,
+        });
+        const total = ref(326);
+
+        /* ---- 示例数据 ---- */
+        const tableData = ref([
+          { id: 1, name: '供应链管理高级研修班',             code: 'MOD-001', type: 'standard',   status: 'completed',   onShelf: true,  priority: 'high',   category: '采购管理',   owner: '张三', createdAt: '2026-07-10 09:30:00', amount: 56000,   notes: '与知名商学院合作的供应链专题课程，面向中高层管理人员，为期12周系统化培训，已确认开班' },
+          { id: 2, name: '2026年新员工入职培训计划',         code: 'MOD-002', type: 'standard',   status: 'inProgress',  onShelf: true,  priority: 'medium', category: '人力资源',   owner: '李四', createdAt: '2026-07-09 14:20:00', amount: 12800,   notes: '面向Q3季度新入职员工的标准化培训方案，涵盖企业文化、制度规范、岗位技能三大模块' },
+          { id: 3, name: '客户关系管理系统升级项目',         code: 'MOD-003', type: 'extension',  status: 'inProgress',  onShelf: false, priority: 'high',   category: '信息技术',   owner: '王五', createdAt: '2026-07-08 11:05:00', amount: 198000,  notes: 'CRM平台从v2.x迁移至v3.x，涉及数据清洗、接口重构、权限体系重建等核心工作' },
+          { id: 4, name: '企业内训师认证与激励方案',         code: 'MOD-004', type: 'standard',   status: 'preparing',   onShelf: false, priority: 'low',    category: '人力资源',   owner: '赵六', createdAt: '2026-07-07 16:45:00', amount: 45000,   notes: '建立内部讲师选拔、培训、认证及课酬激励的完整体系，预计首批认证30名内训师' },
+          { id: 5, name: '数据同步中间件性能优化',           code: 'MOD-005', type: 'extension',  status: 'inProgress',  onShelf: true,  priority: 'medium', category: '信息技术',   owner: '孙七', createdAt: '2026-07-06 08:10:00', amount: 32000,   notes: '基于CDC的实时数据同步服务在高并发场景下存在延迟，需优化消费端批量写入策略' },
+          { id: 6, name: '消息队列插件安全加固',             code: 'MOD-006', type: 'plugin',     status: 'pending',     onShelf: true,  priority: 'low',    category: '信息安全',   owner: '周八', createdAt: '2026-07-05 10:30:00', amount: 18500,   notes: '对RabbitMQ消息队列插件进行安全加固，增加消息加密、消费确认重试及死信队列处理机制' },
+          { id: 7, name: '销售团队季度冲刺培训',             code: 'MOD-007', type: 'standard',   status: 'completed',   onShelf: true,  priority: 'medium', category: '市场营销',   owner: '吴九', createdAt: '2026-07-04 15:00:00', amount: 27600,   notes: '针对华东区销售团队的季度业绩冲刺专项培训，包含话术演练、客户画像分析等实战内容' },
+          { id: 8, name: '日志采集服务监控告警体系',         code: 'MOD-008', type: 'standard',   status: 'pending',     onShelf: false, priority: 'high',   category: '信息技术',   owner: '郑十', createdAt: '2026-07-03 09:15:00', amount: 86000,   notes: '为分布式日志采集平台搭建实时监控告警体系，覆盖采集延迟、存储容量等核心指标' },
+        ]);
+
+        /* ---- 类型映射 ---- */
+        function typeTagType(type) {
+          const map = { standard: '', extension: 'warning', plugin: 'success' };
+          return map[type] || 'info';
+        }
+
+        function typeLabel(type) {
+          const map = { standard: '标准模块', extension: '扩展模块', plugin: '插件' };
+          return map[type] || type;
+        }
+
+        /* ---- 优先级映射 ---- */
+        function priorityTagType(priority) {
+          const map = { high: 'danger', medium: 'warning', low: 'info' };
+          return map[priority] || '';
+        }
+
+        function priorityLabel(priority) {
+          const map = { high: '高', medium: '中', low: '低' };
+          return map[priority] || priority;
+        }
+
+        function handleStatusChange(row) {
+          ElementPlus.ElMessage.info(row.name + ' 状态已变更');
+        }
+
+        function handleShelfChange(row) {
+          ElementPlus.ElMessage.info(row.name + (row.onShelf ? ' 已上架' : ' 已下架'));
+        }
+
+        /* ---- 事件处理 ---- */
+        function handleSearch() {
+          ElementPlus.ElMessage.success('查询条件：' + JSON.stringify({
+            keyword: filterForm.keyword,
+            status: filterForm.status,
+            type: filterForm.type,
+            category: filterForm.category,
+            creator: filterForm.creator,
+            priority: filterForm.priority,
+            tag: filterForm.tag,
+          }));
+        }
+
+        function handleReset() {
+          filterForm.keyword = '';
+          filterForm.status = '';
+          filterForm.type = '';
+          filterForm.onShelf = '';
+          filterForm.category = [];
+          filterForm.creator = '';
+          filterForm.priority = '';
+          filterForm.tag = '';
+          pagination.page = 1;
+          ElementPlus.ElMessage.info('已重置筛选条件');
+        }
+
+        function handleAdd() {
+          ElementPlus.ElMessage.info('新增项目');
+        }
+
+        function handleExport() {
+          if (selectedRows.value.length === 0) return;
+          ElementPlus.ElMessage.success('正在导出 ' + selectedRows.value.length + ' 条数据...');
+        }
+
+        function handleRefresh() {
+          ElementPlus.ElMessage.info('列表已刷新');
+        }
+
+        function handleColumnSetting() {
+          ElementPlus.ElMessage.info('自定义列表');
+        }
+
+        function handleSettingCommand(command) {
+          switch (command) {
+            case 'density':
+              const order = ['default', 'compact', 'loose'];
+              const idx = order.indexOf(tableDensity.value);
+              tableDensity.value = order[(idx + 1) % order.length];
+              break;
+            case 'stripe':
+              tableStripe.value = !tableStripe.value;
+              break;
+            case 'border':
+              tableBorder.value = !tableBorder.value;
+              break;
+            case 'sortable':
+              globalSortable.value = !globalSortable.value;
+              break;
+            case 'fullscreen':
+              if (document.fullscreenElement) {
+                document.exitFullscreen();
+              } else {
+                document.documentElement.requestFullscreen();
+              }
+              break;
+          }
+        }
+
+        function handleSortChange({ prop, order }) {
+          if (!order) {
+            tableData.value.sort((a, b) => a.id - b.id);
+            return;
+          }
+          const sign = order === 'ascending' ? 1 : -1;
+          tableData.value.sort((a, b) => {
+            const va = a[prop];
+            const vb = b[prop];
+            if (typeof va === 'number') return (va - vb) * sign;
+            return String(va).localeCompare(String(vb)) * sign;
+          });
+        }
+
+        function filterType(value, row) {
+          return row.type === value;
+        }
+
+        function handleEdit(row) {
+          ElementPlus.ElMessage.info('编辑：' + row.name);
+        }
+
+        function handleDelete(row) {
+          ElementPlus.ElMessageBox.confirm(
+            '确定删除「' + row.name + '」？删除后无法恢复。',
+            '确认删除',
+            { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
+          ).then(() => {
+            ElementPlus.ElMessage.success('已删除：' + row.name);
+          }).catch(() => {});
+        }
+
+        /* ---- 选择与批量操作 ---- */
+        const tableRef = ref(null);
+        const selectedRows = ref([]);
+
+        function handleSelectionChange(rows) {
+          selectedRows.value = rows;
+        }
+
+        function clearSelection() {
+          if (tableRef.value) {
+            tableRef.value.clearSelection();
+          }
+          selectedRows.value = [];
+        }
+
+        function handleDropdownCommand(command) {
+          if (command === 'batchAdd') {
+            batchAddVisible.value = true;
+          } else if (command === 'batchDelete') {
+            handleBatchDelete();
+          }
+        }
+
+        function handleBatchDelete() {
+          if (selectedRows.value.length === 0) return;
+          ElementPlus.ElMessageBox.confirm(
+            '确定删除所选 ' + selectedRows.value.length + ' 项？删除后无法恢复。',
+            '批量删除',
+            { confirmButtonText: '删除', cancelButtonText: '取消', type: 'warning' }
+          ).then(() => {
+            ElementPlus.ElMessage.success('已批量删除 ' + selectedRows.value.length + ' 项');
+            clearSelection();
+          }).catch(() => {});
+        }
+
+        /* ---- 批量新增弹框 ---- */
+        const batchAddVisible = ref(false);
+        const uploadRef = ref(null);
+        const batchAddFile = ref(null);
+
+        function handleDownloadTemplate() {
+          ElementPlus.ElMessage.success('模板下载中...');
+        }
+
+        function handleFileChange(file) {
+          batchAddFile.value = file;
+        }
+
+        function handleFileExceed() {
+          ElementPlus.ElMessage.warning('只能上传一个文件，请先移除已选文件');
+        }
+
+        function handleBatchAddSubmit() {
+          if (!batchAddFile.value) {
+            ElementPlus.ElMessage.warning('请先选择文件');
+            return;
+          }
+          ElementPlus.ElMessage.success('数据导入成功');
+          batchAddVisible.value = false;
+        }
+
+        function resetBatchAdd() {
+          batchAddFile.value = null;
+        }
+
+        function handlePageChange() {
+          // 替换为实际接口调用
+        }
+
+        return {
+          filterForm,
+          filterExpanded,
+          categoryOptions,
+          loading,
+          pagination,
+          total,
+          tableData,
+          tableRef,
+          selectedRows,
+          batchAddVisible,
+          uploadRef,
+          typeTagType,
+          typeLabel,
+          priorityTagType,
+          priorityLabel,
+          handleStatusChange,
+          handleShelfChange,
+          handleSearch,
+          handleReset,
+          handleAdd,
+          tableDensity,
+          tableStripe,
+          tableBorder,
+          globalSortable,
+          densityLabel,
+          typeFilters,
+          handleExport,
+          handleRefresh,
+          handleColumnSetting,
+          handleSettingCommand,
+          handleSortChange,
+          filterType,
+          handleEdit,
+          handleDelete,
+          handleSelectionChange,
+          clearSelection,
+          handleDropdownCommand,
+          handleBatchDelete,
+          handleDownloadTemplate,
+          handleFileChange,
+          handleFileExceed,
+          handleBatchAddSubmit,
+          resetBatchAdd,
+          handlePageChange,
+        };
+      },
+    });
+
+    app.use(ElementPlus, { locale: zhCn });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
+  </script>
+</body>
+</html>

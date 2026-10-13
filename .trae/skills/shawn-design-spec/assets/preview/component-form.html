@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form 表单</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/locale/zh-cn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --table-header-bg: #fafafa;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--page-bg);
+      color: var(--text-primary);
+      padding: 24px;
+      line-height: 1.6;
+    }
+
+    .page-header {
+      max-width: 960px;
+      margin: 0 auto 20px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .page-body {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: -4px 0 8px 2px;
+    }
+
+    /* label color override */
+    .el-form-item__label {
+      color: var(--text-secondary) !important;
+    }
+
+    /* horizontal form */
+    .form-horizontal .el-form-item {
+      margin-bottom: 16px;
+    }
+
+    .form-horizontal .el-input,
+    .form-horizontal .el-select,
+    .form-horizontal .el-textarea {
+      max-width: 480px;
+    }
+
+    /* vertical form */
+    .form-vertical .el-form-item {
+      margin-bottom: 16px;
+    }
+
+    /* inline form */
+    .form-inline .el-form-item {
+      margin-bottom: 0;
+    }
+
+    /* compact form */
+    .form-compact .el-form-item {
+      margin-bottom: 12px;
+    }
+
+    .form-compact .el-input,
+    .form-compact .el-select,
+    .form-compact .el-textarea {
+      max-width: 360px;
+    }
+
+    /* inline flex-wrap */
+    .form-inline .el-form--inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* descriptions override */
+    .el-descriptions {
+      margin-bottom: 16px;
+    }
+
+    .el-descriptions__label {
+      color: var(--text-secondary) !important;
+    }
+
+    .el-descriptions__content {
+      color: var(--text-primary) !important;
+    }
+
+    /* card + form wrapper */
+    .form-card {
+      background: var(--card-bg);
+      border-radius: 6px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-header">
+      <h1>Form 表单</h1>
+      <p>
+        表单用于收集、校验和提交数据，是 B2B 系统中最常见的交互模式。本页展示水平表单、垂直表单、行内表单、紧凑表单以及 Descriptions 描述列表等多种变体，覆盖创建、编辑、筛选、详情展示等典型场景。
+      </p>
+    </div>
+
+    <div class="page-body">
+
+      <!-- 1. 水平表单 -->
+      <div class="section-title">水平表单（label-left）</div>
+        <div class="section-desc">标签右对齐、水平排列，适用于宽度充裕的编辑页面，是表单最常用的布局方式。</div>
+      <div class="section">
+        <el-form
+          class="form-horizontal"
+          label-width="100px"
+          label-position="right"
+          :model="horizontalForm"
+          style="max-width: 720px;"
+        >
+          <el-form-item label="计划名称">
+            <el-input
+              v-model="horizontalForm.name"
+              placeholder="请输入培训计划名称"
+              style="max-width: 480px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="培训类型">
+            <el-select
+              v-model="horizontalForm.type"
+              placeholder="请选择培训类型"
+              style="max-width: 480px;"
+            >
+              <el-option label="新员工入职培训" value="onboarding"></el-option>
+              <el-option label="产品知识培训" value="product"></el-option>
+              <el-option label="销售技能培训" value="sales"></el-option>
+              <el-option label="管理层领导力" value="leadership"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="计划描述">
+            <el-input
+              v-model="horizontalForm.desc"
+              type="textarea"
+              :rows="3"
+              placeholder="请简要描述本次培训的目标和内容"
+              style="max-width: 480px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="开始日期">
+            <el-date-picker
+              v-model="horizontalForm.date"
+              type="date"
+              placeholder="选择开始日期"
+              style="max-width: 480px;"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item label="是否启用">
+            <el-switch v-model="horizontalForm.enabled"></el-switch>
+          </el-form-item>
+          <el-form-item>
+            <div class="form-actions">
+              <el-button type="primary">保存</el-button>
+              <el-button>取消</el-button>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <!-- 2. 垂直表单 -->
+      <div class="section-title">垂直表单（label-top）</div>
+        <div class="section-desc">标签在控件上方，适用于空间有限或需要强调字段名称的场景。</div>
+      <div class="section">
+        <el-form
+          class="form-vertical"
+          label-position="top"
+          :model="verticalForm"
+          style="max-width: 720px;"
+        >
+          <el-form-item label="名称">
+            <el-input
+              v-model="verticalForm.name"
+              placeholder="请输入名称"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="描述">
+            <el-input
+              v-model="verticalForm.desc"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入描述内容"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="日期">
+            <el-date-picker
+              v-model="verticalForm.date"
+              type="date"
+              placeholder="选择日期"
+              style="width: 100%;"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <div class="form-actions">
+              <el-button type="primary">提交</el-button>
+              <el-button>重置</el-button>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <!-- 3. 行内表单 -->
+      <div class="section-title">行内表单</div>
+        <div class="section-desc">所有字段排列在一行，适用于筛选栏、查询条件等空间紧凑的场景。</div>
+      <div class="section">
+        <el-form
+          class="form-inline"
+          :inline="true"
+          :model="inlineForm"
+        >
+          <el-form-item label="关键字">
+            <el-input
+              v-model="inlineForm.keyword"
+              placeholder="请输入关键字"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select
+              v-model="inlineForm.status"
+              placeholder="全部状态"
+              clearable
+              style="width: 140px;"
+            >
+              <el-option label="待审批" value="pending"></el-option>
+              <el-option label="已通过" value="approved"></el-option>
+              <el-option label="已驳回" value="rejected"></el-option>
+              <el-option label="已取消" value="cancelled"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="日期范围">
+            <el-date-picker
+              v-model="inlineForm.dateRange"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              style="width: 280px;"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary">查询</el-button>
+            <el-button>重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <!-- 4. 紧凑表单 -->
+      <div class="section-title">紧凑表单</div>
+        <div class="section-desc">减少间距，适用于信息密度较高的弹窗或侧边面板。</div>
+      <div class="section">
+        <el-form
+          class="form-compact"
+          label-width="100px"
+          label-position="right"
+          :model="compactForm"
+          style="max-width: 720px;"
+        >
+          <el-form-item label="计划名称">
+            <el-input
+              v-model="compactForm.name"
+              placeholder="请输入培训计划名称"
+              style="max-width: 360px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="培训类型">
+            <el-select
+              v-model="compactForm.type"
+              placeholder="请选择培训类型"
+              style="max-width: 360px;"
+            >
+              <el-option label="新员工入职培训" value="onboarding"></el-option>
+              <el-option label="产品知识培训" value="product"></el-option>
+              <el-option label="销售技能培训" value="sales"></el-option>
+              <el-option label="管理层领导力" value="leadership"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="计划描述">
+            <el-input
+              v-model="compactForm.desc"
+              type="textarea"
+              :rows="2"
+              placeholder="请简要描述"
+              style="max-width: 360px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="开始日期">
+            <el-date-picker
+              v-model="compactForm.date"
+              type="date"
+              placeholder="选择日期"
+              style="max-width: 360px;"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item label="是否启用">
+            <el-switch v-model="compactForm.enabled"></el-switch>
+          </el-form-item>
+          <el-form-item>
+            <div class="form-actions">
+              <el-button type="primary">保存</el-button>
+              <el-button>取消</el-button>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <!-- 5. Descriptions 组件 -->
+      <div class="section-title">Descriptions 描述列表</div>
+        <div class="section-desc">用于只读详情展示，常见于审批详情、订单概览等信息查看场景。</div>
+      <div class="section">
+
+        <!-- 标准模式 -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 12px;">标准模式（2 列 / 带边框）</div>
+          <el-descriptions
+            :column="2"
+            border
+            label-width="120px"
+          >
+            <el-descriptions-item label="供应商名称">杭州远景智能科技有限公司</el-descriptions-item>
+            <el-descriptions-item label="统一社会信用代码">91330100MA2ABXXX</el-descriptions-item>
+            <el-descriptions-item label="联系人">张明辉</el-descriptions-item>
+            <el-descriptions-item label="联系电话">138-0000-8888</el-descriptions-item>
+            <el-descriptions-item label="注册地址" :span="2">浙江省杭州市余杭区文一西路 969 号海创园 3 号楼 5 层</el-descriptions-item>
+            <el-descriptions-item label="合作状态">
+              <el-tag type="success" size="small">已签约</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="入库日期">2025-03-15</el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <!-- 紧凑模式 -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 12px;">紧凑模式（3 列 / small）</div>
+          <el-descriptions
+            :column="3"
+            border
+            size="small"
+          >
+            <el-descriptions-item label="订单编号">PO-20260701-0042</el-descriptions-item>
+            <el-descriptions-item label="订单金额">¥ 128,500.00</el-descriptions-item>
+            <el-descriptions-item label="下单日期">2026-07-01</el-descriptions-item>
+            <el-descriptions-item label="采购部门">华东大区销售部</el-descriptions-item>
+            <el-descriptions-item label="审批人">李建国</el-descriptions-item>
+            <el-descriptions-item label="订单状态">
+              <el-tag type="warning" size="small">待发货</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+
+        <!-- 无边框模式 -->
+        <div>
+          <div style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 12px;">无边框模式（2 列）</div>
+          <el-descriptions
+            :column="2"
+          >
+            <el-descriptions-item label="合同名称">2026 年度框架采购协议</el-descriptions-item>
+            <el-descriptions-item label="合同编号">HT-2026-FW-001</el-descriptions-item>
+            <el-descriptions-item label="甲方">杭州远景智能科技有限公司</el-descriptions-item>
+            <el-descriptions-item label="乙方">上海数联信息技术有限公司</el-descriptions-item>
+            <el-descriptions-item label="有效期">2026-01-01 至 2026-12-31</el-descriptions-item>
+            <el-descriptions-item label="签约状态">
+              <el-tag type="info" size="small">待签署</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue
+
+    const app = createApp({
+      setup() {
+        const horizontalForm = ref({
+          name: '',
+          type: '',
+          desc: '',
+          date: '',
+          enabled: true
+        })
+
+        const verticalForm = ref({
+          name: '',
+          desc: '',
+          date: ''
+        })
+
+        const inlineForm = ref({
+          keyword: '',
+          status: '',
+          dateRange: ''
+        })
+
+        const compactForm = ref({
+          name: '',
+          type: '',
+          desc: '',
+          date: '',
+          enabled: true
+        })
+
+        return {
+          horizontalForm,
+          verticalForm,
+          inlineForm,
+          compactForm
+        }
+      }
+    })
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, {
+      locale: zhCn
+    })
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component)
+    }
+
+    app.mount('#app')
+  </script>
+</body>
+</html>

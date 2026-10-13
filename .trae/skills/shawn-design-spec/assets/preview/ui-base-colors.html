@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Colors 色彩体系</title>
+  <link rel="stylesheet" href="preview-scaffold.css">
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+/* Trae-style color card */
+.color-card {
+  margin-bottom: 12px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.color-card-header {
+  padding: 12px 16px;
+  height: 94px;
+  display: flex;
+  align-items: flex-end;
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+  font-family: -apple-system, "PingFang SC", sans-serif;
+}
+.color-swatches {
+  display: flex;
+  height: 64px;
+}
+.color-swatch {
+  flex: 1;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.color-swatch-name {
+  font-size: 12px;
+  color: inherit;
+  opacity: 0.9;
+  line-height: 1.3;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+}
+.color-swatch-hex {
+  font-size: 12px;
+  color: inherit;
+  opacity: 0.7;
+  line-height: 1.3;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+}
+
+/* Original styles for special groups */
+.color-row {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.swatch {
+  aspect-ratio: 1 / 0.85;
+  min-height: 64px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 6px 8px;
+  position: relative;
+  transition: transform 0.15s;
+}
+.swatch:hover { transform: translateY(-2px); }
+.swatch.main-color {
+  outline: 2.5px solid currentColor;
+  outline-offset: 2px;
+}
+.swatch .level {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: "Roboto Mono", monospace;
+  line-height: 1.3;
+}
+.swatch .hex {
+  font-size: 10px;
+  font-family: "Roboto Mono", monospace;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+.swatch .hint {
+  font-size: 9px;
+  line-height: 1.3;
+  opacity: 0.7;
+  margin-top: 1px;
+}
+.swatch .badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 8px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.9);
+  color: #0C0D0E;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #42464E;
+  margin-bottom: 8px;
+}
+.neutral-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.neutral-swatch {
+  height: 52px;
+  min-width: 80px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 5px 8px;
+}
+.neutral-swatch span {
+  font-size: 10px;
+  font-family: "Roboto Mono", monospace;
+  line-height: 1.4;
+}
+.neutral-swatch .label-hint {
+  font-size: 9px;
+  font-family: "PingFang SC", sans-serif;
+}
+.ai-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.ai-swatch {
+  height: 60px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 6px 8px;
+}
+.ai-swatch span {
+  font-size: 10px;
+  font-family: "Roboto Mono", monospace;
+  line-height: 1.4;
+  color: #fff;
+}
+  </style>
+</head>
+<body>
+
+  <div class="pv-header">
+    <h1>Colors 色彩体系</h1>
+    <p>品牌色、中性色、语义色完整色阶（1-8级），第 6 级为主色。</p>
+  </div>
+
+  <!-- Brand Blue - Trae style -->
+  <div class="color-card">
+    <div class="color-card-header" style="background:#1764E8">Brand Blue 品牌蓝</div>
+    <div class="color-swatches">
+      <div class="color-swatch" style="background:#F3F6FE;color:#737A87"><span class="color-swatch-name">1</span><span class="color-swatch-hex">#F3F6FE</span></div>
+      <div class="color-swatch" style="background:#E6EDFC;color:#737A87"><span class="color-swatch-name">2</span><span class="color-swatch-hex">#E6EDFC</span></div>
+      <div class="color-swatch" style="background:#A5BFF2;color:#fff"><span class="color-swatch-name">3</span><span class="color-swatch-hex">#A5BFF2</span></div>
+      <div class="color-swatch" style="background:#7DA4EC;color:#fff"><span class="color-swatch-name">4</span><span class="color-swatch-hex">#7DA4EC</span></div>
+      <div class="color-swatch" style="background:#3678E2;color:#fff"><span class="color-swatch-name">5</span><span class="color-swatch-hex">#3678E2</span></div>
+      <div class="color-swatch" style="background:#1764E8;color:#fff"><span class="color-swatch-name">6 ★ 主色</span><span class="color-swatch-hex">#1764E8</span></div>
+      <div class="color-swatch" style="background:#1250BA;color:#fff"><span class="color-swatch-name">7</span><span class="color-swatch-hex">#1250BA</span></div>
+      <div class="color-swatch" style="background:#0E3F97;color:#fff"><span class="color-swatch-name">8</span><span class="color-swatch-hex">#0E3F97</span></div>
+    </div>
+  </div>
+
+  <!-- AI Brand - Original style -->
+  <div class="pv-section">
+    <div class="pv-section__title">AI Brand 智能化品牌色</div>
+    <div class="ai-row">
+      <div class="ai-swatch" style="background: linear-gradient(135deg,#1A6BE3,#8404EC); flex:0 0 64px">
+        <span>AI</span>
+      </div>
+      <div class="ai-swatch" style="background:#1A6BE3; flex:1">
+        <span>AI Blue</span><span>#1A6BE3</span>
+      </div>
+      <div class="ai-swatch" style="background:#0D43C0; flex:1">
+        <span>AI Deep</span><span>#0D43C0</span>
+      </div>
+      <div class="ai-swatch" style="background:#8404EC; flex:1">
+        <span>AI Purple</span><span>#8404EC</span>
+      </div>
+      <div style="flex:4"></div>
+    </div>
+  </div>
+
+  <!-- Neutral - Original style -->
+  <div class="pv-section">
+    <div class="pv-section__title">Neutral 中性色</div>
+
+    <div class="group-label">Text 文本色（rgba 透明度方案）</div>
+    <div class="neutral-row">
+      <div class="neutral-swatch" style="background:rgba(0,0,0,0.85); min-width:110px">
+        <span style="color:#fff">rgba(0,0,0,0.85)</span>
+        <span class="label-hint" style="color:#ddd">--text-primary 主标题/正文</span>
+      </div>
+      <div class="neutral-swatch" style="background:rgba(0,0,0,0.65); min-width:110px">
+        <span style="color:#fff">rgba(0,0,0,0.65)</span>
+        <span class="label-hint" style="color:#ddd">--text-secondary 次强调</span>
+      </div>
+      <div class="neutral-swatch" style="background:rgba(0,0,0,0.45); min-width:110px">
+        <span style="color:#fff">rgba(0,0,0,0.45)</span>
+        <span class="label-hint" style="color:#ddd">--text-tertiary 次要/辅助</span>
+      </div>
+      <div class="neutral-swatch" style="background:rgba(0,0,0,0.25); min-width:110px">
+        <span style="color:#666">rgba(0,0,0,0.25)</span>
+        <span class="label-hint" style="color:#666">--text-disabled 置灰/禁用</span>
+      </div>
+      <div class="neutral-swatch" style="background:#1764E8; min-width:90px">
+        <span style="color:#fff">#1764E8</span>
+        <span class="label-hint" style="color:#ddd">链接色</span>
+      </div>
+    </div>
+
+    <div class="group-label">Fill & Background 填充/背景</div>
+    <div class="neutral-row">
+      <div class="neutral-swatch" style="background:#FFFFFF; border:1px solid #EAEDF1; min-width:80px">
+        <span style="color:#737A87">#FFFFFF</span>
+        <span class="label-hint" style="color:#737A87">bg-1</span>
+      </div>
+      <div class="neutral-swatch" style="background:#FCFDFE; border:1px solid #EAEDF1; min-width:80px">
+        <span style="color:#737A87">#FCFDFE</span>
+        <span class="label-hint" style="color:#737A87">bg-2</span>
+      </div>
+      <div class="neutral-swatch" style="background:#FAFBFC; border:1px solid #EAEDF1; min-width:80px">
+        <span style="color:#737A87">#FAFBFC</span>
+        <span class="label-hint" style="color:#737A87">bg-3</span>
+      </div>
+      <div class="neutral-swatch" style="background:#F6F8FA; border:1px solid #EAEDF1; min-width:80px">
+        <span style="color:#737A87">#F6F8FA</span>
+        <span class="label-hint" style="color:#737A87">bg-4</span>
+      </div>
+      <div class="neutral-swatch" style="background:#F1F3F5; border:1px solid #EAEDF1; min-width:80px">
+        <span style="color:#737A87">#F1F3F5</span>
+        <span class="label-hint" style="color:#737A87">bg-5</span>
+      </div>
+    </div>
+
+    <div class="group-label">Border 边框</div>
+    <div class="neutral-row">
+      <div class="neutral-swatch" style="background:#EAEDF1; border:1px solid #DDE2E9; min-width:100px">
+        <span style="color:#737A87">#EAEDF1</span>
+        <span class="label-hint" style="color:#737A87">浅色描边</span>
+      </div>
+      <div class="neutral-swatch" style="background:#DDE2E9; min-width:100px">
+        <span style="color:#fff">#DDE2E9</span>
+        <span class="label-hint" style="color:#ddd">默认描边</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success - Trae style -->
+  <div class="color-card">
+    <div class="color-card-header" style="background:#2A814B">Success 成功色</div>
+    <div class="color-swatches">
+      <div class="color-swatch" style="background:#EEF9F1;color:#2A814B"><span class="color-swatch-name">1</span><span class="color-swatch-hex">#EEF9F1</span></div>
+      <div class="color-swatch" style="background:#E1F6E6;color:#2A814B"><span class="color-swatch-name">2</span><span class="color-swatch-hex">#E1F6E6</span></div>
+      <div class="color-swatch" style="background:#7CCD94;color:#fff"><span class="color-swatch-name">3</span><span class="color-swatch-hex">#7CCD94</span></div>
+      <div class="color-swatch" style="background:#5CAE77;color:#fff"><span class="color-swatch-name">4</span><span class="color-swatch-hex">#5CAE77</span></div>
+      <div class="color-swatch" style="background:#309256;color:#fff"><span class="color-swatch-name">5</span><span class="color-swatch-hex">#309256</span></div>
+      <div class="color-swatch" style="background:#2A814B;color:#fff"><span class="color-swatch-name">6 ★ 主色</span><span class="color-swatch-hex">#2A814B</span></div>
+      <div class="color-swatch" style="background:#237040;color:#fff"><span class="color-swatch-name">7</span><span class="color-swatch-hex">#237040</span></div>
+      <div class="color-swatch" style="background:#1C5E35;color:#fff"><span class="color-swatch-name">8</span><span class="color-swatch-hex">#1C5E35</span></div>
+    </div>
+  </div>
+
+  <!-- Warning - Trae style -->
+  <div class="color-card">
+    <div class="color-card-header" style="background:#BD7E00">Warning 警告色</div>
+    <div class="color-swatches">
+      <div class="color-swatch" style="background:#FEF8EB;color:#BD7E00"><span class="color-swatch-name">1</span><span class="color-swatch-hex">#FEF8EB</span></div>
+      <div class="color-swatch" style="background:#FFF3DC;color:#BD7E00"><span class="color-swatch-name">2</span><span class="color-swatch-hex">#FFF3DC</span></div>
+      <div class="color-swatch" style="background:#F9C76D;color:#fff"><span class="color-swatch-name">3</span><span class="color-swatch-hex">#F9C76D</span></div>
+      <div class="color-swatch" style="background:#F0A50F;color:#fff"><span class="color-swatch-name">4</span><span class="color-swatch-hex">#F0A50F</span></div>
+      <div class="color-swatch" style="background:#D08D06;color:#fff"><span class="color-swatch-name">5</span><span class="color-swatch-hex">#D08D06</span></div>
+      <div class="color-swatch" style="background:#BD7E00;color:#fff"><span class="color-swatch-name">6 ★ 主色</span><span class="color-swatch-hex">#BD7E00</span></div>
+      <div class="color-swatch" style="background:#996600;color:#fff"><span class="color-swatch-name">7</span><span class="color-swatch-hex">#996600</span></div>
+      <div class="color-swatch" style="background:#7A5200;color:#fff"><span class="color-swatch-name">8</span><span class="color-swatch-hex">#7A5200</span></div>
+    </div>
+  </div>
+
+  <!-- Danger - Trae style -->
+  <div class="color-card">
+    <div class="color-card-header" style="background:#D7312A">Danger 危险色</div>
+    <div class="color-swatches">
+      <div class="color-swatch" style="background:#FDF5F5;color:#D7312A"><span class="color-swatch-name">1</span><span class="color-swatch-hex">#FDF5F5</span></div>
+      <div class="color-swatch" style="background:#FFECEC;color:#D7312A"><span class="color-swatch-name">2</span><span class="color-swatch-hex">#FFECEC</span></div>
+      <div class="color-swatch" style="background:#FFA3A0;color:#fff"><span class="color-swatch-name">3</span><span class="color-swatch-hex">#FFA3A0</span></div>
+      <div class="color-swatch" style="background:#FF706D;color:#fff"><span class="color-swatch-name">4</span><span class="color-swatch-hex">#FF706D</span></div>
+      <div class="color-swatch" style="background:#EE3F38;color:#fff"><span class="color-swatch-name">5</span><span class="color-swatch-hex">#EE3F38</span></div>
+      <div class="color-swatch" style="background:#D7312A;color:#fff"><span class="color-swatch-name">6 ★ 主色</span><span class="color-swatch-hex">#D7312A</span></div>
+      <div class="color-swatch" style="background:#BD2923;color:#fff"><span class="color-swatch-name">7</span><span class="color-swatch-hex">#BD2923</span></div>
+      <div class="color-swatch" style="background:#9F211C;color:#fff"><span class="color-swatch-name">8</span><span class="color-swatch-hex">#9F211C</span></div>
+    </div>
+  </div>
+
+  <!-- Teal - Trae style -->
+  <div class="color-card">
+    <div class="color-card-header" style="background:#24758E">Teal 青色</div>
+    <div class="color-swatches">
+      <div class="color-swatch" style="background:#EEF8FF;color:#24758E"><span class="color-swatch-name">1</span><span class="color-swatch-hex">#EEF8FF</span></div>
+      <div class="color-swatch" style="background:#E4F3FC;color:#24758E"><span class="color-swatch-name">2</span><span class="color-swatch-hex">#E4F3FC</span></div>
+      <div class="color-swatch" style="background:#80C5E0;color:#fff"><span class="color-swatch-name">3</span><span class="color-swatch-hex">#80C5E0</span></div>
+      <div class="color-swatch" style="background:#58A8C4;color:#fff"><span class="color-swatch-name">4</span><span class="color-swatch-hex">#58A8C4</span></div>
+      <div class="color-swatch" style="background:#3888A3;color:#fff"><span class="color-swatch-name">5</span><span class="color-swatch-hex">#3888A3</span></div>
+      <div class="color-swatch" style="background:#24758E;color:#fff"><span class="color-swatch-name">6 ★ 主色</span><span class="color-swatch-hex">#24758E</span></div>
+      <div class="color-swatch" style="background:#076C85;color:#fff"><span class="color-swatch-name">7</span><span class="color-swatch-hex">#076C85</span></div>
+      <div class="color-swatch" style="background:#005A70;color:#fff"><span class="color-swatch-name">8</span><span class="color-swatch-hex">#005A70</span></div>
+    </div>
+  </div>
+
+  <!-- Violet - Trae style -->
+  <div class="color-card">
+    <div class="color-card-header" style="background:#6E4C9F">Violet 紫色</div>
+    <div class="color-swatches">
+      <div class="color-swatch" style="background:#FAF4FF;color:#6E4C9F"><span class="color-swatch-name">1</span><span class="color-swatch-hex">#FAF4FF</span></div>
+      <div class="color-swatch" style="background:#F2EAFB;color:#6E4C9F"><span class="color-swatch-name">2</span><span class="color-swatch-hex">#F2EAFB</span></div>
+      <div class="color-swatch" style="background:#C1A3ED;color:#fff"><span class="color-swatch-name">3</span><span class="color-swatch-hex">#C1A3ED</span></div>
+      <div class="color-swatch" style="background:#A285D4;color:#fff"><span class="color-swatch-name">4</span><span class="color-swatch-hex">#A285D4</span></div>
+      <div class="color-swatch" style="background:#876EB8;color:#fff"><span class="color-swatch-name">5</span><span class="color-swatch-hex">#876EB8</span></div>
+      <div class="color-swatch" style="background:#6E4C9F;color:#fff"><span class="color-swatch-name">6 ★ 主色</span><span class="color-swatch-hex">#6E4C9F</span></div>
+      <div class="color-swatch" style="background:#603F8E;color:#fff"><span class="color-swatch-name">7</span><span class="color-swatch-hex">#603F8E</span></div>
+      <div class="color-swatch" style="background:#532D86;color:#fff"><span class="color-swatch-name">8</span><span class="color-swatch-hex">#532D86</span></div>
+    </div>
+  </div>
+
+</body>
+</html>

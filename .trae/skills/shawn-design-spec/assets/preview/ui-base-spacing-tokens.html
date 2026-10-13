@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Spacing 间距</title>
+  <link rel="stylesheet" href="preview-scaffold.css">
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+.spacing-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.bar-wrap {
+  width: 200px;
+  display: flex;
+  align-items: center;
+}
+.bar {
+  height: 20px;
+  background: #1764E8;
+  border-radius: 2px;
+  opacity: 0.85;
+}
+.token-name {
+  min-width: 110px;
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: #1764E8;
+  font-weight: 500;
+}
+.token-value {
+  min-width: 44px;
+  font-size: 11px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: rgba(0,0,0,0.65);
+  font-weight: 500;
+}
+.token-desc {
+  font-size: 12px;
+  color: rgba(0,0,0,0.45);
+}
+
+/* Pattern card */
+.pattern-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.pattern-label {
+  font-size: 11px;
+  color: #1764E8;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.pattern-css {
+  background: #f5f7fa;
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  color: rgba(0,0,0,0.65);
+  line-height: 1.6;
+  margin-top: 12px;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Visual demo */
+.demo-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.demo-card-label {
+  font-size: 11px;
+  color: rgba(0,0,0,0.45);
+  padding: 8px 12px;
+  background: #f5f7fa;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+}
+.demo-card-inner {
+  background: #e8f0fe;
+  position: relative;
+}
+.demo-card-content {
+  background: #fff;
+  border: 1px dashed #1764E8;
+  border-radius: 2px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #1764E8;
+  font-family: "SFMono-Regular", "SF Mono", monospace;
+  min-height: 40px;
+}
+  </style>
+</head>
+<body>
+
+  <div class="pv-header">
+    <h1>Spacing 间距</h1>
+    <p>间距 token、常用布局间距模式与页面布局宽度定义。</p>
+  </div>
+
+  <!-- Base Scale -->
+  <div class="pv-section">
+    <div class="pv-section__title">Base Scale 基础间距</div>
+    <div class="stack-12">
+      <div class="spacing-row">
+        <div class="token-name">--spacing-xs</div>
+        <div class="token-value">4px</div>
+        <div class="bar-wrap"><div class="bar" style="width:4px"></div></div>
+        <div class="token-desc">图标间距 · 紧凑元素</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-sm</div>
+        <div class="token-value">8px</div>
+        <div class="bar-wrap"><div class="bar" style="width:8px"></div></div>
+        <div class="token-desc">按钮间距 · 元素内边距</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-md</div>
+        <div class="token-value">12px</div>
+        <div class="bar-wrap"><div class="bar" style="width:12px"></div></div>
+        <div class="token-desc">表单项间距（紧凑） · 卡片内边距</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-lg</div>
+        <div class="token-value">16px</div>
+        <div class="bar-wrap"><div class="bar" style="width:16px"></div></div>
+        <div class="token-desc">卡片间距 · 表单项间距（标准）</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-20</div>
+        <div class="token-value">20px</div>
+        <div class="bar-wrap"><div class="bar" style="width:20px"></div></div>
+        <div class="token-desc">页面容器内边距 · 卡片内边距（标准）</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-xl</div>
+        <div class="token-value">24px</div>
+        <div class="bar-wrap"><div class="bar" style="width:24px"></div></div>
+        <div class="token-desc">大区块间距 · 模块分隔</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-xxl</div>
+        <div class="token-value">32px</div>
+        <div class="bar-wrap"><div class="bar" style="width:32px"></div></div>
+        <div class="token-desc">页面边距 · 大区域留白</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-40</div>
+        <div class="token-value">40px</div>
+        <div class="bar-wrap"><div class="bar" style="width:40px"></div></div>
+        <div class="token-desc">标题区与内容区间距</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-48</div>
+        <div class="token-value">48px</div>
+        <div class="bar-wrap"><div class="bar" style="width:48px"></div></div>
+        <div class="token-desc">大模块分隔 · 卡片群组间距</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name">--spacing-64</div>
+        <div class="token-value">64px</div>
+        <div class="bar-wrap"><div class="bar" style="width:64px"></div></div>
+        <div class="token-desc">页面级留白 · 最大间距</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common Layout Patterns -->
+  <div class="pv-section">
+    <div class="pv-section__title">常用布局间距模式</div>
+
+    <!-- Card Padding -->
+    <div class="pattern-card">
+      <div class="pattern-label">卡片内边距</div>
+      <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">padding: 12px（紧凑）</div>
+            <div class="demo-card-inner" style="padding: 12px;">
+              <div class="demo-card-content">内容区域</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">表格卡片、数据密集型卡片</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">padding: 12px 16px（标准）</div>
+            <div class="demo-card-inner" style="padding: 12px 16px;">
+              <div class="demo-card-content">内容区域</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">筛选栏、表单卡片、信息展示</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">padding: 16px 20px（宽松）</div>
+            <div class="demo-card-inner" style="padding: 16px 20px;">
+              <div class="demo-card-content">内容区域</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">独立表单页、详情页 banner</div>
+        </div>
+      </div>
+      <div class="pattern-css">/* 紧凑卡片（表格、数据密集） */
+padding: 12px;
+
+/* 标准卡片（筛选栏、表单、信息展示） */
+padding: 12px 16px;
+
+/* 宽松卡片（表单页、详情页） */
+padding: 16px 20px;</div>
+    </div>
+
+    <!-- Section Spacing -->
+    <div class="pattern-card">
+      <div class="pattern-label">区域间距</div>
+      <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">gap: 12px（紧凑）</div>
+            <div class="demo-card-inner" style="padding: 12px; display: flex; flex-direction: column; gap: 12px;">
+              <div class="demo-card-content" style="min-height: 24px;">筛选栏</div>
+              <div class="demo-card-content" style="min-height: 24px;">表格</div>
+              <div class="demo-card-content" style="min-height: 24px;">分页</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">筛选栏与表格、表格与分页</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">gap: 16px（标准）</div>
+            <div class="demo-card-inner" style="padding: 12px; display: flex; flex-direction: column; gap: 16px;">
+              <div class="demo-card-content" style="min-height: 24px;">卡片 A</div>
+              <div class="demo-card-content" style="min-height: 24px;">卡片 B</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">卡片之间、模块之间</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">gap: 24px（宽松）</div>
+            <div class="demo-card-inner" style="padding: 12px; display: flex; flex-direction: column; gap: 24px;">
+              <div class="demo-card-content" style="min-height: 24px;">区块 A</div>
+              <div class="demo-card-content" style="min-height: 24px;">区块 B</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">大模块分隔、页面区块</div>
+        </div>
+      </div>
+      <div class="pattern-css">/* 筛选栏↔表格↔分页 */
+gap: 12px;
+
+/* 卡片之间、模块之间 */
+gap: 16px;
+
+/* 大模块分隔 */
+gap: 24px;</div>
+    </div>
+
+    <!-- Form Spacing -->
+    <div class="pattern-card">
+      <div class="pattern-label">表单间距</div>
+      <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">margin-bottom: 12px（紧凑）</div>
+            <div class="demo-card-inner" style="padding: 12px 16px;">
+              <div class="demo-card-content" style="min-height: 20px; margin-bottom: 12px;">表单项 1</div>
+              <div class="demo-card-content" style="min-height: 20px; margin-bottom: 12px;">表单项 2</div>
+              <div class="demo-card-content" style="min-height: 20px;">表单项 3</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">弹框内表单、抽屉内表单</div>
+        </div>
+        <div style="flex: 1;">
+          <div class="demo-card">
+            <div class="demo-card-label">margin-bottom: 16px（标准）</div>
+            <div class="demo-card-inner" style="padding: 12px 16px;">
+              <div class="demo-card-content" style="min-height: 20px; margin-bottom: 16px;">表单项 1</div>
+              <div class="demo-card-content" style="min-height: 20px; margin-bottom: 16px;">表单项 2</div>
+              <div class="demo-card-content" style="min-height: 20px;">表单项 3</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: rgba(0,0,0,0.45); margin-top: 4px;">独立表单页、详情页表单</div>
+        </div>
+      </div>
+      <div class="pattern-css">/* 弹框/抽屉内表单 */
+.el-form-item { margin-bottom: 12px; }
+
+/* 独立表单页 */
+.el-form-item { margin-bottom: 16px; }</div>
+    </div>
+  </div>
+
+  <!-- Layout Widths -->
+  <div class="pv-section">
+    <div class="pv-section__title">Layout Widths 页面布局宽度</div>
+    <div class="stack-12">
+      <div class="spacing-row">
+        <div class="token-name" style="min-width:60px">1440px</div>
+        <div class="bar-wrap"><div class="bar" style="width:200px;background:#1764E8"></div></div>
+        <div class="token-desc">标准页面宽度（默认使用）</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name" style="min-width:60px">1280px</div>
+        <div class="bar-wrap"><div class="bar" style="width:178px;background:#3678E2"></div></div>
+        <div class="token-desc">笔记本兼容（特殊场景）</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name" style="min-width:60px">980px</div>
+        <div class="bar-wrap"><div class="bar" style="width:136px;background:#7da4ec"></div></div>
+        <div class="token-desc">大弹框 / 抽屉详情页（详情页用 drawer 承接）</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name" style="min-width:60px">720px</div>
+        <div class="bar-wrap"><div class="bar" style="width:100px;background:#7da4ec"></div></div>
+        <div class="token-desc">抽屉（大部分场景）</div>
+      </div>
+      <div class="spacing-row">
+        <div class="token-name" style="min-width:60px">480px</div>
+        <div class="bar-wrap"><div class="bar" style="width:67px;background:#a5bff2"></div></div>
+        <div class="token-desc">弹框（大部分场景）</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

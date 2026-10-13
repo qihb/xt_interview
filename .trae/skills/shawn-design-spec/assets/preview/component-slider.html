@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slider 滑块</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/locale/zh-cn.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--page-bg);
+      color: var(--text-primary);
+      padding: 24px 32px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 16px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .demo-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .slider-block {
+      margin-bottom: 20px;
+    }
+
+    .slider-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .slider-demo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-demo .el-slider {
+      flex: 1;
+    }
+
+    .slider-value {
+      font-size: 13px;
+      color: var(--text-secondary);
+      min-width: 80px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-header">
+      <h1>Slider 滑块</h1>
+      <p>滑动输入组件，支持基础单值滑动、范围选择、带标记和不同尺寸。</p>
+    </div>
+
+    <!-- 基础滑块 -->
+    <div class="section-title">基础滑块</div>
+    <div class="card">
+      <div class="slider-block">
+        <div class="demo-label">默认值 40</div>
+        <div class="slider-demo">
+          <el-slider v-model="value1"></el-slider>
+          <span class="slider-value">{{ value1 }}</span>
+        </div>
+      </div>
+      <div class="slider-block">
+        <div class="demo-label">自定义初始值</div>
+        <div class="slider-demo">
+          <el-slider v-model="value2"></el-slider>
+          <span class="slider-value">{{ value2 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 禁用 -->
+    <div class="section-title">禁用状态</div>
+    <div class="card">
+      <div class="slider-block">
+        <el-slider v-model="valueDisabled" disabled></el-slider>
+      </div>
+    </div>
+
+    <!-- 范围选择 -->
+    <div class="section-title">范围选择（Range）</div>
+    <div class="card">
+      <div class="slider-block">
+        <div class="demo-label">拖拽两端选择范围</div>
+        <div class="slider-demo">
+          <el-slider v-model="valueRange" range show-stops :max="100"></el-slider>
+          <span class="slider-value">{{ valueRange[0] }} - {{ valueRange[1] }}</span>
+        </div>
+      </div>
+      <div class="slider-block">
+        <div class="demo-label">范围禁用</div>
+        <el-slider v-model="valueRangeDisabled" range disabled></el-slider>
+      </div>
+    </div>
+
+    <!-- 带标记 -->
+    <div class="section-title">带标记（Marks）</div>
+    <div class="card">
+      <div class="slider-block">
+        <el-slider v-model="valueMarks" :marks="marks"></el-slider>
+      </div>
+    </div>
+
+    <!-- 不同尺寸 -->
+    <div class="section-title">不同尺寸</div>
+    <div class="card">
+      <div class="slider-block">
+        <div class="demo-label">Large</div>
+        <el-slider v-model="valueSize" size="large"></el-slider>
+      </div>
+      <div class="slider-block">
+        <div class="demo-label">Default</div>
+        <el-slider v-model="valueSize"></el-slider>
+      </div>
+      <div class="slider-block">
+        <div class="demo-label">Small</div>
+        <el-slider v-model="valueSize" size="small"></el-slider>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { ref, reactive } = Vue;
+
+    const app = Vue.createApp({
+      setup() {
+        const value1 = ref(40);
+        const value2 = ref(60);
+        const valueDisabled = ref(30);
+        const valueRange = ref([20, 60]);
+        const valueRangeDisabled = ref([25, 55]);
+        const valueMarks = ref(30);
+        const valueSize = ref(50);
+
+        const marks = reactive({
+          0: '0',
+          20: '20',
+          40: '40',
+          60: '60',
+          80: '80',
+          100: '100'
+        });
+
+        return {
+          value1,
+          value2,
+          valueDisabled,
+          valueRange,
+          valueRangeDisabled,
+          valueMarks,
+          valueSize,
+          marks
+        };
+      }
+    });
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, {
+      locale: zhCn
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+</html>

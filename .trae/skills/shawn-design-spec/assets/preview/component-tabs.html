@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabs 标签页</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/locale/zh-cn.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-stack);
+      background: var(--page-bg);
+      color: var(--text-primary);
+      padding: 24px;
+    }
+    .pv-header {
+      margin-bottom: 32px;
+    }
+    .pv-header h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .pv-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .pv-section {
+      margin-bottom: 32px;
+    }
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+    .demo-box {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .stack-12 {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .tab-label-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-label-custom .el-icon {
+      font-size: 14px;
+    }
+    .tab-panel-content {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.8;
+      padding: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="pv-header">
+      <h1>Tabs 标签页</h1>
+      <p>选项卡组件，基于 Element Plus el-tabs 实现，支持 line、card 类型，图标标签和可编辑模式。</p>
+    </div>
+
+    <!-- 变体 1: 基础标签页 -->
+    <div class="pv-section">
+      <div class="section-title">基础标签页</div>
+      <div class="stack-12">
+        <div class="demo-box">
+          <el-tabs v-model="activeTab1">
+            <el-tab-pane label="基本信息" name="info">
+              <div class="tab-panel-content">
+                <p>项目名称：智能监控平台 V3.0</p>
+                <p>创建时间：2024-06-15</p>
+                <p>所属团队：技术部 · 基础架构组</p>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="监控数据" name="monitor">
+              <div class="tab-panel-content">
+                <p>当前服务可用率 99.97%，平均响应时间 42ms，峰值 QPS 达到 12,000。</p>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="变更历史" name="history">
+              <div class="tab-panel-content">
+                <p>最近一次变更：2025-01-10 升级至 V3.2.1，优化了告警收敛算法。</p>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+    </div>
+
+    <!-- 变体 2: 卡片标签页 -->
+    <div class="pv-section">
+      <div class="section-title">卡片标签页</div>
+      <div class="stack-12">
+        <div class="demo-box">
+          <el-tabs v-model="activeTab2" type="card">
+            <el-tab-pane label="规则管理" name="rules">
+              <div class="tab-panel-content">
+                <p>当前已配置 48 条告警规则，其中 12 条处于启用状态，覆盖 CPU、内存、磁盘、网络等核心指标。</p>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="配置详情" name="config">
+              <div class="tab-panel-content">
+                <p>告警通道：企业微信、短信、邮件。静默时段：每日 00:00 - 07:00。</p>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="监控面板" name="dashboard">
+              <div class="tab-panel-content">
+                <p>已创建 6 个监控面板，包含基础设施概览、业务指标大盘、告警趋势分析等。</p>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+    </div>
+
+    <!-- 变体 3: 带图标 -->
+    <div class="pv-section">
+      <div class="section-title">带图标</div>
+      <div class="stack-12">
+        <div class="demo-box">
+          <el-tabs v-model="activeTab3">
+            <el-tab-pane name="info">
+              <template #label>
+                <span class="tab-label-custom">
+                  <el-icon><component :is="'Document'"></component></el-icon>
+                  <span>基本信息</span>
+                </span>
+              </template>
+              <div class="tab-panel-content">
+                <p>项目名称：智能监控平台 V3.0</p>
+                <p>创建时间：2024-06-15</p>
+                <p>所属团队：技术部 · 基础架构组</p>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane name="monitor">
+              <template #label>
+                <span class="tab-label-custom">
+                  <el-icon><component :is="'DataLine'"></component></el-icon>
+                  <span>监控数据</span>
+                </span>
+              </template>
+              <div class="tab-panel-content">
+                <p>当前服务可用率 99.97%，平均响应时间 42ms，峰值 QPS 达到 12,000。</p>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane name="history">
+              <template #label>
+                <span class="tab-label-custom">
+                  <el-icon><component :is="'Clock'"></component></el-icon>
+                  <span>变更历史</span>
+                </span>
+              </template>
+              <div class="tab-panel-content">
+                <p>最近一次变更：2025-01-10 升级至 V3.2.1，优化了告警收敛算法。</p>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane name="logs">
+              <template #label>
+                <span class="tab-label-custom">
+                  <el-icon><component :is="'Tickets'"></component></el-icon>
+                  <span>操作日志</span>
+                </span>
+              </template>
+              <div class="tab-panel-content">
+                <p>最近操作：管理员 张三 于 2025-01-12 14:30 修改了告警阈值配置。</p>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+    </div>
+
+    <!-- 变体 4: 可增减 -->
+    <div class="pv-section">
+      <div class="section-title">可增减</div>
+      <div class="stack-12">
+        <div class="demo-box">
+          <el-tabs v-model="editableTab" type="card" editable @edit="handleEdit">
+            <el-tab-pane
+              v-for="item in editableTabs"
+              :key="item.name"
+              :label="item.title"
+              :name="item.name"
+            >
+              <div class="tab-panel-content">
+                <p>{{ item.content }}</p>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue;
+    const app = createApp({
+      setup() {
+        const activeTab1 = ref('info');
+        const activeTab2 = ref('rules');
+        const activeTab3 = ref('info');
+        const editableTab = ref('1');
+        const tabIndex = ref(3);
+        const editableTabs = ref([
+          { title: '规则管理', name: '1', content: '当前已配置 48 条告警规则，其中 12 条处于启用状态。' },
+          { title: '配置详情', name: '2', content: '告警通道：企业微信、短信、邮件。静默时段：每日 00:00 - 07:00。' },
+          { title: '操作日志', name: '3', content: '最近操作：管理员 张三 于 2025-01-12 14:30 修改了告警阈值配置。' },
+        ]);
+
+        const handleEdit = (targetName, action) => {
+          if (action === 'add') {
+            const newTabName = ++tabIndex.value + '';
+            editableTabs.value.push({
+              title: '新标签页',
+              name: newTabName,
+              content: '这是新添加的标签页内容。',
+            });
+            editableTab.value = newTabName;
+          } else if (action === 'remove') {
+            const tabs = editableTabs.value;
+            let activeName = editableTab.value;
+            if (activeName === targetName) {
+              tabs.forEach((tab, index) => {
+                if (tab.name === targetName) {
+                  const nextTab = tabs[index + 1] || tabs[index - 1];
+                  if (nextTab) {
+                    activeName = nextTab.name;
+                  }
+                }
+              });
+            }
+            editableTab.value = activeName;
+            editableTabs.value = tabs.filter((tab) => tab.name !== targetName);
+          }
+        };
+
+        return {
+          activeTab1,
+          activeTab2,
+          activeTab3,
+          editableTab,
+          editableTabs,
+          handleEdit,
+        };
+      }
+    });
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, { locale: zhCn });
+    app.mount('#app');
+  </script>
+</body>
+</html>

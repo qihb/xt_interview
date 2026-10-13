@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drawer 抽屉</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--page-bg);
+      color: var(--text-primary);
+      padding: 40px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .section {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 12px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    .demo-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-header">
+      <h1>Drawer 抽屉</h1>
+      <p>从屏幕边缘滑入的浮层面板，用于承载次级操作或详情展示。</p>
+    </div>
+
+    <!-- 基础抽屉 -->
+    <div class="section-title">基础抽屉</div>
+    <div class="section">
+      <div class="demo-row">
+        <el-button type="primary" @click="drawer1 = true">打开基础抽屉</el-button>
+      </div>
+      <el-drawer v-model="drawer1" title="基础抽屉">
+        <p>这是抽屉的内容区域。</p>
+        <template #footer>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <el-button @click="drawer1 = false">取消</el-button>
+            <el-button type="primary" @click="drawer1 = false">确定</el-button>
+          </div>
+        </template>
+      </el-drawer>
+    </div>
+
+    <!-- 不同方向 -->
+    <div class="section-title">不同方向</div>
+    <div class="section">
+      <div class="demo-row">
+        <el-button @click="openDrawer('rtl')">从右往左 (rtl)</el-button>
+        <el-button @click="openDrawer('ltr')">从左往右 (ltr)</el-button>
+        <el-button @click="openDrawer('ttb')">从上往下 (ttb)</el-button>
+        <el-button @click="openDrawer('btt')">从下往上 (btt)</el-button>
+      </div>
+      <el-drawer v-model="drawerDirection" :direction="currentDirection" title="方向演示">
+        <p>当前方向：{{ currentDirection }}</p>
+      </el-drawer>
+    </div>
+
+    <!-- 自定义标题 -->
+    <div class="section-title">自定义标题</div>
+    <div class="section">
+      <div class="demo-row">
+        <el-button type="primary" @click="drawer2 = true">自定义标题抽屉</el-button>
+      </div>
+      <el-drawer v-model="drawer2" size="480">
+        <template #header>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <el-icon color="var(--color-primary)"><InfoFilled></InfoFilled></el-icon>
+            <span style="font-size: 16px; font-weight: 500;">服务详情</span>
+          </div>
+        </template>
+        <p>这是一个带有自定义标题的抽屉组件。</p>
+      </el-drawer>
+    </div>
+
+    <!-- 带操作按钮 -->
+    <div class="section-title">带操作按钮</div>
+    <div class="section">
+      <div class="demo-row">
+        <el-button type="primary" @click="drawer3 = true">打开详情抽屉</el-button>
+      </div>
+      <el-drawer v-model="drawer3" title="服务详情" size="480">
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <div style="width: 3px; height: 16px; background: var(--color-primary); border-radius: 2px;"></div>
+            <span style="font-size: 14px; font-weight: 500;">基本信息</span>
+          </div>
+          <el-descriptions :column="1" border size="default">
+            <el-descriptions-item label="服务名称">用户认证服务</el-descriptions-item>
+            <el-descriptions-item label="编号">SVC-2024-001</el-descriptions-item>
+            <el-descriptions-item label="类型">核心服务</el-descriptions-item>
+            <el-descriptions-item label="负责人">陈明远</el-descriptions-item>
+          </el-descriptions>
+        </div>
+        <template #footer>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <el-button @click="drawer3 = false">关闭</el-button>
+            <el-button type="primary" @click="drawer3 = false">编辑</el-button>
+          </div>
+        </template>
+      </el-drawer>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script>
+    const { createApp, ref } = Vue;
+
+    const app = createApp({
+      setup() {
+        const drawer1 = ref(false);
+        const drawer2 = ref(false);
+        const drawer3 = ref(false);
+        const drawerDirection = ref(false);
+        const currentDirection = ref('rtl');
+
+        const openDrawer = (dir) => {
+          currentDirection.value = dir;
+          drawerDirection.value = true;
+        };
+
+        return {
+          drawer1,
+          drawer2,
+          drawer3,
+          drawerDirection,
+          currentDirection,
+          openDrawer
+        };
+      }
+    });
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, { locale: zhCn });
+    app.mount('#app');
+  </script>
+</body>
+</html>

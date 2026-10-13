@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input 输入框</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.css">
+  <style>
+    :root {
+      --color-primary: #1764E8;
+      --color-success: #67C23A;
+      --color-warning: #E6A23C;
+      --color-danger: #F56C6C;
+      --text-primary: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-muted: rgba(0, 0, 0, 0.45);
+      --page-bg: #f5f7fa;
+      --card-bg: #fff;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--page-bg);
+      color: var(--text-primary);
+      padding: 32px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .section {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      position: relative;
+      margin: 0 0 16px 14px;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 16px;
+      background-color: #1764e8;
+      border-top: 4px solid #C9D8F2;
+      border-bottom: 4px solid #C9D8F2;
+    }
+
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .demo-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .demo-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      min-width: 80px;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .demo-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .demo-item-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .el-input {
+      --el-color-primary: var(--color-primary);
+    }
+
+    .search-btn {
+      background: var(--color-primary) !important;
+      border-color: var(--color-primary) !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="page-header">
+      <h1>Input 输入框</h1>
+      <p>通过键盘输入内容，是最基础的表单域包装。</p>
+    </div>
+
+    <!-- 1. 基础输入框 -->
+    <div class="section-title">基础输入框</div>
+    <div class="section">
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-item-label">默认（placeholder）</span>
+          <el-input v-model="basic.placeholder" placeholder="请输入内容" style="width: 280px;"></el-input>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">有默认值</span>
+          <el-input v-model="basic.defaultValue" placeholder="请输入内容" style="width: 280px;"></el-input>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">禁用状态</span>
+          <el-input v-model="basic.disabled" placeholder="请输入内容" disabled style="width: 280px;"></el-input>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">只读状态</span>
+          <el-input v-model="basic.readonly" placeholder="请输入内容" readonly style="width: 280px;"></el-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 带图标 -->
+    <div class="section-title">带图标</div>
+    <div class="section">
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-item-label">前缀搜索图标</span>
+          <el-input v-model="icon.search" placeholder="请输入内容" style="width: 280px;">
+            <template #prefix>
+              <el-icon><search></search></el-icon>
+            </template>
+          </el-input>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">后缀可清除</span>
+          <el-input v-model="icon.clearable" placeholder="请输入内容" clearable style="width: 280px;"></el-input>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">前缀用户图标</span>
+          <el-input v-model="icon.user" placeholder="请输入用户名" style="width: 280px;">
+            <template #prefix>
+              <el-icon><user></user></el-icon>
+            </template>
+          </el-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 搜索输入 -->
+    <div class="section-title">搜索输入</div>
+    <div class="section">
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-item-label">搜索框 + 搜索按钮</span>
+          <el-input v-model="searchInput" placeholder="请输入搜索内容" style="width: 360px;">
+            <template #prefix>
+              <el-icon><search></search></el-icon>
+            </template>
+            <template #append>
+              <el-button class="search-btn" type="primary">搜索</el-button>
+            </template>
+          </el-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 文本域 -->
+    <div class="section-title">文本域</div>
+    <div class="section">
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-item-label">3 行</span>
+          <el-input v-model="textarea.threeRows" type="textarea" :rows="3" placeholder="请输入详细描述" style="width: 400px;"></el-input>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">5 行</span>
+          <el-input v-model="textarea.fiveRows" type="textarea" :rows="5" placeholder="请输入详细描述" style="width: 400px;"></el-input>
+        </div>
+      </div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-item-label">自适应高度（autosize）</span>
+          <el-input v-model="textarea.autosize" type="textarea" :autosize="{ minRows: 2, maxRows: 6 }" placeholder="输入内容后自动撑开高度" style="width: 400px;"></el-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 数字输入 -->
+    <div class="section-title">数字输入</div>
+    <div class="section">
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-item-label">基础数字输入</span>
+          <el-input-number v-model="number.basic" :min="0" :max="100" placeholder="基础"></el-input-number>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">步长 5</span>
+          <el-input-number v-model="number.step" :min="0" :max="100" :step="5"></el-input-number>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">精度 2 位</span>
+          <el-input-number v-model="number.precision" :min="0" :max="100" :precision="2" :step="0.1"></el-input-number>
+        </div>
+        <div class="demo-item">
+          <span class="demo-item-label">严格步长</span>
+          <el-input-number v-model="number.strictStep" :min="0" :max="100" :step="5" step-strictly></el-input-number>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. 带表单标签 -->
+    <div class="section-title">带表单标签</div>
+    <div class="section">
+      <el-form label-width="100px" style="max-width: 480px;">
+        <el-form-item label="姓名">
+          <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <el-input v-model="form.phone" placeholder="请输入手机号"></el-input>
+        </el-form-item>
+      </el-form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/index.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.8.5/dist/locale/zh-cn.min.js"></script>
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    const app = createApp({
+      setup() {
+        const basic = reactive({
+          placeholder: ref(''),
+          defaultValue: ref('默认内容'),
+          disabled: ref('禁用内容'),
+          readonly: ref('只读内容')
+        });
+
+        const icon = reactive({
+          search: ref(''),
+          clearable: ref('可清除内容'),
+          user: ref('')
+        });
+
+        const searchInput = ref('');
+
+        const textarea = reactive({
+          threeRows: ref(''),
+          fiveRows: ref(''),
+          autosize: ref('')
+        });
+
+        const number = reactive({
+          basic: ref(1),
+          step: ref(0),
+          precision: ref(1.0),
+          strictStep: ref(0)
+        });
+
+        const form = reactive({
+          name: ref(''),
+          email: ref(''),
+          phone: ref('')
+        });
+
+        return {
+          basic,
+          icon,
+          searchInput,
+          textarea,
+          number,
+          form
+        };
+      }
+    });
+
+    const zhCn = {
+      name: 'zh-cn',
+      el: {
+        pagination: { goto: '前往', pagesize: '条/页', total: '共 {total} 条', pageClassifier: '页', page: '页', prev: '上一页', next: '下一页', currentPage: '第 {pager} 页' },
+        select: { loading: '加载中', noMatch: '无匹配数据', noData: '暂无数据', placeholder: '请选择' },
+        table: { emptyText: '暂无数据', confirmFilter: '确认', resetFilter: '重置', clearFilter: '全部', sumText: '合计' },
+        pageHeader: { title: '返回' },
+        datepicker: { now: '此刻', today: '今天', cancel: '取消', clear: '清空', confirm: '确定', startDate: '开始日期', startTime: '开始时间', endDate: '结束日期', endTime: '结束时间', prevYear: '前一年', nextYear: '后一年', prevMonth: '上个月', nextMonth: '下个月', year: '年', month1: '1月', month2: '2月', month3: '3月', month4: '4月', month5: '5月', month6: '6月', month7: '7月', month8: '8月', month9: '9月', month10: '10月', month11: '11月', month12: '12月', weeks: { sun: '日', mon: '一', tue: '二', wed: '三', thu: '四', fri: '五', sat: '六' }, months: { jan: '一月', feb: '二月', mar: '三月', apr: '四月', may: '五月', jun: '六月', jul: '七月', aug: '八月', sep: '九月', oct: '十月', nov: '十一月', dec: '十二月' } }
+      }
+    };    app.use(ElementPlus, { locale: zhCn });
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+
+    app.mount('#app');
+  </script>
+</body>
+</html>
