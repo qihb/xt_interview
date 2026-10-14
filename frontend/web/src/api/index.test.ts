@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import request from '@/utils/request'
-import { accountApi, authApi, departmentApi } from '@/api'
+import { authApi } from '@/features/auth'
+import { accountApi } from '@/features/account'
+import { departmentApi } from '@/features/department'
 
 vi.mock('@/utils/request', () => ({
   default: {

@@ -2,15 +2,19 @@ import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import UserManagement from '@/views/UserManagement.vue'
 import DepartmentManagement from '@/views/DepartmentManagement.vue'
-import { accountApi, departmentApi } from '@/api'
+import { accountApi } from '@/features/account/api'
+import { departmentApi } from '@/features/department/api'
 
-vi.mock('@/api', () => ({
+vi.mock('@/features/account/api', () => ({
   accountApi: {
     page: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn()
-  },
+  }
+}))
+
+vi.mock('@/features/department/api', () => ({
   departmentApi: {
     getAll: vi.fn(),
     create: vi.fn(),

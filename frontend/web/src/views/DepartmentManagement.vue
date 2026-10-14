@@ -95,16 +95,19 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { departmentApi } from '@/api'
-import type { Department, DepartmentPayload } from '@/api'
+import {
+  departmentApi,
+  type Department,
+  type DepartmentPayload,
+  useDepartmentList
+} from '@/features/department'
 
-const loading = ref(false)
 const submitting = ref(false)
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const editId = ref(0)
-const departments = ref<Department[]>([])
 const formRef = ref<FormInstance>()
+const { loading, departments, loadDepartments } = useDepartmentList()
 
 const formData = reactive<DepartmentPayload>({
   name: '',
@@ -146,17 +149,6 @@ const formRules: FormRules = {
 onMounted(() => {
   loadDepartments()
 })
-
-async function loadDepartments() {
-  loading.value = true
-  try {
-    departments.value = await departmentApi.getAll()
-  } catch (error: any) {
-    ElMessage.error(error.message || '加载部门列表失败')
-  } finally {
-    loading.value = false
-  }
-}
 
 function resetForm() {
   formData.name = ''

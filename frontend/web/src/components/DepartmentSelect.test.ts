@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import DepartmentSelect from './DepartmentSelect.vue'
-import { departmentApi } from '@/api'
+import { departmentApi } from '@/features/department'
 
-vi.mock('@/api', () => ({
+vi.mock('@/features/department', () => ({
   departmentApi: {
     getAll: vi.fn()
   }

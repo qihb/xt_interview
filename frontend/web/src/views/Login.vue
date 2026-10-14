@@ -48,8 +48,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { authApi } from '@/api'
+import { authApi, useUserStore } from '@/features/auth'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
@@ -86,7 +85,6 @@ async function handleLogin() {
       if (result.success) {
         userStore.setToken(result.token)
         userStore.setUserInfo(result.user)
-        localStorage.setItem('currentUser', JSON.stringify(result.user))
         ElMessage.success('登录成功')
 
         const redirect = route.query.redirect as string

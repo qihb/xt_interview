@@ -30,13 +30,17 @@
 │   ├── application*.properties
 │   └── db/migration/     # Flyway 版本化 SQL
 ├── frontend/web
-│   ├── src/api/           # Axios API 封装
-│   ├── src/components/    # 可复用组件（如新增）
+│   ├── src/features/      # 按业务领域组织 API、类型、组件、composables 和 store
+│   │   ├── auth/          # 登录认证与用户会话
+│   │   ├── account/       # 用户账号管理
+│   │   └── department/    # 部门管理
+│   ├── src/api/           # 仅保留兼容迁移中的 API 测试或全局 API
+│   ├── src/components/    # 跨 feature 复用组件
 │   ├── src/layouts/       # 登录后的页面布局
 │   ├── src/router/        # Vue Router
 │   ├── src/stores/        # Pinia 状态
 │   ├── src/views/         # 页面视图
-│   └── src/utils/         # 请求等工具
+│   └── src/utils/         # request 等跨 feature 工具
 ├── pom.xml
 └── INTERVIEW_TASKS.md
 ```
@@ -103,12 +107,18 @@ npm run build
 
 ## 7. 前端开发约定
 
-1. 使用 Vue 3 Composition API 和 TypeScript，页面放在 `frontend/web/src/views`。
-2. 页面请求通过 `src/api` 或 `src/utils/request.ts` 统一封装，不在视图中重复创建 Axios 实例。
-3. 登录 Token 和当前用户信息由 Pinia 管理，并配合现有路由鉴权逻辑。
-4. 优先使用 Element Plus 组件及其表单校验、消息提示和确认弹窗。
-5. 新增受保护页面时，同时配置路由元信息和主布局菜单。
-6. 保持 `@` 路径别名和 `/api` 请求前缀约定，不在业务代码中写死后端完整地址。
+1. 使用 Vue 3 Composition API、`<script setup lang="ts">` 和 TypeScript，页面放在 `frontend/web/src/views`。
+2. 新增复杂业务按 `features/<feature>` 组织，领域内按 `api`、`components`、`composables`、`stores`、`types` 和 `utils` 分层。
+3. 页面只负责布局与 feature 组合；请求、业务状态和可复用流程放在 feature 内，禁止在视图中实现完整 CRUD 流程。
+4. feature 对外只通过自己的 `index.ts` 暴露公共 API，禁止跨 feature 深层导入；feature 不得依赖 `views` 或 `layouts`。
+5. 全项目只使用 `src/utils/request.ts` 的 Axios 实例；API 函数按领域放在对应 feature 的 `api/`，不在组件中拼接 URL 或创建 Axios 实例。
+6. 登录 Token 和当前用户信息由 `features/auth` 的 Pinia store 管理，并配合集中式路由鉴权逻辑。
+7. 组件级状态使用 `ref`、`reactive` 和 `computed`；跨组件或跨路由状态使用 Pinia；分页、筛选、排序等可分享状态优先使用 Vue Router query。
+8. 优先使用 Element Plus 组件及其表单校验、消息提示和确认弹窗；公共组件放在 `src/components`，领域专属组件放在对应 feature。
+9. 新增受保护页面时，同时配置路由懒加载、`meta` 权限信息和主布局菜单。
+10. 预期业务错误在提交处提示，网络错误、401 和通用 5xx 由 Axios 拦截器统一处理；非预期异常通过应用或路由级错误兜底处理。
+11. 保持 `@` 路径别名和 `/api` 请求前缀约定，不在业务代码中写死后端完整地址。
+12. 单元和组件测试使用 Vitest + Vue Test Utils，API 使用 mock，关键流程补充端到端测试；测试与源码就近维护。
 
 ## 8. 安全与配置
 
@@ -122,6 +132,7 @@ npm run build
 - [ ] `mvn compile` 通过
 - [ ] `mvn spring-boot:run` 可启动，Flyway 迁移成功
 - [ ] `npm run build` 通过
+- [ ] `npm test -- --run` 通过
 - [ ] 使用 `admin / 123456` 登录成功
 - [ ] 受保护接口能正确携带 JWT，失效 Token 返回 401 并回到登录页
 - [ ] 新增或修改的 CRUD 功能已验证成功
@@ -135,4 +146,3 @@ npm run build
 3. 小步修改，每完成一个阶段就运行对应的编译、构建或接口验证。
 4. 保留与现有实现兼容的 API、字段和目录约定；如需破坏性变更，先明确说明影响范围。
 5. 最终报告应说明修改文件、验证命令和仍存在的限制。
-

@@ -1,20 +1,22 @@
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { authApi } from '@/api'
+import { authApi } from '../api'
+import type { AuthUser } from '../api'
 
 export const useUserStore = defineStore('user', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
-  const userInfo = ref<any>(null)
+  const userInfo = ref<AuthUser | null>(null)
 
-  const isLoggedIn = computed(() => !!token.value)
+  const isLoggedIn = computed(() => Boolean(token.value))
 
   function setToken(newToken: string) {
     token.value = newToken
     localStorage.setItem('token', newToken)
   }
 
-  function setUserInfo(info: any) {
+  function setUserInfo(info: AuthUser) {
     userInfo.value = info
+    localStorage.setItem('currentUser', JSON.stringify(info))
   }
 
   function logout() {
@@ -27,10 +29,9 @@ export const useUserStore = defineStore('user', () => {
   async function validateToken() {
     if (!token.value) return { valid: false }
     try {
-      const res: any = await authApi.validate()
-      return res
-    } catch (e) {
-      console.error('Token验证失败', e)
+      return await authApi.validate()
+    } catch (error) {
+      console.error('Token验证失败', error)
       return { valid: false }
     }
   }
@@ -38,7 +39,7 @@ export const useUserStore = defineStore('user', () => {
   function loadFromStorage() {
     const stored = localStorage.getItem('currentUser')
     if (stored) {
-      userInfo.value = JSON.parse(stored)
+      userInfo.value = JSON.parse(stored) as AuthUser
     }
   }
 

@@ -151,34 +151,30 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { accountApi, type Account } from '@/api'
+import { accountApi, type Account, useAccountList } from '@/features/account'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import AppPagination from '@/components/AppPagination.vue'
-import AccountStatusSelect from '@/modules/account/components/AccountStatusSelect.vue'
-import AccountRoleSelect from '@/modules/account/components/AccountRoleSelect.vue'
+import { AccountRoleSelect, AccountStatusSelect } from '@/features/account'
 
-const loading = ref(false)
 const submitting = ref(false)
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const editId = ref<number>(0)
 
-const users = ref<Account[]>([])
-const total = ref(0)
-const currentPage = ref(0)
-const pageSize = ref(10)
-
-const filters = reactive<{
-  username: string
-  status?: number
-  roleLevel?: number
-}>({
-  username: '',
-  status: undefined,
-  roleLevel: undefined
-})
+const {
+  loading,
+  users,
+  total,
+  currentPage,
+  pageSize,
+  filters,
+  loadUsers,
+  handleSearch,
+  handlePageChange,
+  handlePageSizeChange
+} = useAccountList()
 
 const formRef = ref<FormInstance>()
 
@@ -264,41 +260,6 @@ function roleTagType(level: number): 'info' | 'warning' | 'danger' {
     3: 'danger'
   }
   return map[level] || 'info'
-}
-
-async function loadUsers() {
-  loading.value = true
-  try {
-    const result = await accountApi.page({
-      username: filters.username,
-      status: filters.status,
-      roleLevel: filters.roleLevel,
-      page: currentPage.value,
-      size: pageSize.value
-    })
-    users.value = result.list
-    total.value = result.totalElements
-  } catch (error: any) {
-    ElMessage.error(error.message || '加载用户列表失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-function handleSearch() {
-  currentPage.value = 0
-  loadUsers()
-}
-
-function handlePageChange(page: number) {
-  currentPage.value = page
-  loadUsers()
-}
-
-function handlePageSizeChange(size: number) {
-  pageSize.value = size
-  currentPage.value = 0
-  loadUsers()
 }
 
 function resetForm() {
