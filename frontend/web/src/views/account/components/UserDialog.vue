@@ -3,7 +3,7 @@
     v-model="visible"
     :title="mode === 'edit' ? '编辑用户' : '添加用户'"
     width="500px"
-    @close="resetForm"
+    @close="handleClose"
   >
     <el-form
       ref="formRef"
@@ -147,9 +147,8 @@ function syncForm() {
   formRef.value?.clearValidate()
 }
 
-function resetForm() {
-  Object.assign(formData, defaultFormData)
-  formRef.value?.resetFields()
+function handleClose() {
+  formRef.value?.clearValidate()
 }
 
 async function handleSubmit() {

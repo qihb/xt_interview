@@ -3,7 +3,7 @@
     v-model="visible"
     :title="mode === 'edit' ? '编辑部门' : '新增部门'"
     width="500px"
-    @close="resetForm"
+    @close="handleClose"
   >
     <el-form ref="formRef" :model="formData" :rules="formRules" label-width="90px">
       <el-form-item label="部门名称" prop="name">
@@ -104,9 +104,8 @@ function syncForm() {
   formRef.value?.clearValidate()
 }
 
-function resetForm() {
-  Object.assign(formData, defaultFormData)
-  formRef.value?.resetFields()
+function handleClose() {
+  formRef.value?.clearValidate()
 }
 
 async function handleSubmit() {
