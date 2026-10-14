@@ -11,13 +11,13 @@ const router = createRouter({
         {
           path: 'users',
           name: 'UserManagement',
-          component: () => import('@/views/UserManagement.vue'),
+          component: () => import('@/views/account/UserManagement.vue'),
           meta: { requiresAuth: true, title: '用户管理' }
         },
         {
           path: 'departments',
           name: 'DepartmentManagement',
-          component: () => import('@/views/DepartmentManagement.vue'),
+          component: () => import('@/views/department/DepartmentManagement.vue'),
           meta: { requiresAuth: true, title: '部门管理' }
         }
       ]
@@ -25,7 +25,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/Login.vue')
+      component: () => import('@/views/auth/Login.vue')
     }
   ]
 })

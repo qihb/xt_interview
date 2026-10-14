@@ -19,7 +19,7 @@ description: Vue 3 管理后台的功能分层与架构规范。用于新增或�
 src/
   app/                  # 应用级装配：App、全局 Provider、错误兜底
   assets/               # 静态资源
-  components/           # 跨 feature 复用的通用组件
+  components/           # 跨 feature 复用的通用组件，如 AppPagination
   config/               # 环境变量与全局配置
   features/<feature>/   # 按业务领域划分，如 user、department、auth
     api/                # feature 请求函数与响应类型
@@ -34,7 +34,10 @@ src/
   stores/               # 跨 feature 的全局 Pinia store，如 auth
   types/                # 跨 feature 共享类型
   utils/                # 跨 feature 共享工具
-  views/                # 页面视图，只做 feature 组装
+  views/                # 按业务域组织的页面视图，只做 feature 组装
+    auth/               # 登录与认证页面
+    account/            # 账号业务页面
+    department/         # 部门业务页面
 ```
 
 已有项目目录可以兼容过渡，但新增复杂业务优先采用 `features/<feature>`，不要继续扩大按 `api/components/stores` 横向堆放的规模。
@@ -86,8 +89,8 @@ src/
 
 - 使用 Vue 3 Composition API 和 `<script setup lang="ts">`，组件用 PascalCase，文件和目录使用 kebab-case。
 - 使用 `@` 指向 `src`；如果别名未配置，先补齐 Vite 与 TypeScript 配置再使用。
-- 页面放在 `views/`，业务模块放在 `features/`；不要在页面中实现完整请求、权限和复杂状态流程。
-- Element Plus 负责交互组件和表单，项目约定的 Less 或公共样式负责页面视觉；遵循现有主题，不随意覆盖组件内部 class。
+- 页面放在 `views/<feature>/`，业务模块放在 `features/<feature>/`；不要把业务页面平铺在 `views/` 根目录，也不要在页面中实现完整请求、权限和复杂状态流程。
+- Element Plus 负责交互组件和表单，项目约定的 Less 或公共样式负责页面视觉；全局跨 feature 组件放在 `components/`，领域组件放在 feature 内，遵循现有主题，不随意覆盖组件内部 class。
 - 导入顺序：Vue 内置 → 第三方依赖 → `@/` 别名 → 相对路径；同组按字母序整理。
 - 不引入重复的请求客户端、全局事件总线或未经约定的状态库。
 

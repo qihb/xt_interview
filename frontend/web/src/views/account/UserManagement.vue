@@ -156,6 +156,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import AppPagination from '@/components/AppPagination.vue'
+import { DepartmentSelect } from '@/features/department'
 import { AccountRoleSelect, AccountStatusSelect } from '@/features/account'
 
 const submitting = ref(false)

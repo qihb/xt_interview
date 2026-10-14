@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import UserManagement from '@/views/UserManagement.vue'
-import DepartmentManagement from '@/views/DepartmentManagement.vue'
+import UserManagement from '@/views/account/UserManagement.vue'
+import DepartmentManagement from '@/views/department/DepartmentManagement.vue'
 import { accountApi } from '@/features/account/api'
 import { departmentApi } from '@/features/department/api'
 

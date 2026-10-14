@@ -35,11 +35,14 @@
 │   │   ├── account/       # 用户账号管理
 │   │   └── department/    # 部门管理
 │   ├── src/api/           # 仅保留兼容迁移中的 API 测试或全局 API
-│   ├── src/components/    # 跨 feature 复用组件
+│   ├── src/components/    # 跨 feature 复用组件，如 AppPagination
 │   ├── src/layouts/       # 登录后的页面布局
 │   ├── src/router/        # Vue Router
 │   ├── src/stores/        # Pinia 状态
-│   ├── src/views/         # 页面视图
+│   ├── src/views/         # 按业务域组织页面视图
+│   │   ├── auth/          # 登录与认证页面
+│   │   ├── account/       # 用户账号页面
+│   │   └── department/    # 部门页面
 │   └── src/utils/         # request 等跨 feature 工具
 ├── pom.xml
 └── INTERVIEW_TASKS.md
@@ -110,15 +113,16 @@ npm run build
 1. 使用 Vue 3 Composition API、`<script setup lang="ts">` 和 TypeScript，页面放在 `frontend/web/src/views`。
 2. 新增复杂业务按 `features/<feature>` 组织，领域内按 `api`、`components`、`composables`、`stores`、`types` 和 `utils` 分层。
 3. 页面只负责布局与 feature 组合；请求、业务状态和可复用流程放在 feature 内，禁止在视图中实现完整 CRUD 流程。
-4. feature 对外只通过自己的 `index.ts` 暴露公共 API，禁止跨 feature 深层导入；feature 不得依赖 `views` 或 `layouts`。
-5. 全项目只使用 `src/utils/request.ts` 的 Axios 实例；API 函数按领域放在对应 feature 的 `api/`，不在组件中拼接 URL 或创建 Axios 实例。
-6. 登录 Token 和当前用户信息由 `features/auth` 的 Pinia store 管理，并配合集中式路由鉴权逻辑。
-7. 组件级状态使用 `ref`、`reactive` 和 `computed`；跨组件或跨路由状态使用 Pinia；分页、筛选、排序等可分享状态优先使用 Vue Router query。
-8. 优先使用 Element Plus 组件及其表单校验、消息提示和确认弹窗；公共组件放在 `src/components`，领域专属组件放在对应 feature。
-9. 新增受保护页面时，同时配置路由懒加载、`meta` 权限信息和主布局菜单。
-10. 预期业务错误在提交处提示，网络错误、401 和通用 5xx 由 Axios 拦截器统一处理；非预期异常通过应用或路由级错误兜底处理。
-11. 保持 `@` 路径别名和 `/api` 请求前缀约定，不在业务代码中写死后端完整地址。
-12. 单元和组件测试使用 Vitest + Vue Test Utils，API 使用 mock，关键流程补充端到端测试；测试与源码就近维护。
+4. `views/` 也按业务域分目录，例如 `views/auth`、`views/account`、`views/department`，禁止所有页面直接平铺在 `views/` 根目录。
+5. feature 对外只通过自己的 `index.ts` 暴露公共 API，禁止跨 feature 深层导入；feature 不得依赖 `views` 或 `layouts`。
+6. 全项目只使用 `src/utils/request.ts` 的 Axios 实例；API 函数按领域放在对应 feature 的 `api/`，不在组件中拼接 URL 或创建 Axios 实例。
+7. 登录 Token 和当前用户信息由 `features/auth` 的 Pinia store 管理，并配合集中式路由鉴权逻辑。
+8. 组件级状态使用 `ref`、`reactive` 和 `computed`；跨组件或跨路由状态使用 Pinia；分页、筛选、排序等可分享状态优先使用 Vue Router query。
+9. 优先使用 Element Plus 组件及其表单校验、消息提示和确认弹窗；全局公共组件放在 `src/components`，领域专属组件放在对应 feature 的 `components/`。
+10. 新增受保护页面时，同时配置路由懒加载、`meta` 权限信息和主布局菜单。
+11. 预期业务错误在提交处提示，网络错误、401 和通用 5xx 由 Axios 拦截器统一处理；非预期异常通过应用或路由级错误兜底处理。
+12. 保持 `@` 路径别名和 `/api` 请求前缀约定，不在业务代码中写死后端完整地址。
+13. 单元和组件测试使用 Vitest + Vue Test Utils，API 使用 mock，关键流程补充端到端测试；测试文件与对应源码就近放置。
 
 ## 8. 安全与配置
 
