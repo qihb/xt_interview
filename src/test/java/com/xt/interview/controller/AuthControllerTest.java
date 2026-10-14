@@ -68,8 +68,9 @@ class AuthControllerTest {
         account.setPassword(MD5Util.encode("secret"));
         account.setRoleLevel(1);
         account.setStatus(1);
+        account.setTokenVersion(0);
         when(accountRepository.findByUsernameAndDeleted("alice", 0)).thenReturn(Optional.of(account));
-        when(jwtUtil.generateToken(1L, "alice", 1)).thenReturn("jwt-token");
+        when(jwtUtil.generateToken(1L, "alice", 1, 0)).thenReturn("jwt-token");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType("application/json")
@@ -102,5 +103,26 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valid").value(false))
                 .andExpect(jsonPath("$.message").value("未提供token"));
+    }
+
+    @Test
+    void validateReturnsFalseWhenTokenVersionIsStale() throws Exception {
+        Account account = new Account();
+        account.setId(1L);
+        account.setUsername("alice");
+        account.setStatus(1);
+        account.setTokenVersion(2);
+        when(jwtUtil.isTokenValid("stale-token")).thenReturn(true);
+        when(jwtUtil.getUsernameFromToken("stale-token")).thenReturn("alice");
+        when(jwtUtil.getUserIdFromToken("stale-token")).thenReturn(1L);
+        when(jwtUtil.getRoleLevelFromToken("stale-token")).thenReturn(1);
+        when(jwtUtil.getTokenVersionFromToken("stale-token")).thenReturn(1);
+        when(accountRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(account));
+
+        mockMvc.perform(get("/api/auth/validate")
+                        .header("Authorization", "Bearer stale-token"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valid").value(false))
+                .andExpect(jsonPath("$.message").value("token已失效，请重新登录"));
     }
 }

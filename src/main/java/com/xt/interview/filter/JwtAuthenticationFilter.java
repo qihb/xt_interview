@@ -1,6 +1,8 @@
 package com.xt.interview.filter;
 
 import com.xt.interview.util.JwtUtil;
+import com.xt.interview.entity.Account;
+import com.xt.interview.repository.AccountRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,12 +13,16 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -50,6 +56,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtUtil.getUsernameFromToken(token);
             Long userId = jwtUtil.getUserIdFromToken(token);
             Integer roleLevel = jwtUtil.getRoleLevelFromToken(token);
+            Integer tokenVersion = jwtUtil.getTokenVersionFromToken(token);
+            Account account = accountRepository.findByIdAndDeleted(userId, 0).orElse(null);
+
+            if (account == null
+                    || !Objects.equals(account.getTokenVersion(), tokenVersion)
+                    || !account.getUsername().equals(username)
+                    || !Objects.equals(account.getStatus(), 1)) {
+                sendErrorResponse(response, 401, "token已失效，请重新登录");
+                return;
+            }
 
             request.setAttribute("userId", userId);
             request.setAttribute("username", username);

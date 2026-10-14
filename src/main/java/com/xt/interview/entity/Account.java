@@ -35,6 +35,9 @@ public class Account {
     @Column(name = "is_super")
     private Integer isSuper;
 
+    @Column(name = "token_version", nullable = false)
+    private Integer tokenVersion;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
@@ -55,6 +58,7 @@ public class Account {
         if (roleLevel == null) roleLevel = 1;
         if (status == null) status = 1;
         if (isSuper == null) isSuper = 0;
+        if (tokenVersion == null) tokenVersion = 0;
         if (deleted == null) deleted = 0;
     }
 
@@ -89,6 +93,9 @@ public class Account {
 
     public Integer getIsSuper() { return isSuper; }
     public void setIsSuper(Integer isSuper) { this.isSuper = isSuper; }
+
+    public Integer getTokenVersion() { return tokenVersion; }
+    public void setTokenVersion(Integer tokenVersion) { this.tokenVersion = tokenVersion; }
 
     public Department getDepartment() { return department; }
     public void setDepartment(Department department) { this.department = department; }

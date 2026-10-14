@@ -67,6 +67,19 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void updateDepartmentTreatsCodeCaseChangeAsDifferentCode() {
+        Department existing = entity(1L, "研发部", "RD");
+        when(departmentRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
+        when(departmentRepository.existsByCodeAndDeleted("rd", 0)).thenReturn(false);
+        when(departmentRepository.save(any(Department.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.updateDepartment(1L, department("研发部", "rd"));
+
+        verify(departmentRepository).existsByCodeAndDeleted("rd", 0);
+        assertEquals("rd", existing.getCode());
+    }
+
+    @Test
     void deleteDepartmentMarksDepartmentAsDeleted() {
         Department existing = entity(1L, "研发部", "RD");
         when(departmentRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));

@@ -34,11 +34,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDTO createAccount(AccountDTO dto) {
-        if (accountRepository.existsByUsernameAndDeleted(dto.getUsername(), NOT_DELETED)) {
+        String username = normalizeUsername(dto.getUsername());
+        if (accountRepository.existsByUsernameAndDeleted(username, NOT_DELETED)) {
             throw new RuntimeException("用户名已存在");
         }
         Account account = new Account();
-        account.setUsername(dto.getUsername());
+        account.setUsername(username);
         account.setName(dto.getName());
         account.setGender(dto.getGender());
         account.setPhone(dto.getPhone());
@@ -59,12 +60,14 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByIdAndDeleted(id, NOT_DELETED)
                 .orElseThrow(() -> new RuntimeException("账号不存在"));
 
-        if (!account.getUsername().equals(dto.getUsername()) &&
-            accountRepository.existsByUsernameAndDeleted(dto.getUsername(), NOT_DELETED)) {
+        String username = normalizeUsername(dto.getUsername());
+        boolean usernameChanged = !account.getUsername().equals(username);
+        if (usernameChanged &&
+            accountRepository.existsByUsernameAndDeleted(username, NOT_DELETED)) {
             throw new RuntimeException("用户名已存在");
         }
 
-        account.setUsername(dto.getUsername());
+        account.setUsername(username);
         account.setName(dto.getName());
         account.setGender(dto.getGender());
         account.setPhone(dto.getPhone());
@@ -74,6 +77,9 @@ public class AccountServiceImpl implements AccountService {
         account.setRoleLevel(dto.getRoleLevel());
         account.setStatus(dto.getStatus());
         account.setIsSuper(dto.getIsSuper());
+        if (usernameChanged) {
+            account.setTokenVersion(account.getTokenVersion() == null ? 1 : account.getTokenVersion() + 1);
+        }
         account.setDepartment(resolveDepartment(dto.getDepartmentId()));
         account = accountRepository.save(account);
         return convertToDTO(account);
@@ -166,5 +172,16 @@ public class AccountServiceImpl implements AccountService {
         }
         return departmentRepository.findByIdAndDeleted(departmentId, NOT_DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("所属部门不存在或已删除"));
+    }
+
+    private String normalizeUsername(String username) {
+        if (username == null) {
+            throw new IllegalArgumentException("用户名不能为空");
+        }
+        String normalized = username.trim();
+        if (normalized.isEmpty()) {
+            throw new IllegalArgumentException("用户名不能为空");
+        }
+        return normalized;
     }
 }

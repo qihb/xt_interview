@@ -24,6 +24,18 @@ class UtilityTest {
         assertEquals(7L, jwt.getUserIdFromToken(token));
         assertEquals("alice", jwt.getUsernameFromToken(token));
         assertEquals(2, jwt.getRoleLevelFromToken(token));
+        assertEquals(0, jwt.getTokenVersionFromToken(token));
         assertFalse(jwt.isTokenValid("invalid-token"));
+    }
+
+    @Test
+    void jwtRoundTripPreservesTokenVersion() {
+        JwtUtil jwt = new JwtUtil();
+        ReflectionTestUtils.setField(jwt, "secret", "test-secret-key-that-is-long-enough-123456");
+        ReflectionTestUtils.setField(jwt, "expiration", 60_000L);
+
+        String token = jwt.generateToken(7L, "alice", 2, 3);
+
+        assertEquals(3, jwt.getTokenVersionFromToken(token));
     }
 }

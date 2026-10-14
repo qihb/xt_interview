@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -67,7 +68,9 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            String token = jwtUtil.generateToken(account.getId(), account.getUsername(), account.getRoleLevel());
+            String token = jwtUtil.generateToken(
+                    account.getId(), account.getUsername(), account.getRoleLevel(),
+                    account.getTokenVersion() == null ? 0 : account.getTokenVersion());
 
             response.put("success", true);
             response.put("message", "登录成功");
@@ -121,9 +124,15 @@ public class AuthController {
             String username = jwtUtil.getUsernameFromToken(token);
             Long userId = jwtUtil.getUserIdFromToken(token);
             Integer roleLevel = jwtUtil.getRoleLevelFromToken(token);
+            Integer tokenVersion = jwtUtil.getTokenVersionFromToken(token);
+            Account account = accountRepository.findByIdAndDeleted(userId, NOT_DELETED).orElse(null);
 
-            response.put("valid", true);
-            response.put("message", "token有效");
+            boolean active = account != null
+                    && Objects.equals(account.getTokenVersion(), tokenVersion)
+                    && account.getUsername().equals(username)
+                    && account.getStatus() == 1;
+            response.put("valid", active);
+            response.put("message", active ? "token有效" : "token已失效，请重新登录");
             response.put("user", Map.of(
                 "id", userId,
                 "username", username,

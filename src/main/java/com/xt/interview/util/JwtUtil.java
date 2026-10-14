@@ -26,10 +26,15 @@ public class JwtUtil {
     }
 
     public String generateToken(Long userId, String username, Integer roleLevel) {
+        return generateToken(userId, username, roleLevel, 0);
+    }
+
+    public String generateToken(Long userId, String username, Integer roleLevel, Integer tokenVersion) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("username", username);
         claims.put("roleLevel", roleLevel);
+        claims.put("tokenVersion", tokenVersion == null ? 0 : tokenVersion);
 
         return Jwts.builder()
                 .claims(claims)
@@ -74,5 +79,11 @@ public class JwtUtil {
     public Integer getRoleLevelFromToken(String token) {
         Claims claims = parseToken(token);
         return claims.get("roleLevel", Integer.class);
+    }
+
+    public Integer getTokenVersionFromToken(String token) {
+        Claims claims = parseToken(token);
+        Integer tokenVersion = claims.get("tokenVersion", Integer.class);
+        return tokenVersion == null ? 0 : tokenVersion;
     }
 }

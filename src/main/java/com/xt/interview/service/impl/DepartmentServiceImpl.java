@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +50,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         String name = requireText(dto.getName(), "部门名称不能为空");
         String code = requireText(dto.getCode(), "部门编码不能为空");
-        if (!Objects.equals(department.getCode(), code)
+        if (!department.getCode().equals(code)
                 && departmentRepository.existsByCodeAndDeleted(code, NOT_DELETED)) {
             throw new RuntimeException("部门编码已存在");
         }
