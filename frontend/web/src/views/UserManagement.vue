@@ -4,7 +4,7 @@
       <div class="user-header">
         <div class="user-header-title">
           <span>用户列表</span>
-          <span class="user-count">共 {{ users.length }} 个用户</span>
+          <span class="user-count">共 {{ total }} 个用户</span>
         </div>
         <div class="user-header-actions">
           <el-button :icon="Refresh" @click="loadUsers">刷新</el-button>
@@ -12,6 +12,19 @@
             新增用户
           </el-button>
         </div>
+      </div>
+
+      <div class="user-filters">
+        <el-input
+          v-model="filters.username"
+          clearable
+          placeholder="请输入用户名"
+          style="width: 220px"
+          @keyup.enter="handleSearch"
+        />
+        <AccountStatusSelect v-model="filters.status" />
+        <AccountRoleSelect v-model="filters.roleLevel" />
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
 
       <el-table
@@ -56,6 +69,15 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <AppPagination
+        class="user-pagination"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :total="total"
+        @page-change="handlePageChange"
+        @size-change="handlePageSizeChange"
+      />
     </section>
 
     <el-dialog
@@ -133,6 +155,9 @@ import { accountApi, type Account } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import AppPagination from '@/components/AppPagination.vue'
+import AccountStatusSelect from '@/modules/account/components/AccountStatusSelect.vue'
+import AccountRoleSelect from '@/modules/account/components/AccountRoleSelect.vue'
 
 const loading = ref(false)
 const submitting = ref(false)
@@ -141,6 +166,19 @@ const isEdit = ref(false)
 const editId = ref<number>(0)
 
 const users = ref<Account[]>([])
+const total = ref(0)
+const currentPage = ref(0)
+const pageSize = ref(10)
+
+const filters = reactive<{
+  username: string
+  status?: number
+  roleLevel?: number
+}>({
+  username: '',
+  status: undefined,
+  roleLevel: undefined
+})
 
 const formRef = ref<FormInstance>()
 
@@ -231,12 +269,36 @@ function roleTagType(level: number): 'info' | 'warning' | 'danger' {
 async function loadUsers() {
   loading.value = true
   try {
-    users.value = await accountApi.getAll()
+    const result = await accountApi.page({
+      username: filters.username,
+      status: filters.status,
+      roleLevel: filters.roleLevel,
+      page: currentPage.value,
+      size: pageSize.value
+    })
+    users.value = result.list
+    total.value = result.totalElements
   } catch (error: any) {
     ElMessage.error(error.message || '加载用户列表失败')
   } finally {
     loading.value = false
   }
+}
+
+function handleSearch() {
+  currentPage.value = 0
+  loadUsers()
+}
+
+function handlePageChange(page: number) {
+  currentPage.value = page
+  loadUsers()
+}
+
+function handlePageSizeChange(size: number) {
+  pageSize.value = size
+  currentPage.value = 0
+  loadUsers()
 }
 
 function resetForm() {
@@ -360,6 +422,18 @@ onMounted(() => {
   color: @text-primary;
   font-size: 18px;
   font-weight: 600;
+}
+
+.user-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.user-pagination {
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 
 .user-count {

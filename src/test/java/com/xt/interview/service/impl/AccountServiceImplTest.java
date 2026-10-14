@@ -11,7 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -131,6 +134,31 @@ class AccountServiceImplTest {
                 () -> service.login("alice", "secret"));
 
         assertEquals("账号已禁用", error.getMessage());
+    }
+
+    @Test
+    void pageAccountsUsesZeroBasedDefaultsAndMapsPageMetadata() {
+        Account alice = accountEntity(1L, "alice");
+        when(accountRepository.findPage(null, null, null, PageRequest.of(0, 10)))
+                .thenReturn(new PageImpl<>(List.of(alice), PageRequest.of(0, 10), 21));
+
+        var result = service.pageAccounts(null, null, null, null, null);
+
+        assertEquals(List.of("alice"), result.getList().stream().map(AccountDTO::getUsername).toList());
+        assertEquals(21, result.getTotalElements());
+        assertEquals(3, result.getTotalPages());
+        assertEquals(0, result.getCurrentPage());
+        assertEquals(10, result.getPageSize());
+    }
+
+    @Test
+    void pageAccountsPassesCombinedFiltersAndExcludesDeletedAccounts() {
+        when(accountRepository.findPage("ali", 1, 2, PageRequest.of(1, 5)))
+                .thenReturn(new PageImpl<>(List.of(), PageRequest.of(1, 5), 0));
+
+        service.pageAccounts("ali", 1, 2, 1, 5);
+
+        verify(accountRepository).findPage("ali", 1, 2, PageRequest.of(1, 5));
     }
 
     private AccountDTO account(String username) {

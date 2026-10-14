@@ -80,4 +80,12 @@ describe('api clients', () => {
     expect(request.put).toHaveBeenCalledWith('/departments/2', { name: '研发', code: 'RD', status: 0 })
     expect(request.delete).toHaveBeenCalledWith('/departments/2')
   })
+
+  it('maps account page queries to the zero-based pagination endpoint', () => {
+    accountApi.page({ username: 'ali', status: 1, roleLevel: 2, page: 0, size: 10 })
+
+    expect(request.get).toHaveBeenCalledWith('/accounts/page', {
+      params: { username: 'ali', status: 1, roleLevel: 2, page: 0, size: 10 }
+    })
+  })
 })

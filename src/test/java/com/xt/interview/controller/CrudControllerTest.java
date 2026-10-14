@@ -2,6 +2,7 @@ package com.xt.interview.controller;
 
 import com.xt.interview.dto.AccountDTO;
 import com.xt.interview.dto.DepartmentDTO;
+import com.xt.interview.dto.PageResponse;
 import com.xt.interview.service.AccountService;
 import com.xt.interview.service.DepartmentService;
 import com.xt.interview.exception.DepartmentInUseException;
@@ -58,6 +59,28 @@ class CrudControllerTest {
 
         verify(accountService).getAllAccounts();
         verify(accountService).deleteAccount(1L);
+    }
+
+    @Test
+    void accountPageEndpointBindsFiltersAndPagination() throws Exception {
+        AccountDTO account = new AccountDTO();
+        account.setId(1L);
+        account.setUsername("alice");
+        when(accountService.pageAccounts("ali", 1, 2, 1, 5))
+                .thenReturn(new PageResponse<>(List.of(account), 1, 1, 1, 5));
+
+        mockMvc.perform(get("/api/accounts/page")
+                        .param("username", "ali")
+                        .param("status", "1")
+                        .param("roleLevel", "2")
+                        .param("page", "1")
+                        .param("size", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.list[0].username").value("alice"))
+                .andExpect(jsonPath("$.currentPage").value(1))
+                .andExpect(jsonPath("$.pageSize").value(5));
+
+        verify(accountService).pageAccounts("ali", 1, 2, 1, 5);
     }
 
     @Test

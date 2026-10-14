@@ -41,12 +41,31 @@ export interface AccountPayload {
   departmentId: number | null
 }
 
+export interface PageResponse<T> {
+  list: T[]
+  totalElements: number
+  totalPages: number
+  currentPage: number
+  pageSize: number
+}
+
+export interface AccountPageParams {
+  username?: string
+  status?: number
+  roleLevel?: number
+  page: number
+  size: number
+}
+
 export const accountApi = {
   getAll() {
     return request.get<Account[]>('/accounts') as unknown as Promise<Account[]>
   },
   getById(id: number) {
     return request.get<Account>(`/accounts/${id}`) as unknown as Promise<Account>
+  },
+  page(params: AccountPageParams) {
+    return request.get<PageResponse<Account>>('/accounts/page', { params }) as unknown as Promise<PageResponse<Account>>
   },
   create(data: AccountPayload) {
     return request.post<Account>('/accounts', data) as unknown as Promise<Account>

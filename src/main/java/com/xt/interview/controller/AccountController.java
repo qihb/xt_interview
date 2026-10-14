@@ -1,6 +1,7 @@
 package com.xt.interview.controller;
 
 import com.xt.interview.dto.AccountDTO;
+import com.xt.interview.dto.PageResponse;
 import com.xt.interview.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,16 @@ public class AccountController {
     @GetMapping
     public ResponseEntity<List<AccountDTO>> getAll() {
         return ResponseEntity.ok(accountService.getAllAccounts());
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<PageResponse<AccountDTO>> page(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) Integer roleLevel,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
+        return ResponseEntity.ok(accountService.pageAccounts(username, status, roleLevel, page, size));
     }
 
     @GetMapping("/{id}")

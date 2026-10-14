@@ -1,6 +1,7 @@
 package com.xt.interview.service.impl;
 
 import com.xt.interview.dto.AccountDTO;
+import com.xt.interview.dto.PageResponse;
 import com.xt.interview.entity.Account;
 import com.xt.interview.entity.Department;
 import com.xt.interview.repository.AccountRepository;
@@ -8,6 +9,8 @@ import com.xt.interview.repository.DepartmentRepository;
 import com.xt.interview.service.AccountService;
 import com.xt.interview.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,6 +101,32 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByDeleted(NOT_DELETED).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<AccountDTO> pageAccounts(
+            String username, Integer status, Integer roleLevel, Integer page, Integer size) {
+        int currentPage = page == null ? 0 : page;
+        int pageSize = size == null ? 10 : size;
+        if (currentPage < 0) {
+            throw new IllegalArgumentException("页码不能小于 0");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new IllegalArgumentException("每页条数必须在 1-100 之间");
+        }
+
+        Page<Account> accountPage = accountRepository.findPage(
+                username == null ? null : username.trim(),
+                status,
+                roleLevel,
+                PageRequest.of(currentPage, pageSize));
+        return new PageResponse<>(
+                accountPage.getContent().stream().map(this::convertToDTO).collect(Collectors.toList()),
+                accountPage.getTotalElements(),
+                accountPage.getTotalPages(),
+                accountPage.getNumber(),
+                accountPage.getSize());
     }
 
     @Override

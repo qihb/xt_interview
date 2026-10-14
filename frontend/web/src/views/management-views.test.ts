@@ -6,7 +6,7 @@ import { accountApi, departmentApi } from '@/api'
 
 vi.mock('@/api', () => ({
   accountApi: {
-    getAll: vi.fn(),
+    page: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn()
@@ -30,16 +30,29 @@ const stubs = {
   'el-option': true,
   'el-button': true,
   'el-tag': true,
+  'el-pagination': true,
   DepartmentSelect: true
 }
 
 describe('management views', () => {
   it('loads users on mount', async () => {
-    vi.mocked(accountApi.getAll).mockResolvedValueOnce([{ id: 1, username: 'alice' }] as any)
+    vi.mocked(accountApi.page).mockResolvedValueOnce({
+      list: [{ id: 1, username: 'alice' }],
+      totalElements: 1,
+      totalPages: 1,
+      currentPage: 0,
+      pageSize: 10
+    } as any)
 
     mount(UserManagement, { global: { stubs, directives: { loading: () => undefined } } })
 
-    expect(accountApi.getAll).toHaveBeenCalledOnce()
+    expect(accountApi.page).toHaveBeenCalledWith({
+      username: '',
+      status: undefined,
+      roleLevel: undefined,
+      page: 0,
+      size: 10
+    })
   })
 
   it('loads departments on mount', async () => {
