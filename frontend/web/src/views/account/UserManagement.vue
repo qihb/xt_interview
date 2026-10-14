@@ -14,18 +14,32 @@
         </div>
       </div>
 
-      <div class="user-filters">
-        <el-input
-          v-model="filters.username"
-          clearable
-          placeholder="请输入用户名"
-          style="width: 220px"
-          @keyup.enter="handleSearch"
-        />
-        <AccountStatusSelect v-model="filters.status" />
-        <AccountRoleSelect v-model="filters.roleLevel" />
-        <el-button type="primary" @click="handleSearch">搜索</el-button>
-      </div>
+      <el-form
+        :model="filters"
+        inline
+        class="user-filters"
+        @submit.prevent="handleSearch"
+      >
+        <el-form-item label="用户名">
+          <el-input
+            v-model="filters.username"
+            clearable
+            placeholder="请输入用户名"
+            style="width: 220px"
+            @keyup.enter="handleSearch"
+          />
+        </el-form-item>
+        <el-form-item label="状态">
+          <AccountStatusSelect v-model="filters.status" />
+        </el-form-item>
+        <el-form-item label="权限级别">
+          <AccountRoleSelect v-model="filters.roleLevel" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" native-type="submit">搜索</el-button>
+          <el-button @click="resetSearch">重置</el-button>
+        </el-form-item>
+      </el-form>
 
       <el-table
         v-loading="loading"
@@ -92,7 +106,14 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { accountApi, type Account, type AccountPayload, useAccountList } from '@/features/account'
+import {
+  accountApi,
+  AccountRoleSelect,
+  AccountStatusSelect,
+  type Account,
+  type AccountPayload,
+  useAccountList
+} from '@/features/account'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import AppPagination from '@/components/AppPagination.vue'
@@ -140,6 +161,13 @@ function roleTagType(level: number): 'info' | 'warning' | 'danger' {
     3: 'danger'
   }
   return map[level] || 'info'
+}
+
+function resetSearch() {
+  filters.username = ''
+  filters.status = undefined
+  filters.roleLevel = undefined
+  handleSearch()
 }
 
 function resetForm() {
