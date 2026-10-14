@@ -51,7 +51,7 @@ class AccountServiceImplTest {
 
     @Test
     void createAccountRejectsDuplicateUsername() {
-        when(accountRepository.existsByUsernameAndDeleted("alice", 0)).thenReturn(true);
+        when(accountRepository.countByUsernameAndDeleted("alice", 0)).thenReturn(1L);
 
         RuntimeException error = assertThrows(RuntimeException.class,
                 () -> service.createAccount(account("alice")));
@@ -62,7 +62,7 @@ class AccountServiceImplTest {
 
     @Test
     void createAccountAllowsUsernameUsedByDeletedAccount() {
-        when(accountRepository.existsByUsernameAndDeleted("alice", 0)).thenReturn(false);
+        when(accountRepository.countByUsernameAndDeleted("alice", 0)).thenReturn(0L);
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> {
             Account account = invocation.getArgument(0);
             account.setId(2L);
@@ -95,13 +95,13 @@ class AccountServiceImplTest {
         Account existing = accountEntity(1L, "alice");
         existing.setTokenVersion(0);
         when(accountRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
-        when(accountRepository.existsByUsernameAndDeleted("ALICE", 0)).thenReturn(false);
+        when(accountRepository.countByUsernameAndDeleted("ALICE", 0)).thenReturn(0L);
         when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         AccountDTO input = account("ALICE");
         service.updateAccount(1L, input);
 
-        verify(accountRepository).existsByUsernameAndDeleted("ALICE", 0);
+        verify(accountRepository).countByUsernameAndDeleted("ALICE", 0);
         assertEquals("ALICE", existing.getUsername());
         assertEquals(1, existing.getTokenVersion());
     }

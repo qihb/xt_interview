@@ -36,14 +36,12 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
                                                            @Param("deleted") Integer deleted);
 
     @Query(value = """
-            SELECT EXISTS(
-                SELECT 1 FROM sys_account
-                WHERE BINARY username = BINARY :username
-                  AND deleted = :deleted
-            )
+            SELECT COUNT(*) FROM sys_account
+            WHERE BINARY username = BINARY :username
+              AND deleted = :deleted
             """, nativeQuery = true)
-    boolean existsByUsernameAndDeleted(@Param("username") String username,
-                                       @Param("deleted") Integer deleted);
+    long countByUsernameAndDeleted(@Param("username") String username,
+                                   @Param("deleted") Integer deleted);
     boolean existsByDepartment_IdAndDeleted(Long departmentId, Integer deleted);
 
     @Query("""

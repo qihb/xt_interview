@@ -35,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDTO createAccount(AccountDTO dto) {
         String username = normalizeUsername(dto.getUsername());
-        if (accountRepository.existsByUsernameAndDeleted(username, NOT_DELETED)) {
+        if (accountRepository.countByUsernameAndDeleted(username, NOT_DELETED) > 0) {
             throw new RuntimeException("用户名已存在");
         }
         Account account = new Account();
@@ -63,7 +63,7 @@ public class AccountServiceImpl implements AccountService {
         String username = normalizeUsername(dto.getUsername());
         boolean usernameChanged = !account.getUsername().equals(username);
         if (usernameChanged &&
-            accountRepository.existsByUsernameAndDeleted(username, NOT_DELETED)) {
+            accountRepository.countByUsernameAndDeleted(username, NOT_DELETED) > 0) {
             throw new RuntimeException("用户名已存在");
         }
 
