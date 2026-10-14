@@ -31,7 +31,7 @@ request.interceptors.response.use(
         localStorage.removeItem('currentUser')
         router.push('/login')
         ElMessage.error('登录已过期，请重新登录')
-      } else if (error.response.status === 400) {
+      } else if (error.response.status === 400 || error.response.status === 409) {
         return Promise.reject(error.response.data)
       } else {
         ElMessage.error(error.response.data?.message || '请求失败')

@@ -29,7 +29,8 @@ const stubs = {
   'el-select': true,
   'el-option': true,
   'el-button': true,
-  'el-tag': true
+  'el-tag': true,
+  DepartmentSelect: true
 }
 
 describe('management views', () => {

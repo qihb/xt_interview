@@ -14,18 +14,45 @@ export const authApi = {
 }
 
 // 账号管理 API
+export interface Account {
+  id: number
+  username: string
+  name: string
+  gender?: string
+  phone?: string
+  roleLevel: number
+  status: number
+  isSuper: number
+  departmentId: number | null
+  departmentName?: string
+  createTime?: string
+  updateTime?: string
+}
+
+export interface AccountPayload {
+  username: string
+  name: string
+  gender: string
+  phone?: string
+  password?: string
+  roleLevel: number
+  status: number
+  isSuper: number
+  departmentId: number | null
+}
+
 export const accountApi = {
   getAll() {
-    return request.get('/accounts')
+    return request.get<Account[]>('/accounts') as unknown as Promise<Account[]>
   },
   getById(id: number) {
-    return request.get(`/accounts/${id}`)
+    return request.get<Account>(`/accounts/${id}`) as unknown as Promise<Account>
   },
-  create(data: any) {
-    return request.post('/accounts', data)
+  create(data: AccountPayload) {
+    return request.post<Account>('/accounts', data) as unknown as Promise<Account>
   },
-  update(id: number, data: any) {
-    return request.put(`/accounts/${id}`, data)
+  update(id: number, data: AccountPayload) {
+    return request.put<Account>(`/accounts/${id}`, data) as unknown as Promise<Account>
   },
   delete(id: number) {
     return request.delete(`/accounts/${id}`)

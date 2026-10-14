@@ -25,6 +25,11 @@
         <el-table-column prop="name" label="姓名" width="100" />
         <el-table-column prop="gender" label="性别" width="80" />
         <el-table-column prop="phone" label="联系方式" width="140" />
+        <el-table-column label="所属部门" width="140">
+          <template #default="{ row }">
+            {{ row.departmentName || '未分配' }}
+          </template>
+        </el-table-column>
         <el-table-column label="权限级别" width="120">
           <template #default="{ row }">
             <el-tag :type="roleTagType(row.roleLevel)">
@@ -85,6 +90,9 @@
         <el-form-item label="联系方式" prop="phone">
           <el-input v-model="formData.phone" maxlength="20" show-word-limit placeholder="请输入手机号或座机号" />
         </el-form-item>
+        <el-form-item label="所属部门" prop="departmentId">
+          <DepartmentSelect v-model="formData.departmentId" scope="all" />
+        </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input
             v-model="formData.password"
@@ -121,7 +129,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { accountApi } from '@/api'
+import { accountApi, type Account } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
@@ -132,7 +140,7 @@ const dialogVisible = ref(false)
 const isEdit = ref(false)
 const editId = ref<number>(0)
 
-const users = ref<any[]>([])
+const users = ref<Account[]>([])
 
 const formRef = ref<FormInstance>()
 
@@ -145,6 +153,7 @@ interface UserFormData {
   roleLevel: number
   status: number
   isSuper: number
+  departmentId: number | null
 }
 
 const formData = reactive<UserFormData>({
@@ -155,7 +164,8 @@ const formData = reactive<UserFormData>({
   password: '',
   roleLevel: 1,
   status: 1,
-  isSuper: 0
+  isSuper: 0,
+  departmentId: null
 })
 
 const formRules: FormRules = {
@@ -221,7 +231,7 @@ function roleTagType(level: number): 'info' | 'warning' | 'danger' {
 async function loadUsers() {
   loading.value = true
   try {
-    users.value = await accountApi.getAll() as unknown as any[]
+    users.value = await accountApi.getAll()
   } catch (error: any) {
     ElMessage.error(error.message || '加载用户列表失败')
   } finally {
@@ -238,6 +248,7 @@ function resetForm() {
   formData.roleLevel = 1
   formData.status = 1
   formData.isSuper = 0
+  formData.departmentId = null
   isEdit.value = false
   editId.value = 0
   formRef.value?.resetFields()
@@ -248,7 +259,7 @@ function openCreateDialog() {
   dialogVisible.value = true
 }
 
-function openEditDialog(row: any) {
+function openEditDialog(row: Account) {
   resetForm()
   isEdit.value = true
   editId.value = row.id
@@ -259,6 +270,7 @@ function openEditDialog(row: any) {
   formData.roleLevel = row.roleLevel
   formData.status = row.status
   formData.isSuper = row.isSuper
+  formData.departmentId = row.departmentId ?? null
   dialogVisible.value = true
 }
 
@@ -291,7 +303,7 @@ async function handleSubmit() {
   })
 }
 
-async function handleDelete(row: any) {
+async function handleDelete(row: Account) {
   try {
     await ElMessageBox.confirm(
       `确定要删除用户 "${row.username}" 吗？`,

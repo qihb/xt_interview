@@ -39,4 +39,15 @@ describe('request client', () => {
     expect(push).toHaveBeenCalledWith('/login')
     expect(messageError).toHaveBeenCalledWith('登录已过期，请重新登录')
   })
+
+  it('passes conflict business messages to callers', async () => {
+    const request = (await import('@/utils/request')).default
+    const responseData = { message: '部门已被用户关联，无法删除' }
+
+    await expect(request.interceptors.response.handlers[0].rejected({
+      response: { status: 409, data: responseData }
+    })).rejects.toEqual(responseData)
+
+    expect(messageError).not.toHaveBeenCalled()
+  })
 })

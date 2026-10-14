@@ -2,7 +2,9 @@ package com.xt.interview.service.impl;
 
 import com.xt.interview.dto.AccountDTO;
 import com.xt.interview.entity.Account;
+import com.xt.interview.entity.Department;
 import com.xt.interview.repository.AccountRepository;
+import com.xt.interview.repository.DepartmentRepository;
 import com.xt.interview.service.AccountService;
 import com.xt.interview.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
     @Override
     public AccountDTO createAccount(AccountDTO dto) {
         if (accountRepository.existsByUsernameAndDeleted(dto.getUsername(), NOT_DELETED)) {
@@ -40,6 +45,7 @@ public class AccountServiceImpl implements AccountService {
         account.setRoleLevel(dto.getRoleLevel());
         account.setStatus(dto.getStatus());
         account.setIsSuper(dto.getIsSuper());
+        account.setDepartment(resolveDepartment(dto.getDepartmentId()));
         account.setDeleted(NOT_DELETED);
         account = accountRepository.save(account);
         return convertToDTO(account);
@@ -65,6 +71,7 @@ public class AccountServiceImpl implements AccountService {
         account.setRoleLevel(dto.getRoleLevel());
         account.setStatus(dto.getStatus());
         account.setIsSuper(dto.getIsSuper());
+        account.setDepartment(resolveDepartment(dto.getDepartmentId()));
         account = accountRepository.save(account);
         return convertToDTO(account);
     }
@@ -115,8 +122,20 @@ public class AccountServiceImpl implements AccountService {
         dto.setRoleLevel(account.getRoleLevel());
         dto.setStatus(account.getStatus());
         dto.setIsSuper(account.getIsSuper());
+        if (account.getDepartment() != null) {
+            dto.setDepartmentId(account.getDepartment().getId());
+            dto.setDepartmentName(account.getDepartment().getName());
+        }
         dto.setCreateTime(account.getCreateTime());
         dto.setUpdateTime(account.getUpdateTime());
         return dto;
+    }
+
+    private Department resolveDepartment(Long departmentId) {
+        if (departmentId == null) {
+            return null;
+        }
+        return departmentRepository.findByIdAndDeleted(departmentId, NOT_DELETED)
+                .orElseThrow(() -> new IllegalArgumentException("所属部门不存在或已删除"));
     }
 }

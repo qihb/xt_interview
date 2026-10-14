@@ -5,6 +5,7 @@ import 'element-plus/dist/index.css'
 import 'virtual:uno.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
+import DepartmentSelect from './components/DepartmentSelect.vue'
 import router from './router'
 import './style.css'
 
@@ -17,5 +18,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
+app.component('DepartmentSelect', DepartmentSelect)
 
 app.mount('#app')

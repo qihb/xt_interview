@@ -3,6 +3,7 @@ package com.xt.interview.service.impl;
 import com.xt.interview.dto.DepartmentDTO;
 import com.xt.interview.entity.Department;
 import com.xt.interview.repository.DepartmentRepository;
+import com.xt.interview.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,9 @@ class DepartmentServiceImplTest {
 
     @Mock
     private DepartmentRepository departmentRepository;
+
+    @Mock
+    private AccountRepository accountRepository;
 
     @InjectMocks
     private DepartmentServiceImpl service;
@@ -71,6 +75,19 @@ class DepartmentServiceImplTest {
 
         assertEquals(1, existing.getDeleted());
         verify(departmentRepository).save(existing);
+    }
+
+    @Test
+    void deleteDepartmentRejectsWhenActiveAccountReferencesIt() {
+        Department existing = entity(1L, "研发部", "RD");
+        when(departmentRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
+        when(accountRepository.existsByDepartment_IdAndDeleted(1L, 0)).thenReturn(true);
+
+        RuntimeException error = assertThrows(RuntimeException.class,
+                () -> service.deleteDepartment(1L));
+
+        assertEquals("部门已被用户关联，无法删除", error.getMessage());
+        verify(departmentRepository, never()).save(any(Department.class));
     }
 
     private DepartmentDTO department(String name, String code) {

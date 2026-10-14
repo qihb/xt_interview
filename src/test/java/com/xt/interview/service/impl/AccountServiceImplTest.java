@@ -2,7 +2,9 @@ package com.xt.interview.service.impl;
 
 import com.xt.interview.dto.AccountDTO;
 import com.xt.interview.entity.Account;
+import com.xt.interview.entity.Department;
 import com.xt.interview.repository.AccountRepository;
+import com.xt.interview.repository.DepartmentRepository;
 import com.xt.interview.util.MD5Util;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +23,9 @@ class AccountServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private DepartmentRepository departmentRepository;
 
     @InjectMocks
     private AccountServiceImpl service;
@@ -64,6 +69,43 @@ class AccountServiceImplTest {
         service.updateAccount(1L, input);
 
         assertEquals("old-hash", existing.getPassword());
+        verify(accountRepository).save(existing);
+    }
+
+    @Test
+    void createAccountStoresDepartmentAndReturnsDepartmentName() {
+        Department department = departmentEntity(7L, "研发部", 1);
+        when(departmentRepository.findByIdAndDeleted(7L, 0)).thenReturn(Optional.of(department));
+        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> {
+            Account account = invocation.getArgument(0);
+            account.setId(1L);
+            return account;
+        });
+
+        AccountDTO input = account("alice");
+        input.setDepartmentId(7L);
+
+        AccountDTO result = service.createAccount(input);
+
+        var captor = org.mockito.ArgumentCaptor.forClass(Account.class);
+        verify(accountRepository).save(captor.capture());
+        assertEquals(7L, captor.getValue().getDepartment().getId());
+        assertEquals(7L, result.getDepartmentId());
+        assertEquals("研发部", result.getDepartmentName());
+    }
+
+    @Test
+    void updateAccountCanClearDepartment() {
+        Account existing = accountEntity(1L, "alice");
+        existing.setDepartment(departmentEntity(7L, "研发部", 1));
+        when(accountRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
+        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AccountDTO input = account("alice");
+        input.setDepartmentId(null);
+        service.updateAccount(1L, input);
+
+        assertNull(existing.getDepartment());
         verify(accountRepository).save(existing);
     }
 
@@ -112,5 +154,15 @@ class AccountServiceImplTest {
         account.setIsSuper(0);
         account.setDeleted(0);
         return account;
+    }
+
+    private Department departmentEntity(Long id, String name, Integer status) {
+        Department department = new Department();
+        department.setId(id);
+        department.setName(name);
+        department.setCode("D" + id);
+        department.setStatus(status);
+        department.setDeleted(0);
+        return department;
     }
 }

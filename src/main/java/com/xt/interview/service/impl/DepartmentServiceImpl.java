@@ -2,6 +2,8 @@ package com.xt.interview.service.impl;
 
 import com.xt.interview.dto.DepartmentDTO;
 import com.xt.interview.entity.Department;
+import com.xt.interview.exception.DepartmentInUseException;
+import com.xt.interview.repository.AccountRepository;
 import com.xt.interview.repository.DepartmentRepository;
 import com.xt.interview.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public DepartmentDTO createDepartment(DepartmentDTO dto) {
@@ -62,6 +67,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void deleteDepartment(Long id) {
         Department department = departmentRepository.findByIdAndDeleted(id, NOT_DELETED)
                 .orElseThrow(() -> new RuntimeException("部门不存在"));
+        if (accountRepository.existsByDepartment_IdAndDeleted(id, NOT_DELETED)) {
+            throw new DepartmentInUseException("部门已被用户关联，无法删除");
+        }
         department.setDeleted(DELETED);
         departmentRepository.save(department);
     }

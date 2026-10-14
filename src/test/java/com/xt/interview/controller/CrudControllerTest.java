@@ -4,6 +4,7 @@ import com.xt.interview.dto.AccountDTO;
 import com.xt.interview.dto.DepartmentDTO;
 import com.xt.interview.service.AccountService;
 import com.xt.interview.service.DepartmentService;
+import com.xt.interview.exception.DepartmentInUseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,5 +77,14 @@ class CrudControllerTest {
                 .andExpect(jsonPath("$.code").value("RD"));
 
         verify(departmentService).createDepartment(any(DepartmentDTO.class));
+    }
+
+    @Test
+    void deletingReferencedDepartmentReturnsConflict() throws Exception {
+        doThrow(new DepartmentInUseException("部门已被用户关联，无法删除"))
+                .when(departmentService).deleteDepartment(1L);
+
+        mockMvc.perform(delete("/api/departments/1"))
+                .andExpect(status().isConflict());
     }
 }

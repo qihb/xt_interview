@@ -28,8 +28,24 @@ describe('api clients', () => {
   it('maps account and department CRUD requests', () => {
     accountApi.getAll()
     accountApi.getById(1)
-    accountApi.create({ username: 'u' })
-    accountApi.update(1, { name: 'N' })
+    accountApi.create({
+      username: 'u',
+      name: 'User',
+      gender: '男',
+      roleLevel: 1,
+      status: 1,
+      isSuper: 0,
+      departmentId: null
+    })
+    accountApi.update(1, {
+      username: 'u',
+      name: 'N',
+      gender: '男',
+      roleLevel: 1,
+      status: 1,
+      isSuper: 0,
+      departmentId: 2
+    })
     accountApi.delete(1)
     departmentApi.getAll()
     departmentApi.getById(2)
@@ -39,8 +55,24 @@ describe('api clients', () => {
 
     expect(request.get).toHaveBeenCalledWith('/accounts')
     expect(request.get).toHaveBeenCalledWith('/accounts/1')
-    expect(request.post).toHaveBeenCalledWith('/accounts', { username: 'u' })
-    expect(request.put).toHaveBeenCalledWith('/accounts/1', { name: 'N' })
+    expect(request.post).toHaveBeenCalledWith('/accounts', {
+      username: 'u',
+      name: 'User',
+      gender: '男',
+      roleLevel: 1,
+      status: 1,
+      isSuper: 0,
+      departmentId: null
+    })
+    expect(request.put).toHaveBeenCalledWith('/accounts/1', {
+      username: 'u',
+      name: 'N',
+      gender: '男',
+      roleLevel: 1,
+      status: 1,
+      isSuper: 0,
+      departmentId: 2
+    })
     expect(request.delete).toHaveBeenCalledWith('/accounts/1')
     expect(request.get).toHaveBeenCalledWith('/departments')
     expect(request.get).toHaveBeenCalledWith('/departments/2')
