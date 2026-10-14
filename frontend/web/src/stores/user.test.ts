@@ -45,4 +45,12 @@ describe('user store', () => {
     store.loadFromStorage()
     expect(store.userInfo).toEqual({ id: 2 })
   })
+
+  it('exposes permissions for the current role', () => {
+    const store = useUserStore()
+    store.setUserInfo({ id: 2, username: 'manager', roleLevel: 2 })
+
+    expect(store.can('create')).toBe(true)
+    expect(store.can('delete')).toBe(false)
+  })
 })

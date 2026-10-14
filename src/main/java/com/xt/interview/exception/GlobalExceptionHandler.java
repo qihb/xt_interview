@@ -79,6 +79,12 @@ public class GlobalExceptionHandler {
         return response(HttpStatus.CONFLICT, exception.getMessage(), Map.of("id", exception.getMessage()));
     }
 
+    @ExceptionHandler(PermissionDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handlePermissionDenied(PermissionDeniedException exception) {
+        return response(HttpStatus.FORBIDDEN, exception.getMessage(),
+                Map.of("permission", exception.getRequiredPermission()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException exception) {
         String message = exception.getMessage();

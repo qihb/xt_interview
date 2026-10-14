@@ -2,10 +2,21 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { authApi } from '../api'
 import type { AuthUser } from '../api'
+import { can as canPermission, type PermissionAction } from '../permissions'
+
+function readStoredUser(): AuthUser | null {
+  const stored = localStorage.getItem('currentUser')
+  if (!stored) return null
+  try {
+    return JSON.parse(stored) as AuthUser
+  } catch {
+    return null
+  }
+}
 
 export const useUserStore = defineStore('user', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
-  const userInfo = ref<AuthUser | null>(null)
+  const userInfo = ref<AuthUser | null>(readStoredUser())
 
   const isLoggedIn = computed(() => Boolean(token.value))
 
@@ -37,10 +48,11 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function loadFromStorage() {
-    const stored = localStorage.getItem('currentUser')
-    if (stored) {
-      userInfo.value = JSON.parse(stored) as AuthUser
-    }
+    userInfo.value = readStoredUser()
+  }
+
+  function can(action: PermissionAction) {
+    return canPermission(userInfo.value?.roleLevel, action)
   }
 
   return {
@@ -51,6 +63,7 @@ export const useUserStore = defineStore('user', () => {
     setUserInfo,
     logout,
     validateToken,
-    loadFromStorage
+    loadFromStorage,
+    can
   }
 })

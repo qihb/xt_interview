@@ -11,7 +11,7 @@
         </div>
         <div class="user-header-actions">
           <el-button :icon="Refresh" @click="loadUsers">刷新</el-button>
-          <el-button type="primary" :icon="Plus" @click="openCreateDialog">
+          <el-button v-if="userStore.can('create')" type="primary" :icon="Plus" @click="openCreateDialog">
             新增用户
           </el-button>
         </div>
@@ -77,10 +77,10 @@
         <el-table-column prop="createTime" label="创建时间" width="180" />
         <el-table-column label="操作" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link :icon="Edit" @click="openEditDialog(row)">
+            <el-button v-if="userStore.can('edit')" type="primary" link :icon="Edit" @click="openEditDialog(row)">
               编辑
             </el-button>
-            <el-button type="danger" link :icon="Delete" @click="handleDelete(row)">
+            <el-button v-if="userStore.can('delete')" type="danger" link :icon="Delete" @click="handleDelete(row)">
               删除
             </el-button>
           </template>
@@ -123,7 +123,9 @@ import { Plus, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import AppPagination from '@/components/AppPagination.vue'
 import UserDialog from './components/UserDialog.vue'
 import DepartmentTree from './components/DepartmentTree.vue'
+import { useUserStore } from '@/features/auth'
 
+const userStore = useUserStore()
 const submitting = ref(false)
 const dialogVisible = ref(false)
 const isEdit = ref(false)
@@ -195,11 +197,13 @@ function resetForm() {
 }
 
 function openCreateDialog() {
+  if (!userStore.can('create')) return
   resetForm()
   dialogVisible.value = true
 }
 
 function openEditDialog(row: Account) {
+  if (!userStore.can('edit')) return
   resetForm()
   isEdit.value = true
   editId.value = row.id
@@ -235,6 +239,7 @@ async function handleSubmit(data: AccountPayload) {
 }
 
 async function handleDelete(row: Account) {
+  if (!userStore.can('delete')) return
   try {
     await ElMessageBox.confirm(
       `确定要删除用户 "${row.username}" 吗？`,

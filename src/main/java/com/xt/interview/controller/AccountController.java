@@ -11,6 +11,8 @@ import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import com.xt.interview.util.RolePermission;
 
 import java.util.List;
 
@@ -46,21 +48,27 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<AccountDTO> create(@Valid @RequestBody AccountDTO dto) {
+    public ResponseEntity<AccountDTO> create(@Valid @RequestBody AccountDTO dto, HttpServletRequest request) {
+        RolePermission.requireAtLeast(request, 2);
         return ResponseEntity.ok(accountService.createAccount(dto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AccountDTO> update(
             @PathVariable @Positive(message = "ID 必须大于 0") Long id,
-            @Valid @RequestBody AccountDTO dto) {
+            @Valid @RequestBody AccountDTO dto,
+            HttpServletRequest request) {
         validateId(id);
+        RolePermission.requireAtLeast(request, 2);
         return ResponseEntity.ok(accountService.updateAccount(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @Positive(message = "ID 必须大于 0") Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable @Positive(message = "ID 必须大于 0") Long id,
+            HttpServletRequest request) {
         validateId(id);
+        RolePermission.requireAtLeast(request, 3);
         accountService.deleteAccount(id);
         return ResponseEntity.ok().build();
     }

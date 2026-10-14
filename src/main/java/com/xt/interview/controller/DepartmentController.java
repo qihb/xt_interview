@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import com.xt.interview.util.RolePermission;
 
 import java.util.List;
 
@@ -31,21 +33,29 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<DepartmentDTO> create(@Valid @RequestBody DepartmentDTO dto) {
+    public ResponseEntity<DepartmentDTO> create(
+            @Valid @RequestBody DepartmentDTO dto,
+            HttpServletRequest request) {
+        RolePermission.requireAtLeast(request, 2);
         return ResponseEntity.ok(departmentService.createDepartment(dto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<DepartmentDTO> update(
             @PathVariable @Positive(message = "ID 必须大于 0") Long id,
-            @Valid @RequestBody DepartmentDTO dto) {
+            @Valid @RequestBody DepartmentDTO dto,
+            HttpServletRequest request) {
         validateId(id);
+        RolePermission.requireAtLeast(request, 2);
         return ResponseEntity.ok(departmentService.updateDepartment(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @Positive(message = "ID 必须大于 0") Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable @Positive(message = "ID 必须大于 0") Long id,
+            HttpServletRequest request) {
         validateId(id);
+        RolePermission.requireAtLeast(request, 3);
         departmentService.deleteDepartment(id);
         return ResponseEntity.ok().build();
     }

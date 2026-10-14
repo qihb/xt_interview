@@ -9,6 +9,7 @@ export interface AuthUser {
   id: number
   username: string
   name?: string
+  roleLevel?: number
   [key: string]: unknown
 }
 

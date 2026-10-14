@@ -1,3 +1,5 @@
 export { authApi } from './api'
 export type { AuthUser, LoginPayload, LoginResult } from './api'
+export { can } from './permissions'
+export type { PermissionAction } from './permissions'
 export { useUserStore } from './stores/user'

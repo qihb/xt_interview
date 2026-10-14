@@ -50,4 +50,19 @@ describe('request client', () => {
 
     expect(messageError).not.toHaveBeenCalled()
   })
+
+  it('shows the backend permission message for forbidden responses', async () => {
+    const request = (await import('@/utils/request')).default
+    const responseData = {
+      status: 403,
+      message: '没有执行该操作的权限',
+      details: { permission: '需要超级管理员权限' }
+    }
+
+    await expect(request.interceptors.response.handlers[0].rejected({
+      response: { status: 403, data: responseData }
+    })).rejects.toBeTruthy()
+
+    expect(messageError).toHaveBeenCalledWith('没有执行该操作的权限')
+  })
 })

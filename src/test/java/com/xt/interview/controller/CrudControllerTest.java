@@ -61,7 +61,7 @@ class CrudControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].username").value("alice"));
 
-        mockMvc.perform(delete("/api/accounts/1"))
+        mockMvc.perform(delete("/api/accounts/1").requestAttr("roleLevel", 3))
                 .andExpect(status().isOk());
 
         verify(accountService).getAllAccounts();
@@ -99,7 +99,7 @@ class CrudControllerTest {
         department.setCode("RD");
         when(departmentService.createDepartment(any(DepartmentDTO.class))).thenReturn(department);
 
-        mockMvc.perform(post("/api/departments")
+        mockMvc.perform(post("/api/departments").requestAttr("roleLevel", 3)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name":"研发部","code":"RD","status":1}
@@ -124,6 +124,33 @@ class CrudControllerTest {
                 .andExpect(jsonPath("$.details.roleLevel").value("权限级别必须在 1-3 之间"))
                 .andExpect(jsonPath("$.details.status").value("状态必须是 0 或 1"))
                 .andExpect(jsonPath("$.details.departmentId").value("部门 ID 必须大于 0"));
+
+        verifyNoInteractions(accountService);
+    }
+
+    @Test
+    void viewerCannotCreateAccount() throws Exception {
+        mockMvc.perform(post("/api/accounts")
+                        .requestAttr("roleLevel", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username":"alice","name":"Alice","password":"123456",
+                                 "roleLevel":1,"status":1,"isSuper":0}
+                                """))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.message").value("没有执行该操作的权限"))
+                .andExpect(jsonPath("$.details.permission").value("需要管理员权限"));
+
+        verifyNoInteractions(accountService);
+    }
+
+    @Test
+    void managerCannotDeleteAccount() throws Exception {
+        mockMvc.perform(delete("/api/accounts/1").requestAttr("roleLevel", 2))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.details.permission").value("需要超级管理员权限"));
 
         verifyNoInteractions(accountService);
     }
@@ -160,7 +187,7 @@ class CrudControllerTest {
                 "Duplicate entry 'qihb' for key 'sys_account.uk_account_active_username'"))
                 .when(accountService).createAccount(any(AccountDTO.class));
 
-        mockMvc.perform(post("/api/accounts")
+        mockMvc.perform(post("/api/accounts").requestAttr("roleLevel", 3)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"username":"qihb","name":"齐海兵","gender":"男","phone":"13511061687",
@@ -176,7 +203,7 @@ class CrudControllerTest {
         doThrow(new DepartmentInUseException("部门已被用户关联，无法删除"))
                 .when(departmentService).deleteDepartment(1L);
 
-        mockMvc.perform(delete("/api/departments/1"))
+        mockMvc.perform(delete("/api/departments/1").requestAttr("roleLevel", 3))
                 .andExpect(status().isConflict());
     }
 }

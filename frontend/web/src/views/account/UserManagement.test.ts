@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { config, flushPromises, mount } from '@vue/test-utils'
+import { createPinia, setActivePinia } from 'pinia'
 import UserManagement from './UserManagement.vue'
+import { useUserStore } from '@/features/auth'
 import { accountApi } from '@/features/account/api'
 import AccountRoleSelect from '@/features/account/components/AccountRoleSelect.vue'
 import AccountStatusSelect from '@/features/account/components/AccountStatusSelect.vue'
@@ -22,8 +24,13 @@ vi.mock('@/features/department/api', () => ({
 }))
 
 const stubs = {
-  'el-table': true,
-  'el-table-column': true,
+  'el-table': {
+    props: ['data'],
+    template: '<div class="table-stub"><slot v-for="row in data" :row="row" /></div>'
+  },
+  'el-table-column': {
+    template: '<div><slot :row="{}" /></div>'
+  },
   'el-dialog': true,
   'el-form': {
     template: '<form><slot /></form>'
@@ -51,6 +58,10 @@ const stubs = {
 
 describe('UserManagement', () => {
   beforeEach(() => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    config.global.plugins = [pinia]
+    useUserStore().setUserInfo({ id: 1, username: 'viewer', roleLevel: 1 })
     vi.mocked(departmentApi.getAll).mockResolvedValue([])
   })
 
@@ -145,5 +156,37 @@ describe('UserManagement', () => {
       page: 0,
       size: 10
     })
+  })
+
+  it('hides create, edit and delete actions for a viewer', () => {
+    const wrapper = mount(UserManagement, {
+      global: { stubs, directives: { loading: () => undefined } }
+    })
+
+    expect(wrapper.text()).not.toContain('新增用户')
+    expect(wrapper.text()).not.toContain('编辑')
+    expect(wrapper.text()).not.toContain('删除')
+    expect(wrapper.text()).toContain('刷新')
+  })
+
+  it('shows create and edit actions for a manager but not delete', async () => {
+    useUserStore().setUserInfo({ id: 2, username: 'manager', roleLevel: 2 })
+    expect(useUserStore().can('create')).toBe(true)
+    vi.mocked(accountApi.page).mockResolvedValue({
+      list: [{ id: 1, username: 'alice', roleLevel: 1, status: 1 }],
+      totalElements: 1,
+      totalPages: 1,
+      currentPage: 0,
+      pageSize: 10
+    } as any)
+    const wrapper = mount(UserManagement, {
+      global: { stubs, directives: { loading: () => undefined } }
+    })
+    await flushPromises()
+    expect((wrapper.vm as any).userStore.can('create')).toBe(true)
+
+    expect(wrapper.text()).toContain('新增用户')
+    expect(wrapper.text()).toContain('编辑')
+    expect(wrapper.text()).not.toContain('删除')
   })
 })
