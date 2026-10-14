@@ -12,10 +12,12 @@ export function useAccountList() {
     username: string
     status?: number
     roleLevel?: number
+    departmentId?: number
   }>({
     username: '',
     status: undefined,
-    roleLevel: undefined
+    roleLevel: undefined,
+    departmentId: undefined
   })
 
   async function loadUsers() {
@@ -25,6 +27,7 @@ export function useAccountList() {
         username: filters.username,
         status: filters.status,
         roleLevel: filters.roleLevel,
+        departmentId: filters.departmentId,
         page: currentPage.value,
         size: pageSize.value
       })

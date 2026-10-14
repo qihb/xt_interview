@@ -33,9 +33,10 @@ public class AccountController {
             @RequestParam(required = false) @Size(max = 50, message = "用户名长度不能超过 50 个字符") String username,
             @RequestParam(required = false) @Min(value = 0, message = "状态必须是 0 或 1") @Max(value = 1, message = "状态必须是 0 或 1") Integer status,
             @RequestParam(required = false) @Min(value = 1, message = "权限级别必须在 1-3 之间") @Max(value = 3, message = "权限级别必须在 1-3 之间") Integer roleLevel,
+            @RequestParam(required = false) @Positive(message = "部门 ID 必须大于 0") Long departmentId,
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "页码不能小于 0") Integer page,
             @RequestParam(defaultValue = "10") @Min(value = 1, message = "每页条数必须在 1-100 之间") @Max(value = 100, message = "每页条数必须在 1-100 之间") Integer size) {
-        return ResponseEntity.ok(accountService.pageAccounts(username, status, roleLevel, page, size));
+        return ResponseEntity.ok(accountService.pageAccounts(username, status, roleLevel, departmentId, page, size));
     }
 
     @GetMapping("/{id}")

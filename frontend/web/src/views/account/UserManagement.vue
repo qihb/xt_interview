@@ -1,6 +1,9 @@
 <template>
   <div class="page-container">
-    <section class="user-section">
+    <div class="user-layout">
+      <DepartmentTree @select="handleDepartmentSelect" />
+
+      <section class="user-section">
       <div class="user-header">
         <div class="user-header-title">
           <span>用户列表</span>
@@ -92,7 +95,8 @@
         @page-change="handlePageChange"
         @size-change="handlePageSizeChange"
       />
-    </section>
+      </section>
+    </div>
 
     <UserDialog
       v-model="dialogVisible"
@@ -118,6 +122,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete, Refresh } from '@element-plus/icons-vue'
 import AppPagination from '@/components/AppPagination.vue'
 import UserDialog from './components/UserDialog.vue'
+import DepartmentTree from './components/DepartmentTree.vue'
 
 const submitting = ref(false)
 const dialogVisible = ref(false)
@@ -167,6 +172,11 @@ function resetSearch() {
   filters.username = ''
   filters.status = undefined
   filters.roleLevel = undefined
+  handleSearch()
+}
+
+function handleDepartmentSelect(departmentId?: number) {
+  filters.departmentId = departmentId
   handleSearch()
 }
 
@@ -261,7 +271,15 @@ onMounted(() => {
   background: @page-bg;
 }
 
+.user-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
 .user-section {
+  min-width: 0;
   background: #fff;
   border-radius: 8px;
   padding: 20px;

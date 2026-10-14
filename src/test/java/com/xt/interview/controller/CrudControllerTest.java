@@ -73,13 +73,14 @@ class CrudControllerTest {
         AccountDTO account = new AccountDTO();
         account.setId(1L);
         account.setUsername("alice");
-        when(accountService.pageAccounts("ali", 1, 2, 1, 5))
+        when(accountService.pageAccounts("ali", 1, 2, 7L, 1, 5))
                 .thenReturn(new PageResponse<>(List.of(account), 1, 1, 1, 5));
 
         mockMvc.perform(get("/api/accounts/page")
                         .param("username", "ali")
                         .param("status", "1")
                         .param("roleLevel", "2")
+                        .param("departmentId", "7")
                         .param("page", "1")
                         .param("size", "5"))
                 .andExpect(status().isOk())
@@ -87,7 +88,7 @@ class CrudControllerTest {
                 .andExpect(jsonPath("$.currentPage").value(1))
                 .andExpect(jsonPath("$.pageSize").value(5));
 
-        verify(accountService).pageAccounts("ali", 1, 2, 1, 5);
+        verify(accountService).pageAccounts("ali", 1, 2, 7L, 1, 5);
     }
 
     @Test

@@ -31,6 +31,7 @@ export interface AccountPageParams {
   username?: string
   status?: number
   roleLevel?: number
+  departmentId?: number
   page: number
   size: number
 }

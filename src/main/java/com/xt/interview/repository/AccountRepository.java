@@ -50,10 +50,12 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
               and (:username is null or :username = '' or lower(a.username) like lower(concat('%', :username, '%')))
               and (:status is null or a.status = :status)
               and (:roleLevel is null or a.roleLevel = :roleLevel)
+              and (:departmentId is null or a.department.id = :departmentId)
             order by a.createTime desc, a.id desc
             """)
     Page<Account> findPage(@Param("username") String username,
                            @Param("status") Integer status,
                            @Param("roleLevel") Integer roleLevel,
+                           @Param("departmentId") Long departmentId,
                            Pageable pageable);
 }

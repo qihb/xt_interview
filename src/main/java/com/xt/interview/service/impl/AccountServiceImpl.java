@@ -112,7 +112,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional(readOnly = true)
     public PageResponse<AccountDTO> pageAccounts(
-            String username, Integer status, Integer roleLevel, Integer page, Integer size) {
+            String username, Integer status, Integer roleLevel, Long departmentId, Integer page, Integer size) {
         int currentPage = page == null ? 0 : page;
         int pageSize = size == null ? 10 : size;
         if (currentPage < 0) {
@@ -126,6 +126,7 @@ public class AccountServiceImpl implements AccountService {
                 username == null ? null : username.trim(),
                 status,
                 roleLevel,
+                departmentId,
                 PageRequest.of(currentPage, pageSize));
         return new PageResponse<>(
                 accountPage.getContent().stream().map(this::convertToDTO).collect(Collectors.toList()),

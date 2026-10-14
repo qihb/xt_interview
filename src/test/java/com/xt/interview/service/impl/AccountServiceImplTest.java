@@ -184,10 +184,10 @@ class AccountServiceImplTest {
     @Test
     void pageAccountsUsesZeroBasedDefaultsAndMapsPageMetadata() {
         Account alice = accountEntity(1L, "alice");
-        when(accountRepository.findPage(null, null, null, PageRequest.of(0, 10)))
+        when(accountRepository.findPage(null, null, null, null, PageRequest.of(0, 10)))
                 .thenReturn(new PageImpl<>(List.of(alice), PageRequest.of(0, 10), 21));
 
-        var result = service.pageAccounts(null, null, null, null, null);
+        var result = service.pageAccounts(null, null, null, null, null, null);
 
         assertEquals(List.of("alice"), result.getList().stream().map(AccountDTO::getUsername).toList());
         assertEquals(21, result.getTotalElements());
@@ -198,12 +198,22 @@ class AccountServiceImplTest {
 
     @Test
     void pageAccountsPassesCombinedFiltersAndExcludesDeletedAccounts() {
-        when(accountRepository.findPage("ali", 1, 2, PageRequest.of(1, 5)))
+        when(accountRepository.findPage("ali", 1, 2, null, PageRequest.of(1, 5)))
                 .thenReturn(new PageImpl<>(List.of(), PageRequest.of(1, 5), 0));
 
-        service.pageAccounts("ali", 1, 2, 1, 5);
+        service.pageAccounts("ali", 1, 2, null, 1, 5);
 
-        verify(accountRepository).findPage("ali", 1, 2, PageRequest.of(1, 5));
+        verify(accountRepository).findPage("ali", 1, 2, null, PageRequest.of(1, 5));
+    }
+
+    @Test
+    void pageAccountsPassesDepartmentFilter() {
+        when(accountRepository.findPage("ali", null, null, 7L, PageRequest.of(0, 10)))
+                .thenReturn(new PageImpl<>(List.of(), PageRequest.of(0, 10), 0));
+
+        service.pageAccounts("ali", null, null, 7L, 0, 10);
+
+        verify(accountRepository).findPage("ali", null, null, 7L, PageRequest.of(0, 10));
     }
 
     private AccountDTO account(String username) {
