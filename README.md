@@ -1,15 +1,20 @@
 # XT Interview
 
-XT Interview 是一个前后端分离的用户管理后台项目，当前提供 JWT 登录认证和用户账号 CRUD 能力，并为部门管理、用户-部门关联以及用户搜索分页预留了扩展任务。
+XT Interview 是一个前后端分离的用户管理后台项目，已完成登录认证、用户账号管理、部门管理、用户-部门关联、分页筛选和基于角色的权限控制。
 
 ## 功能概览
 
-- 用户登录、Token 校验和退出登录
-- 用户账号新增、查询、编辑、软删除
-- 基于 Vue Router 的登录页和后台布局
-- 基于 Pinia 的用户会话状态管理
-- 基于 Flyway 的数据库版本迁移
-- Element Plus 管理后台界面
+- JWT 登录、Token 校验和退出登录
+- 用户账号新增、查询、编辑、软删除，以及用户名、状态、权限级别和部门筛选
+- 部门新增、查询、编辑、软删除和启用/禁用
+- 用户与部门关联、部门树展示和部门选择
+- 禁用有关联用户的部门时进行解绑确认，并在同一事务中完成批量解除关联
+- 1-3 级角色权限控制：查看/刷新、新增/编辑、删除分别对应不同权限等级
+- 前端按钮级权限控制与后端 Controller 接口级权限校验双重拦截
+- 统一参数校验和错误响应，错误信息包含 `status`、`message` 和字段级 `details`
+- 基于 Vue Router 的登录页和后台布局，基于 Pinia 的用户会话状态管理
+- 按业务 feature 组织的 Vue 前端架构，以及就近放置的组件和页面测试
+- 基于 Flyway 的数据库版本迁移和 Element Plus 管理后台界面
 
 ## 技术栈
 
@@ -110,13 +115,22 @@ npm run build
 │   ├── application*.properties
 │   └── db/migration/      # Flyway 迁移脚本
 ├── frontend/web
-│   ├── src/api/           # Axios API 封装
+│   ├── src/features/      # 按业务领域组织 API、类型、组件、composables 和 store
+│   │   ├── auth/          # 登录认证、会话和权限
+│   │   ├── account/       # 用户账号管理
+│   │   └── department/    # 部门管理
+│   ├── src/api/           # 兼容迁移中的 API 测试或全局 API
+│   ├── src/components/    # 跨 feature 复用组件
 │   ├── src/layouts/       # 登录后的页面布局
 │   ├── src/router/        # Vue Router 配置
 │   ├── src/stores/        # Pinia 状态
-│   ├── src/views/         # 页面视图
+│   ├── src/views/         # 按业务域组织的页面视图
+│   │   ├── auth/
+│   │   ├── account/
+│   │   └── department/
 │   └── src/utils/         # 请求工具
 ├── agent.md               # AI 协作与开发规范
+├── FUNCTION_ARCHITECTURE.md # 项目初始功能架构与问题基线
 ├── INTERVIEW_TASKS.md     # 面试开发任务说明
 ├── skills-lock.json       # 项目锁定的 skills 来源和版本信息
 └── pom.xml
@@ -172,20 +186,25 @@ Authorization: Bearer <JWT>
 
 项目通过 `skills-lock.json` 锁定了以下 14 个 skills。它们用于统一开发规范、提升代码质量，并辅助前端、后端和测试工作流。
 
+### 全局工程规范
+
+| Skill | 用途 |
+| --- | --- |
+| `tdd` | 适用于整个项目，按测试驱动开发流程推进功能实现，强调先写测试、再实现、最后重构 |
+
 ### 后端与工程规范
 
 | Skill | 用途 |
 | --- | --- |
 | `dr-jskill` | 创建和组织 Java / Spring Boot 应用，适用于后端模块、REST API 和数据库集成 |
 | `java-springboot-standards-skill` | 约束 Spring Boot 分层、DTO/VO、校验、事务、分页、安全和数据库访问实践 |
-| `antfu` | 提供 JavaScript / TypeScript 工程化配置和代码风格建议 |
-| `tdd` | 按测试驱动开发流程推进功能实现，强调先写测试、再实现、最后重构 |
-| `vitest` | 提供 Vitest 测试编写、Mock、过滤和覆盖率配置建议 |
 
 ### Vue 与前端工程
 
 | Skill | 用途 |
 | --- | --- |
+| `antfu` | 提供 JavaScript / TypeScript 工程化配置和代码风格建议 |
+| `vitest` | 提供 Vitest 测试编写、Mock、过滤和覆盖率配置建议 |
 | `vue` | 指导 Vue 3 Composition API、`script setup`、组件通信和响应式状态设计 |
 | `pinia` | 指导 Pinia store 的状态、getter、action 和类型安全实现 |
 | `vite` | 指导 Vite 配置、插件、开发服务器、构建和 SSR 相关实践 |
@@ -222,22 +241,40 @@ Authorization: Bearer <JWT>
 5. 新增受保护页面时同步配置路由鉴权、布局菜单和 API 封装。
 6. 保持 `@` 路径别名和 `/api` 请求前缀约定。
 
-## 验证清单
+## 关键问题与解决方案
 
-- [ ] `mvn compile` 通过
-- [ ] `mvn spring-boot:run` 可启动且 Flyway 迁移成功
-- [ ] `npm run build` 通过
-- [ ] 使用 `admin / 123456` 登录成功
-- [ ] 受保护接口能够正确携带 JWT
-- [ ] 失效 Token 能够回到登录页
-- [ ] 未提交数据库凭据、JWT secret、Token 或构建产物
+### 1. 软删除账号仍触发用户名唯一约束
 
-## 进一步开发
+**问题**：账号采用软删除后，历史记录仍保留在数据库中，创建同名账号时会触发唯一索引异常并返回 500。
 
-详细的面试开发任务和验收要求请阅读 [`INTERVIEW_TASKS.md`](./INTERVIEW_TASKS.md)，包括：
+**解决方案**：补充业务层重复校验和统一异常处理，对已存在或已软删除的用户名给出明确字段错误；数据库唯一性仍由索引兜底，避免直接暴露默认 500 响应。
 
-- 部门管理模块
-- 用户与部门关联
-- 用户列表搜索和分页
+### 2. MySQL 原生 `EXISTS` 返回类型不匹配
 
-协作流程、目录约定和安全要求请阅读 [`agent.md`](./agent.md)。
+**问题**：部门编码重复校验使用原生 `SELECT EXISTS(...)` 时，MySQL 返回 `Long`，而 Repository 声明为 `boolean`，导致 `ClassCastException`。
+
+**解决方案**：将查询改为 `COUNT(*)`，Repository 返回 `long`，Service 通过 `> 0` 判断是否存在，并同步补充服务层测试。
+
+### 3. 禁用部门时存在关联用户
+
+**问题**：部门被用户引用时不能直接禁用，否则会产生悬空关联或影响用户数据一致性。
+
+**解决方案**：首次请求返回 `409`，在 `details` 中返回 `requiresConfirmation` 和 `accountCount`；用户确认后提交 `unassignUsers: true`，服务端在同一事务中批量解除用户部门关联并完成禁用。
+
+### 4. 前端权限控制可能被绕过
+
+**问题**：仅隐藏前端按钮不能阻止直接调用接口，越权操作仍可能到达后端。
+
+**解决方案**：前端通过 Pinia 用户状态和统一权限工具控制按钮显示及事件拦截；后端 Controller 使用 `RolePermission` 按角色等级强制校验，无权限统一返回 `403`，并在 `details.permission` 中说明要求。
+
+### 5. 错误信息不统一、难以定位字段
+
+**问题**：参数校验、业务冲突和权限错误的响应格式不一致，前端难以展示具体原因。
+
+**解决方案**：增加全局异常处理器，统一返回 `status`、`message`、`details`；字段校验错误写入对应字段，前端 Axios 拦截器和表单组件按错误类型展示提示。
+
+### 6. 前端业务代码边界不清晰
+
+**问题**：API、状态、页面和组件职责分散，跨模块深层导入容易造成依赖耦合。
+
+**解决方案**：按 `auth`、`account`、`department` 拆分 `features`，每个 feature 通过 `index.ts` 暴露公共 API；`views` 按业务域组织，公共组件统一放在 `src/components/`。
