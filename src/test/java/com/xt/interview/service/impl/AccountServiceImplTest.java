@@ -61,6 +61,21 @@ class AccountServiceImplTest {
     }
 
     @Test
+    void createAccountAllowsUsernameUsedByDeletedAccount() {
+        when(accountRepository.existsByUsernameAndDeleted("alice", 0)).thenReturn(false);
+        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> {
+            Account account = invocation.getArgument(0);
+            account.setId(2L);
+            return account;
+        });
+
+        AccountDTO result = service.createAccount(account("alice"));
+
+        assertEquals("alice", result.getUsername());
+        verify(accountRepository).save(any(Account.class));
+    }
+
+    @Test
     void updateAccountOnlyChangesPasswordWhenProvided() {
         Account existing = accountEntity(1L, "alice");
         existing.setPassword("old-hash");

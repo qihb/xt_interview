@@ -156,7 +156,7 @@ class CrudControllerTest {
     @Test
     void accountCreateReturnsConflictForDuplicateUsername() throws Exception {
         doThrow(new DataIntegrityViolationException(
-                "Duplicate entry 'qihb' for key 'sys_account.uk_username'"))
+                "Duplicate entry 'qihb' for key 'sys_account.uk_account_active_username'"))
                 .when(accountService).createAccount(any(AccountDTO.class));
 
         mockMvc.perform(post("/api/accounts")
