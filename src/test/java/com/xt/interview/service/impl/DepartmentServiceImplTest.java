@@ -58,7 +58,7 @@ class DepartmentServiceImplTest {
 
     @Test
     void createDepartmentRejectsDuplicateCode() {
-        when(departmentRepository.existsByCodeAndDeleted("RD", 0)).thenReturn(true);
+        when(departmentRepository.countByCodeAndDeleted("RD", 0)).thenReturn(1L);
 
         RuntimeException error = assertThrows(RuntimeException.class,
                 () -> service.createDepartment(department("研发部", "RD")));
@@ -70,12 +70,12 @@ class DepartmentServiceImplTest {
     void updateDepartmentTreatsCodeCaseChangeAsDifferentCode() {
         Department existing = entity(1L, "研发部", "RD");
         when(departmentRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
-        when(departmentRepository.existsByCodeAndDeleted("rd", 0)).thenReturn(false);
+        when(departmentRepository.countByCodeAndDeleted("rd", 0)).thenReturn(0L);
         when(departmentRepository.save(any(Department.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         service.updateDepartment(1L, department("研发部", "rd"));
 
-        verify(departmentRepository).existsByCodeAndDeleted("rd", 0);
+        verify(departmentRepository).countByCodeAndDeleted("rd", 0);
         assertEquals("rd", existing.getCode());
     }
 

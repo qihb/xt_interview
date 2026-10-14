@@ -30,7 +30,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDTO createDepartment(DepartmentDTO dto) {
         String name = requireText(dto.getName(), "部门名称不能为空");
         String code = requireText(dto.getCode(), "部门编码不能为空");
-        if (departmentRepository.existsByCodeAndDeleted(code, NOT_DELETED)) {
+        if (departmentRepository.countByCodeAndDeleted(code, NOT_DELETED) > 0) {
             throw new RuntimeException("部门编码已存在");
         }
 
@@ -51,7 +51,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         String name = requireText(dto.getName(), "部门名称不能为空");
         String code = requireText(dto.getCode(), "部门编码不能为空");
         if (!department.getCode().equals(code)
-                && departmentRepository.existsByCodeAndDeleted(code, NOT_DELETED)) {
+                && departmentRepository.countByCodeAndDeleted(code, NOT_DELETED) > 0) {
             throw new RuntimeException("部门编码已存在");
         }
 

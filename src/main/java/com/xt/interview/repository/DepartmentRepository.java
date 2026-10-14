@@ -16,12 +16,10 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     Optional<Department> findByIdAndDeleted(Long id, Integer deleted);
 
     @Query(value = """
-            SELECT EXISTS(
-                SELECT 1 FROM sys_department
-                WHERE BINARY code = BINARY :code
-                  AND deleted = :deleted
-            )
+            SELECT COUNT(*) FROM sys_department
+            WHERE BINARY code = BINARY :code
+              AND deleted = :deleted
             """, nativeQuery = true)
-    boolean existsByCodeAndDeleted(@Param("code") String code,
-                                   @Param("deleted") Integer deleted);
+    long countByCodeAndDeleted(@Param("code") String code,
+                               @Param("deleted") Integer deleted);
 }
