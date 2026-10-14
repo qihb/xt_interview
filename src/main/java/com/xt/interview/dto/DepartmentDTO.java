@@ -24,6 +24,7 @@ public class DepartmentDTO {
     @Min(value = 0, message = "状态必须是 0 或 1")
     @Max(value = 1, message = "状态必须是 0 或 1")
     private Integer status;
+    private Boolean unassignUsers;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -43,6 +44,9 @@ public class DepartmentDTO {
 
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
+
+    public Boolean getUnassignUsers() { return unassignUsers; }
+    public void setUnassignUsers(Boolean unassignUsers) { this.unassignUsers = unassignUsers; }
 
     public LocalDateTime getCreateTime() { return createTime; }
     public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }

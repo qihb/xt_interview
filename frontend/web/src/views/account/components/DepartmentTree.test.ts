@@ -12,7 +12,8 @@ vi.mock('@/features/department/api', () => ({
 describe('DepartmentTree', () => {
   beforeEach(() => {
     vi.mocked(departmentApi.getAll).mockResolvedValue([
-      { id: 2, name: '研发部', code: 'RD', status: 1 }
+      { id: 2, name: '研发部', code: 'RD', status: 1 },
+      { id: 3, name: '停用部', code: 'OLD', status: 0 }
     ])
   })
 
@@ -22,7 +23,7 @@ describe('DepartmentTree', () => {
         stubs: {
           'el-tree': {
             props: ['data'],
-            template: '<div class="tree-stub">{{ data[0]?.label }}</div>'
+            template: '<div class="tree-stub">{{ data[0]?.label }} {{ data[0]?.children?.map((item) => item.label).join(",") }}</div>'
           }
         },
         directives: { loading: () => undefined }
@@ -34,6 +35,8 @@ describe('DepartmentTree', () => {
     expect(departmentApi.getAll).toHaveBeenCalled()
     expect(wrapper.text()).toContain('部门')
     expect(wrapper.find('.tree-stub').text()).toContain('全部')
+    expect(wrapper.find('.tree-stub').text()).toContain('研发部')
+    expect(wrapper.find('.tree-stub').text()).not.toContain('停用部')
   })
 
   it('emits the selected department id', async () => {

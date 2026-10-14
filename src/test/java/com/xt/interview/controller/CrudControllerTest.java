@@ -6,6 +6,7 @@ import com.xt.interview.dto.PageResponse;
 import com.xt.interview.service.AccountService;
 import com.xt.interview.service.DepartmentService;
 import com.xt.interview.exception.DepartmentInUseException;
+import com.xt.interview.exception.DepartmentUsersRequireConfirmationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -205,5 +206,21 @@ class CrudControllerTest {
 
         mockMvc.perform(delete("/api/departments/1").requestAttr("roleLevel", 3))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    void disablingDepartmentWithUsersReturnsConfirmationConflict() throws Exception {
+        doThrow(new DepartmentUsersRequireConfirmationException(3L))
+                .when(departmentService).updateDepartment(eq(1L), any(DepartmentDTO.class));
+
+        mockMvc.perform(put("/api/departments/1").requestAttr("roleLevel", 2)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name":"研发部","code":"RD","status":0}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.details.requiresConfirmation").value("true"))
+                .andExpect(jsonPath("$.details.accountCount").value("3"));
     }
 }

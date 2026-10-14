@@ -142,6 +142,18 @@ npm run build
 | `PUT` | `/api/accounts/{id}` | 更新账号 |
 | `DELETE` | `/api/accounts/{id}` | 删除账号 |
 
+### 部门接口
+
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| `GET` | `/api/departments` | 查询全部未删除部门，用户侧由前端过滤禁用部门 |
+| `GET` | `/api/departments/{id}` | 查询指定部门 |
+| `POST` | `/api/departments` | 创建部门 |
+| `PUT` | `/api/departments/{id}` | 更新部门；禁用有关联用户的部门时，首次请求返回 409，确认后在请求体增加 `"unassignUsers": true` 批量解除用户部门关联 |
+| `DELETE` | `/api/departments/{id}` | 删除未被用户关联的部门 |
+
+禁用部门的确认响应会在 `details.accountCount` 返回关联用户数，并通过 `details.requiresConfirmation=true` 标识需要确认。确认后的解绑和禁用在同一事务中完成，用户的 `department_id` 会被置为 `NULL`。
+
 受保护请求使用以下请求头：
 
 ```http

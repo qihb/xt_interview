@@ -116,20 +116,52 @@ function openEditDialog(row: Department) {
 async function handleSubmit(data: DepartmentPayload) {
   submitting.value = true
   try {
-    if (isEdit.value) {
-      await departmentApi.update(editId.value, data)
-      ElMessage.success('部门更新成功')
-    } else {
-      await departmentApi.create(data)
-      ElMessage.success('部门创建成功')
-    }
+    await saveDepartment(data)
+    ElMessage.success(isEdit.value ? '部门更新成功' : '部门创建成功')
     dialogVisible.value = false
     await loadDepartments()
   } catch (error: any) {
-    ElMessage.error(error.message || '保存部门失败')
+    if (!isDisableConfirmationRequired(error)) {
+      ElMessage.error(error.message || '保存部门失败')
+      return
+    }
+
+    try {
+      const accountCount = error.details.accountCount
+      await ElMessageBox.confirm(
+        `该部门当前关联 ${accountCount} 个用户，禁用后这些用户将改为“未分配”。是否继续？`,
+        '禁用部门确认',
+        {
+          confirmButtonText: '确认禁用并解绑',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+      await saveDepartment({ ...data, unassignUsers: true })
+      ElMessage.success('部门已禁用，关联用户已改为未分配')
+      dialogVisible.value = false
+      await loadDepartments()
+    } catch (confirmError: any) {
+      if (confirmError !== 'cancel') {
+        ElMessage.error(confirmError.message || '禁用部门失败')
+      }
+    }
   } finally {
     submitting.value = false
   }
+}
+
+async function saveDepartment(data: DepartmentPayload) {
+  if (isEdit.value) {
+    await departmentApi.update(editId.value, data)
+  } else {
+    await departmentApi.create(data)
+  }
+}
+
+function isDisableConfirmationRequired(error: any): boolean {
+  return error?.details?.requiresConfirmation === true
+    || error?.details?.requiresConfirmation === 'true'
 }
 
 async function handleDelete(row: Department) {

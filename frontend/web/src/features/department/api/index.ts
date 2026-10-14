@@ -15,6 +15,7 @@ export interface DepartmentPayload {
   code: string
   description?: string
   status: number
+  unassignUsers?: boolean
 }
 
 export const departmentApi = {

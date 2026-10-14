@@ -32,7 +32,7 @@
         <el-input v-model="formData.phone" maxlength="20" show-word-limit placeholder="请输入手机号或座机号" />
       </el-form-item>
       <el-form-item label="所属部门" prop="departmentId">
-        <DepartmentSelect v-model="formData.departmentId" scope="all" />
+        <DepartmentSelect v-model="formData.departmentId" scope="active" />
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input

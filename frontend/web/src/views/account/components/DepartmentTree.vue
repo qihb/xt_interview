@@ -39,7 +39,7 @@ function buildTree(items: Department[]) {
   treeData.value = [{
     id: 'all',
     label: '全部',
-    children: items.map((department) => ({
+    children: items.filter((department) => department.status === 1).map((department) => ({
       id: department.id,
       label: department.name,
       departmentId: department.id

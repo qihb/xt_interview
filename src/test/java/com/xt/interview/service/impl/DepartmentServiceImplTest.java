@@ -4,6 +4,7 @@ import com.xt.interview.dto.DepartmentDTO;
 import com.xt.interview.entity.Department;
 import com.xt.interview.repository.DepartmentRepository;
 import com.xt.interview.repository.AccountRepository;
+import com.xt.interview.exception.DepartmentUsersRequireConfirmationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -77,6 +78,60 @@ class DepartmentServiceImplTest {
 
         verify(departmentRepository).countByCodeAndDeleted("rd", 0);
         assertEquals("rd", existing.getCode());
+    }
+
+    @Test
+    void disablingDepartmentWithUsersRequiresConfirmation() {
+        Department existing = entity(1L, "研发部", "RD");
+        when(departmentRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
+        when(accountRepository.countByDepartment_IdAndDeleted(1L, 0)).thenReturn(3L);
+
+        DepartmentDTO input = department("研发部", "RD");
+        input.setStatus(0);
+
+        DepartmentUsersRequireConfirmationException error = assertThrows(
+                DepartmentUsersRequireConfirmationException.class,
+                () -> service.updateDepartment(1L, input));
+
+        assertEquals(3L, error.getAccountCount());
+        verify(accountRepository, never()).clearDepartmentForActiveAccounts(1L);
+        verify(departmentRepository, never()).save(any(Department.class));
+    }
+
+    @Test
+    void confirmedDisableBulkUnassignsUsersBeforeSavingDepartment() {
+        Department existing = entity(1L, "研发部", "RD");
+        when(departmentRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
+        when(accountRepository.countByDepartment_IdAndDeleted(1L, 0)).thenReturn(3L);
+        when(accountRepository.clearDepartmentForActiveAccounts(1L)).thenReturn(3);
+        when(departmentRepository.save(any(Department.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        DepartmentDTO input = department("研发部", "RD");
+        input.setStatus(0);
+        input.setUnassignUsers(true);
+
+        service.updateDepartment(1L, input);
+
+        verify(accountRepository).clearDepartmentForActiveAccounts(1L);
+        verify(departmentRepository).save(existing);
+        assertEquals(0, existing.getStatus());
+    }
+
+    @Test
+    void disablingDepartmentWithoutUsersDoesNotBulkUpdateAccounts() {
+        Department existing = entity(1L, "研发部", "RD");
+        when(departmentRepository.findByIdAndDeleted(1L, 0)).thenReturn(Optional.of(existing));
+        when(accountRepository.countByDepartment_IdAndDeleted(1L, 0)).thenReturn(0L);
+        when(departmentRepository.save(any(Department.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        DepartmentDTO input = department("研发部", "RD");
+        input.setStatus(0);
+
+        service.updateDepartment(1L, input);
+
+        verify(accountRepository, never()).clearDepartmentForActiveAccounts(1L);
+        verify(departmentRepository).save(existing);
+        assertEquals(0, existing.getStatus());
     }
 
     @Test

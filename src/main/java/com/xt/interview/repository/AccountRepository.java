@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -43,6 +44,17 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     long countByUsernameAndDeleted(@Param("username") String username,
                                    @Param("deleted") Integer deleted);
     boolean existsByDepartment_IdAndDeleted(Long departmentId, Integer deleted);
+
+    long countByDepartment_IdAndDeleted(Long departmentId, Integer deleted);
+
+    @Modifying
+    @Query("""
+            update Account a
+               set a.department = null
+             where a.department.id = :departmentId
+               and a.deleted = 0
+            """)
+    int clearDepartmentForActiveAccounts(@Param("departmentId") Long departmentId);
 
     @Query("""
             select a from Account a

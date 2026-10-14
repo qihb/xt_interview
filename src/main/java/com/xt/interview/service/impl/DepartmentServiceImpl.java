@@ -3,6 +3,7 @@ package com.xt.interview.service.impl;
 import com.xt.interview.dto.DepartmentDTO;
 import com.xt.interview.entity.Department;
 import com.xt.interview.exception.DepartmentInUseException;
+import com.xt.interview.exception.DepartmentUsersRequireConfirmationException;
 import com.xt.interview.repository.AccountRepository;
 import com.xt.interview.repository.DepartmentRepository;
 import com.xt.interview.service.DepartmentService;
@@ -58,7 +59,17 @@ public class DepartmentServiceImpl implements DepartmentService {
         department.setName(name);
         department.setCode(code);
         department.setDescription(normalize(dto.getDescription()));
-        department.setStatus(normalizeStatus(dto.getStatus()));
+        Integer nextStatus = normalizeStatus(dto.getStatus());
+        if (isDisabling(department, nextStatus)) {
+            long accountCount = accountRepository.countByDepartment_IdAndDeleted(id, NOT_DELETED);
+            if (accountCount > 0 && !Boolean.TRUE.equals(dto.getUnassignUsers())) {
+                throw new DepartmentUsersRequireConfirmationException(accountCount);
+            }
+            if (accountCount > 0) {
+                accountRepository.clearDepartmentForActiveAccounts(id);
+            }
+        }
+        department.setStatus(nextStatus);
         return convertToDTO(departmentRepository.save(department));
     }
 
@@ -119,5 +130,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private Integer normalizeStatus(Integer status) {
         return status == null ? 1 : status;
+    }
+
+    private boolean isDisabling(Department department, Integer nextStatus) {
+        return Integer.valueOf(1).equals(department.getStatus()) && Integer.valueOf(0).equals(nextStatus);
     }
 }

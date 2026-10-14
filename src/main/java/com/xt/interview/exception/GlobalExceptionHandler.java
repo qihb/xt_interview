@@ -79,6 +79,16 @@ public class GlobalExceptionHandler {
         return response(HttpStatus.CONFLICT, exception.getMessage(), Map.of("id", exception.getMessage()));
     }
 
+    @ExceptionHandler(DepartmentUsersRequireConfirmationException.class)
+    public ResponseEntity<ApiErrorResponse> handleDepartmentUsersRequireConfirmation(
+            DepartmentUsersRequireConfirmationException exception) {
+        return response(HttpStatus.CONFLICT, exception.getMessage(), Map.of(
+                "requiresConfirmation", "true",
+                "accountCount", String.valueOf(exception.getAccountCount()),
+                "action", "unassignUsers"
+        ));
+    }
+
     @ExceptionHandler(PermissionDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handlePermissionDenied(PermissionDeniedException exception) {
         return response(HttpStatus.FORBIDDEN, exception.getMessage(),
