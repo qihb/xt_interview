@@ -286,8 +286,14 @@ onMounted(() => {
 .user-filters {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 20px;
+
+  :deep(.el-form-item) {
+    margin-right: 0;
+    margin-bottom: 0;
+  }
 }
 
 .user-pagination {
