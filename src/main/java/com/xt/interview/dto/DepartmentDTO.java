@@ -1,12 +1,28 @@
 package com.xt.interview.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 public class DepartmentDTO {
     private Long id;
+
+    @NotBlank(message = "部门名称不能为空")
+    @Size(max = 100, message = "部门名称长度不能超过 100 个字符")
     private String name;
+
+    @NotBlank(message = "部门编码不能为空")
+    @Size(max = 50, message = "部门编码长度不能超过 50 个字符")
     private String code;
+
+    @Size(max = 255, message = "部门描述长度不能超过 255 个字符")
     private String description;
+
+    @Min(value = 0, message = "状态必须是 0 或 1")
+    @Max(value = 1, message = "状态必须是 0 或 1")
     private Integer status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;

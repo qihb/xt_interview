@@ -1,17 +1,51 @@
 package com.xt.interview.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 public class AccountDTO {
     private Long id;
+
+    @NotBlank(message = "用户名不能为空")
+    @Size(max = 50, message = "用户名长度不能超过 50 个字符")
     private String username;
+
+    @NotBlank(message = "姓名不能为空")
+    @Size(max = 100, message = "姓名长度不能超过 100 个字符")
     private String name;
+
+    @Size(max = 10, message = "性别长度不能超过 10 个字符")
     private String gender;
+
+    @Pattern(regexp = "^$|^1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
+
+    @Pattern(regexp = "^$|^.{6,255}$", message = "密码长度必须在 6-255 个字符之间")
     private String password;
+
+    @NotNull(message = "权限级别不能为空")
+    @Min(value = 1, message = "权限级别必须在 1-3 之间")
+    @Max(value = 3, message = "权限级别必须在 1-3 之间")
     private Integer roleLevel;
+
+    @NotNull(message = "状态不能为空")
+    @Min(value = 0, message = "状态必须是 0 或 1")
+    @Max(value = 1, message = "状态必须是 0 或 1")
     private Integer status;
+
+    @NotNull(message = "超级管理员标识不能为空")
+    @Min(value = 0, message = "超级管理员标识必须是 0 或 1")
+    @Max(value = 1, message = "超级管理员标识必须是 0 或 1")
     private Integer isSuper;
+
+    @Positive(message = "部门 ID 必须大于 0")
     private Long departmentId;
     private String departmentName;
     private LocalDateTime createTime;

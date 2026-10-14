@@ -1,9 +1,11 @@
 package com.xt.interview.controller;
 
 import com.xt.interview.entity.Account;
+import com.xt.interview.dto.LoginRequest;
 import com.xt.interview.repository.AccountRepository;
 import com.xt.interview.util.JwtUtil;
 import com.xt.interview.util.MD5Util;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +27,9 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        String password = request.get("password");
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
 
         Map<String, Object> response = new HashMap<>();
 
@@ -84,9 +86,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "登录失败: " + e.getMessage());
-            return ResponseEntity.internalServerError().body(response);
+            throw new RuntimeException("登录服务暂不可用", e);
         }
     }
 
@@ -134,7 +134,7 @@ public class AuthController {
 
         } catch (Exception e) {
             response.put("valid", false);
-            response.put("message", "token无效: " + e.getMessage());
+            response.put("message", "token无效，请重新登录");
             return ResponseEntity.ok(response);
         }
     }

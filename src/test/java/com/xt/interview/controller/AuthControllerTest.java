@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.Optional;
 
@@ -35,7 +36,12 @@ class AuthControllerTest {
         AuthController controller = new AuthController();
         ReflectionTestUtils.setField(controller, "accountRepository", accountRepository);
         ReflectionTestUtils.setField(controller, "jwtUtil", jwtUtil);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+        validator.afterPropertiesSet();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setValidator(validator)
+                .setControllerAdvice(new com.xt.interview.exception.GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -46,8 +52,9 @@ class AuthControllerTest {
                                 {"username":"","password":""}
                                 """))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("用户名不能为空"));
+                .andExpect(jsonPath("$.message").value("请求参数校验失败"))
+                .andExpect(jsonPath("$.details.username").value("用户名不能为空"))
+                .andExpect(jsonPath("$.details.password").value("密码不能为空"));
 
         verifyNoInteractions(accountRepository);
     }
@@ -73,6 +80,20 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.token").value("jwt-token"))
                 .andExpect(jsonPath("$.user.username").value("alice"));
+    }
+
+    @Test
+    void loginReturnsFieldErrorWhenPasswordIsMissing() throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType("application/json")
+                        .content("""
+                                {"username":"alice","password":""}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("请求参数校验失败"))
+                .andExpect(jsonPath("$.details.password").value("密码不能为空"));
+
+        verifyNoInteractions(accountRepository);
     }
 
     @Test
