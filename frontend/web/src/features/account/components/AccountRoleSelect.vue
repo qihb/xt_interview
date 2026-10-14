@@ -1,5 +1,12 @@
 <script setup lang="ts">
-defineProps<{ modelValue?: number }>()
+const props = withDefaults(defineProps<{
+  modelValue?: number
+  clearable?: boolean
+  placeholder?: string
+}>(), {
+  clearable: true,
+  placeholder: '全部权限'
+})
 
 defineEmits<{
   'update:modelValue': [value: number | undefined]
@@ -9,8 +16,8 @@ defineEmits<{
 <template>
   <el-select
     :model-value="modelValue"
-    clearable
-    placeholder="全部权限"
+    :clearable="props.clearable"
+    :placeholder="props.placeholder"
     style="width: 180px"
     @update:model-value="$emit('update:modelValue', $event)"
   >

@@ -45,48 +45,13 @@
       </el-table>
     </section>
 
-    <el-dialog
+    <DepartmentDialog
       v-model="dialogVisible"
-      :title="isEdit ? '编辑部门' : '新增部门'"
-      width="500px"
-      @close="resetForm"
-    >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="90px"
-      >
-        <el-form-item label="部门名称" prop="name">
-          <el-input v-model="formData.name" maxlength="20" show-word-limit placeholder="请输入部门名称" />
-        </el-form-item>
-        <el-form-item label="部门编码" prop="code">
-          <el-input v-model="formData.code" maxlength="20" show-word-limit placeholder="请输入部门编码" />
-        </el-form-item>
-        <el-form-item label="部门描述" prop="description">
-          <el-input
-            v-model="formData.description"
-            type="textarea"
-            :rows="4"
-            maxlength="200"
-            show-word-limit
-            placeholder="请输入部门描述"
-          />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="formData.status" style="width: 100%">
-            <el-option label="启用" :value="1" />
-            <el-option label="禁用" :value="0" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="handleSubmit">
-          确定
-        </el-button>
-      </template>
-    </el-dialog>
+      :mode="isEdit ? 'edit' : 'create'"
+      :initial-data="formData"
+      :submitting="submitting"
+      @submit="handleSubmit"
+    />
   </div>
 </template>
 
@@ -94,19 +59,18 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Delete, Edit, Plus, Refresh } from '@element-plus/icons-vue'
-import type { FormInstance, FormRules } from 'element-plus'
 import {
   departmentApi,
   type Department,
   type DepartmentPayload,
   useDepartmentList
 } from '@/features/department'
+import DepartmentDialog from './components/DepartmentDialog.vue'
 
 const submitting = ref(false)
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const editId = ref(0)
-const formRef = ref<FormInstance>()
 const { loading, departments, loadDepartments } = useDepartmentList()
 
 const formData = reactive<DepartmentPayload>({
@@ -115,36 +79,6 @@ const formData = reactive<DepartmentPayload>({
   description: '',
   status: 1
 })
-
-const formRules: FormRules = {
-  name: [
-    { required: true, message: '请输入部门名称', trigger: 'blur' },
-    { min: 2, max: 20, message: '部门名称长度应为 2-20 个字', trigger: 'blur' },
-    {
-      validator: (_rule, value, callback) => {
-        if (value && value.trim() !== value) {
-          callback(new Error('部门名称首尾不能有空格'))
-          return
-        }
-        callback()
-      },
-      trigger: 'blur'
-    }
-  ],
-  code: [
-    { required: true, message: '请输入部门编码', trigger: 'blur' },
-    { min: 2, max: 20, message: '部门编码长度应为 2-20 个字符', trigger: 'blur' },
-    {
-      pattern: /^[A-Za-z0-9_-]+$/,
-      message: '部门编码只能包含字母、数字、下划线或短横线',
-      trigger: 'blur'
-    }
-  ],
-  description: [
-    { max: 200, message: '部门描述不能超过 200 个字', trigger: 'blur' }
-  ],
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }]
-}
 
 onMounted(() => {
   loadDepartments()
@@ -157,7 +91,6 @@ function resetForm() {
   formData.status = 1
   isEdit.value = false
   editId.value = 0
-  formRef.value?.resetFields()
 }
 
 function openCreateDialog() {
@@ -176,18 +109,14 @@ function openEditDialog(row: Department) {
   dialogVisible.value = true
 }
 
-async function handleSubmit() {
-  if (!formRef.value) return
-  const valid = await formRef.value.validate()
-  if (!valid) return
-
+async function handleSubmit(data: DepartmentPayload) {
   submitting.value = true
   try {
     if (isEdit.value) {
-      await departmentApi.update(editId.value, { ...formData })
+      await departmentApi.update(editId.value, data)
       ElMessage.success('部门更新成功')
     } else {
-      await departmentApi.create({ ...formData })
+      await departmentApi.create(data)
       ElMessage.success('部门创建成功')
     }
     dialogVisible.value = false

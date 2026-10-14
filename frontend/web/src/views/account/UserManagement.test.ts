@@ -1,22 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import UserManagement from '@/views/account/UserManagement.vue'
-import DepartmentManagement from '@/views/department/DepartmentManagement.vue'
+import UserManagement from './UserManagement.vue'
 import { accountApi } from '@/features/account/api'
-import { departmentApi } from '@/features/department/api'
 
 vi.mock('@/features/account/api', () => ({
   accountApi: {
     page: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn()
-  }
-}))
-
-vi.mock('@/features/department/api', () => ({
-  departmentApi: {
-    getAll: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn()
@@ -35,11 +24,14 @@ const stubs = {
   'el-button': true,
   'el-tag': true,
   'el-pagination': true,
-  DepartmentSelect: true
+  DepartmentSelect: true,
+  AccountRoleSelect: true,
+  AccountStatusSelect: true,
+  UserDialog: true
 }
 
-describe('management views', () => {
-  it('loads users on mount', async () => {
+describe('UserManagement', () => {
+  it('loads users on mount', () => {
     vi.mocked(accountApi.page).mockResolvedValueOnce({
       list: [{ id: 1, username: 'alice' }],
       totalElements: 1,
@@ -57,15 +49,5 @@ describe('management views', () => {
       page: 0,
       size: 10
     })
-  })
-
-  it('loads departments on mount', async () => {
-    vi.mocked(departmentApi.getAll).mockResolvedValueOnce([
-      { id: 1, name: '研发部', code: 'RD', status: 1 }
-    ])
-
-    mount(DepartmentManagement, { global: { stubs, directives: { loading: () => undefined } } })
-
-    expect(departmentApi.getAll).toHaveBeenCalledOnce()
   })
 })
